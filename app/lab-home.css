@@ -1,0 +1,326 @@
+/**
+ * The Invention Lab landing.
+ *
+ * Built on the authoritative O6 tokens (declared in office.css). Violet appears exactly
+ * twice on this page — the active mode tab and the primary button — which keeps it inside
+ * the brand's 5% cap and, more usefully, means the one violet thing on screen is always
+ * the thing you are meant to press.
+ */
+
+.lab {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 5%;
+  color: var(--ink);
+}
+
+.lab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 78px;
+}
+
+.lab-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.lab-brand b {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 15px;
+}
+
+.lab-brand span {
+  color: var(--subtle);
+  font-weight: 500;
+}
+
+.lab-nav {
+  display: flex;
+  gap: 22px;
+  font-size: 14px;
+}
+
+.lab-nav a {
+  color: var(--subtle);
+  text-decoration: none;
+}
+
+.lab-nav a:hover {
+  color: var(--ink);
+}
+
+/* --- hero ---------------------------------------------------------------- */
+
+.lab-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 44px;
+  align-items: center;
+  padding: 28px 0 56px;
+}
+
+.lab-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--subtle);
+}
+
+.lab h1 {
+  font-size: clamp(38px, 5vw, 66px);
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+  font-weight: 550;
+  margin: 18px 0 20px;
+}
+
+.lab h1 em {
+  font-style: normal;
+  /* The one decorative use of the signal colour, on the word the whole product is about. */
+  color: var(--signal);
+}
+
+.lab-lede {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #4d535e;
+  max-width: 58ch;
+  margin: 0;
+}
+
+.lab-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.lab-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 550;
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.lab-button:hover {
+  transform: translateY(-1px);
+}
+
+.lab-button.primary {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+}
+
+/* The office runs here. Given real height, because a hero that shows the product
+   working is the entire argument of this page. */
+.lab-stage {
+  height: clamp(360px, 46vw, 560px);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--porcelain);
+}
+
+/* --- modes --------------------------------------------------------------- */
+
+.lab-modes,
+.lab-rules,
+.lab-next {
+  padding: 56px 0;
+  border-top: 1px solid var(--line);
+}
+
+.lab-mode-switch {
+  display: inline-flex;
+  gap: 6px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  margin-bottom: 24px;
+}
+
+.lab-mode-switch button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  padding: 9px 15px;
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--subtle);
+}
+
+.lab-mode-switch button.is-on {
+  background: var(--signal);
+  color: #fff;
+}
+
+.lab h2 {
+  font-size: clamp(26px, 3vw, 38px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-weight: 550;
+  margin: 0 0 16px;
+}
+
+.lab-modes p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #4d535e;
+  max-width: 62ch;
+  margin: 0;
+}
+
+.lab-note {
+  margin-top: 14px !important;
+  font-size: 14px !important;
+  color: var(--subtle) !important;
+}
+
+/* --- rules --------------------------------------------------------------- */
+
+.lab-rule-list {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px 40px;
+}
+
+.lab-rule-list li {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4d535e;
+  padding-left: 16px;
+  border-left: 2px solid var(--line);
+}
+
+.lab-rule-list strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* --- what's next --------------------------------------------------------- */
+
+.lab-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.lab-card {
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 24px 22px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lab-card h3 {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.lab-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5b626d;
+  margin: 0;
+  flex: 1;
+}
+
+.lab-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.lab-card-tag {
+  align-self: flex-start;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--subtle);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+/* Ideas are visibly ideas. Nothing here is built, and dressing an idea up as a roadmap
+   on the page whose subject is honesty would be a poor start. */
+.lab-card:not(.is-built) {
+  background: transparent;
+  border-style: dashed;
+}
+
+.lab-card.is-built .lab-card-tag {
+  color: var(--signal);
+  border-color: #d9cbff;
+  background: #f5f1ff;
+}
+
+.lab-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 26px 0 40px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+
+@media (max-width: 900px) {
+  .lab-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-bottom: 40px;
+  }
+
+  .lab-stage {
+    height: 320px;
+  }
+
+  .lab-foot {
+    flex-direction: column;
+    gap: 6px;
+  }
+}

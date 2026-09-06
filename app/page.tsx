@@ -1,109 +1,218 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
-import {Play,Upload,LayoutGrid,ListFilter,Activity,ArrowUpRight,Layers3,CircleHelp,ShieldCheck,Settings2,Download,Square,ArrowRight,Check,Search,FileText,Database,ScanLine,Send,Link2,AlertCircle,RotateCcw,X,Zap,Clock3} from 'lucide-react';
-import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
-import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription} from '@/components/ui/sheet';
-import {Table,TableHeader,TableBody,TableRow,TableHead,TableCell} from '@/components/ui/table';
-import {Progress} from '@/components/ui/progress';
-import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
-import {SAMPLE_CSV,exportCSV,makeReport,type Lead,type Department} from '@/lib/lead-engine';
-import {useOffice,toActivity,type ActivityItem} from '@/lib/use-office';
-import {type Selection} from '@/lib/office-view/react/OfficeView';
-import {OfficeStage} from '@/lib/office-view/three/OfficeStage';
-import {leadReactivationPlan,leadReactivationCompactPlan} from '@/lib/floorplans/lead-reactivation';
-import {useIsMobile} from '@/hooks/use-mobile';
-import recordedRun from '@/fixtures/recorded-lead-run.json';
-import type {OfficeEvent} from '@/lib/office-view/core/types';
-const departments:{name:Department;job:string;icon:typeof Database;type:string}[]=[
- {name:'Records',job:'Normalize records, merge matching emails, and honor exclusions.',icon:Database,type:'Data rules'},
- {name:'Context',job:'Reconstruct the relationship from the original notes.',icon:FileText,type:'AI or local summary'},
- {name:'Research',job:'Trace evidence to the supplied records. External web research is not connected.',icon:Search,type:'Source check'},
- {name:'Opportunity',job:'Check timing, contact preferences, and the basis for a follow-up.',icon:ScanLine,type:'Qualification rules'},
- {name:'Outreach',job:'Prepare a relevant draft using your offer and the documented history.',icon:Send,type:'AI or template'},
- {name:'Review',job:'Check the draft, then hand the decision back to you.',icon:ShieldCheck,type:'AI or local check'}];
-const stationLabel=(id?:string)=>id?id.charAt(0).toUpperCase()+id.slice(1):'Office';
-const stateLabel={queued:'In the inbox',ready:'Ready for review',hold:'On hold',excluded:'Excluded'};
-function download(name:string,content:string,type='text/csv;charset=utf-8'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function status(l:Lead){return l.review==='approved'?'Reviewed':l.review==='held'?'Held by reviewer':stateLabel[l.state];}
-type Tool={name:string;title:string;description:string;inputSchema:object;annotations:object;execute:(input:unknown)=>unknown};
-export default function Home(){
- const o=useOffice();const {rows,leads,sample,sourceName,events,active,phase,error,setError,apiKey,setApiKey,offer,setOffer,runMode,elapsed,speed,usage,running,date}=o;
- const [tab,setTab]=useState('office'),[modal,setModal]=useState<'import'|'settings'|'about'|null>(null),[selected,setSelected]=useState<string|null>(null),[desk,setDesk]=useState<Department|null>(null);
- const [notice,setNotice]=useState(''),[importText,setImportText]=useState(''),[filter,setFilter]=useState('all'),[query,setQuery]=useState(''),[editDraft,setEditDraft]=useState(''),[editSubject,setEditSubject]=useState('');
- /* Replay transport for the office. Separate from the workflow: the run happens once,
-    the recording can be watched as many times, and as slowly, as you like. */
- const [officeSeek,setOfficeSeek]=useState<number|null>(null),[officePlaying,setOfficePlaying]=useState(true),[officeProgress,setOfficeProgress]=useState({t:0,duration:1});
- const isMobile=useIsMobile();
- const completed=leads.filter(l=>l.processed).length,ready=leads.filter(l=>l.state==='ready'&&l.review!=='held').length,held=leads.filter(l=>l.state==='hold'||l.review==='held').length,excluded=leads.filter(l=>l.state==='excluded').length;
- /* Until a run has produced anything, the office plays a committed recording of a real
-    run over the fictional sample data, so a first-time visitor sees the thing working
-    immediately rather than an empty floor. It is labelled as a recording on screen. */
- const officeEvents=events.length>0?events:(recordedRun.events as unknown as OfficeEvent[]);
- const activity=toActivity(officeEvents);
- const selectedLead=leads.find(l=>l.id===selected),deskInfo=departments.find(d=>d.name===desk),latest=activity[activity.length-1];
- const visible=leads.filter(l=>(filter==='all'||(filter==='approved'?l.review==='approved':l.state===filter))&&`${l.name} ${l.company} ${l.email}`.toLowerCase().includes(query.toLowerCase()));
- const liveConfigured=Boolean(apiKey.trim());
- useEffect(()=>{if(!notice)return;const id=setTimeout(()=>setNotice(''),4500);return()=>clearTimeout(id);},[notice]);
- useEffect(()=>{if(selectedLead){setEditDraft(selectedLead.draft);setEditSubject(selectedLead.subject);}},[selectedLead?.id,selectedLead?.draft,selectedLead?.subject]);
- const stateRef=useRef<()=>unknown>(()=>({})),sampleRef=useRef<()=>Promise<unknown>>(async()=>({}));
- stateRef.current=()=>({phase,mode:runMode,counts:{records:rows.length,unique:leads.length,completed,ready,held,excluded},leads:leads.map(l=>({id:l.id,name:l.name,state:l.state,review:l.review,reason:l.reason}))});
- sampleRef.current=()=>{setSelected(null);setDesk(null);setTab('office');return o.run(true);};
- useEffect(()=>{const context=(document as Document&{modelContext?:{registerTool:(t:Tool,options:{signal:AbortSignal})=>unknown}}).modelContext;if(!context?.registerTool)return;const lifecycle=new AbortController();const tools:Tool[]=[{name:'o6_read_run',title:'Read office run',description:'Read the current lead run and decisions without changing them.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute:(input)=>{if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object.');return stateRef.current();}},{name:'o6_run_sample',title:'Run fictional lead sample',description:'Replace the in-memory run with fictional sample records and process locally. No model calls or messages.',inputSchema:{type:'object',properties:{confirmReplace:{type:'boolean',const:true}},required:['confirmReplace'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:(input)=>{if(!input||typeof input!=='object'||(input as {confirmReplace?:boolean}).confirmReplace!==true||Object.keys(input).length!==1)throw new Error('confirmReplace must be true.');return sampleRef.current();}}];tools.forEach(t=>{try{Promise.resolve(context.registerTool(t,{signal:lifecycle.signal})).catch(()=>{});}catch{}});return()=>lifecycle.abort();},[]);
- function importCSV(text:string,name:string){try{o.importCSV(text,name);setSelected(null);setModal('settings');setNotice('Records imported. Describe your offer to begin.');}catch(e){setError(e instanceof Error?e.message:'Could not read this CSV.');}}
- async function readFile(file?:File){if(!file)return;if(file.size>250000){setError('Please use a CSV smaller than 250 KB.');return;}try{const text=await file.text();setImportText(text);importCSV(text,file.name);}catch{setError('The file could not be read.');}}
- /* Until a run has produced anything, the office plays a committed recording of a real
-   run over the fictional sample data, so a first-time visitor sees the thing working
-   immediately rather than an empty floor. It is labelled as a recording on screen. */
- const officeModeLabel=events.length>0?runMode:'Recorded run · fictional sample';
- const officeSelection:Selection=desk?{kind:'station',id:desk.toLowerCase()}:selectedLead?{kind:'work',id:selectedLead.id}:null;
- /* A click on the floor opens the same inspection sheet the rest of the page uses. */
- function onOfficeSelect(next:Selection){
-  if(!next){setSelected(null);setDesk(null);return;}
-  if(next.kind==='station'){setSelected(null);setDesk((departments.find(d=>d.name.toLowerCase()===next.id)?.name)??null);return;}
-  if(next.kind==='work'){setDesk(null);inspect(next.id);}
- }
- function inspect(id:string){setDesk(null);setSelected(id);}
- function saveReview(review:Lead['review']){if(!selectedLead)return;o.updateLead(selectedLead.id,{draft:editDraft,subject:editSubject,review});o.recordDecision(selectedLead,review);setNotice(review==='approved'?'Marked as reviewed. Nothing sent.':'Draft placed on hold.');}
- const activityList=(list:ActivityItem[])=><div className="event-list">{list.map(e=><button key={e.id} className={`event ${e.tone}`} disabled={!e.leadId} onClick={()=>e.leadId&&inspect(e.leadId)}><span className="event-dot"/><div><span className="event-meta">{stationLabel(e.station)} · {new Date(e.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}{e.tokens!==undefined&&` · ${e.tokens} tokens`}</span><strong>{e.title}</strong><p>{e.detail}</p>{e.leadId&&<small>{leads.find(l=>l.id===e.leadId)?.company} <ArrowUpRight size={12}/></small>}</div></button>)}</div>;
- return <main><header className="topbar"><a className="brand" href="/" aria-label="O6 Office home"><b>O6<small>↗</small></b>office<span>.</span></a><span className="top-context">INVENTION LAB <i>/</i> EXPERIMENT 001</span><span className="prototype"><i/>Working prototype</span><button className="icon-button" aria-label="About this experiment" onClick={()=>setModal('about')}><CircleHelp size={19}/></button></header>
- <div className="workspace"><div className="page-heading"><div><span className="eyebrow"><span className="status-dot blue"/>YOUR DIGITAL OPERATIONS FLOOR</span><h1>Good leads deserve a second conversation<span>.</span></h1><p>A little teamwork. A lot of untapped potential.</p></div><div className="heading-actions"><button className="button outline" disabled={running} onClick={()=>{setError('');setModal('import');}}><Upload size={16}/>Import leads</button><button className="icon-button settings" disabled={running} aria-label="Run settings" onClick={()=>{setError('');setModal('settings');}}><Settings2 size={19}/></button></div></div>
- <div className="mission"><span className="mission-icon"><Layers3/></span><div><strong>Lead reactivation</strong><p>Find the right people. Understand the history. Prepare the next move.</p></div><span className="mission-data">{rows.length} {sample?'sample ':''}records</span>{running?<button className="button outline" onClick={o.stop}><Square size={14}/>Stop run</button>:<button className="button primary" onClick={()=>{setSelected(null);void o.run();}}><Play size={15} fill="currentColor"/>{phase==='idle'?(liveConfigured?'Run with AI':sample?'Run sample':'Run local workflow'):'Run again'}</button>}</div>
- {error&&!modal&&<div className="error-message" role="alert"><AlertCircle size={18}/>{error}<button className="text-button" onClick={()=>setModal('settings')}>Settings</button></div>}
- <Tabs value={tab} onValueChange={v=>setTab(String(v))}><div className="viewbar"><TabsList variant="line" className="view-tabs"><TabsTrigger value="office"><LayoutGrid/>Office floor</TabsTrigger><TabsTrigger value="leads"><ListFilter/>Lead workspace {ready>0&&<span className="count-badge">{ready}</span>}</TabsTrigger><TabsTrigger value="activity"><Activity/>Activity</TabsTrigger></TabsList><span className="subtle">{phase==='idle'?(liveConfigured?'AI READY · GPT-4.1 MINI':sample?'SAMPLE MODE · NO AI CALLS':'LOCAL RULES · NO AI CALLS'):runMode.toUpperCase()}</span></div>
- <TabsContent value="office"><div className="office-layout"><section className="floor"><div className="floor-heading"><div><span className="eyebrow">THE REACTIVATION TEAM</span><h2>{running?'The right work, in the right hands.':phase==='completed'?'The next conversation is yours.':'Six desks. One shared goal.'}</h2></div><span className={`pill ${running?'live-pill':''}`}><span className="status-dot"/>{running?`${Object.keys(active).length} active assignments`:phase==='completed'?'Run complete':phase==='stopped'?'Run stopped':'Ready when you are'}</span></div><div className={`office-map ${running?'is-running':''}`}>
-        <OfficeStage
-          plan={isMobile?leadReactivationCompactPlan:leadReactivationPlan}
-          events={officeEvents}
-          modeLabel={officeModeLabel}
-          playing={officePlaying}
-          speed={speed}
-          seekMs={officeSeek}
-          selection={officeSelection}
-          onSelect={onOfficeSelect}
-          onTime={(t,duration)=>{setOfficeProgress({t,duration});if(officeSeek!==null&&Math.abs(t-officeSeek)>60)setOfficeSeek(null);}}
-        />
-      </div><div className="floor-footer">
-        <button className="speed-button" onClick={()=>setOfficePlaying(v=>!v)} aria-label={officePlaying?'Pause the office':'Play the office'}>{officePlaying?<Square size={12}/>:<Play size={12}/>}{officePlaying?'Pause':'Play'}</button>
-        {/* Scrubbing works while paused: a recorded run is the public demo, so it has to
-            be as inspectable as a live one. */}
-        <input className="scrubber" type="range" min={0} max={Math.max(1,officeProgress.duration)} value={officeProgress.t} onChange={e=>setOfficeSeek(Number(e.target.value))} aria-label="Scrub the run"/>
-        <span className="scrub-time">{(officeProgress.t/1000).toFixed(0)}s / {(officeProgress.duration/1000).toFixed(0)}s</span>
-        <button className="speed-button" onClick={o.toggleSpeed} aria-label={`Playback pace ${speed} times. Click to change.`}><Zap size={13}/>{speed}×</button>
-        <span className="floor-source"><span className={`status-dot ${running?'live':''}`}/>{running?'Every action leaves a trail.':sample?'Fictional records · September 6, 2026':`${sourceName} · ${date}`}</span>
-      </div></section>
- <aside className="right-panel"><div className="panel-top"><span className="eyebrow">RUN OVERVIEW</span><Activity size={16}/></div><h2>{phase==='completed'?<>A clearer picture.<br/>A better next move.</>:<>From overlooked<br/>to on your radar.</>}</h2><p>{phase==='idle'?'Start a run to see leads move through the team.':phase==='stopped'?'Stopped. Completed work is still available.':running?'Follow each handoff, then take a closer look.':'Your review packet is ready. You decide what happens next.'}</p><div className="big-metric">{phase==='idle'?rows.length:completed}<span>{phase==='idle'?'records in the inbox':`of ${leads.length} leads processed`}</span></div>{phase!=='idle'&&<Progress value={completed/leads.length*100} aria-label="Leads processed"/>}<div className="mini-metrics"><div><strong className={ready?'positive':''}>{ready}</strong><span>Ready for review</span></div><div><strong>{held}</strong><span>On hold</span></div></div>{phase==='idle'?<div className="activity-empty"><Activity size={23}/><strong>The office is ready.</strong><p>Assignments, handoffs, and finished drafts will appear here.</p></div>:<div className="current-activity" aria-live="polite"><span className="eyebrow">{running?'HAPPENING NOW':'LATEST UPDATE'}</span><strong>{latest?.title}</strong><p>{latest?.detail}</p>{latest?.leadId&&<button className="text-button" onClick={()=>inspect(latest.leadId!)}>Follow this lead <ArrowRight size={14}/></button>}</div>}{phase!=='idle'&&<div className="run-meters"><span><Clock3 size={13}/>{Math.floor(elapsed/60)}m {elapsed%60}s</span><span>{usage.tokens.toLocaleString()} tokens</span><span title="Estimated from reported successful calls; failed calls may add usage.">{usage.cost?`~$${usage.cost.toFixed(4)}`:'$0.00'}</span></div>}{completed>0&&<button className="button outline review-button" onClick={()=>{setFilter('all');setTab('leads');}}>Open review packet <ArrowRight size={15}/></button>}<div className="privacy-note"><ShieldCheck size={18}/><span>You review every draft.<br/>Nothing is sent automatically.</span></div></aside></div><div className="under-floor"><span><Link2 size={14}/>{rows.length-leads.length} duplicate{rows.length-leads.length!==1?'s':''} merged</span><span>{excluded} excluded from outreach</span><button className="text-button" onClick={()=>setModal('about')}>How the office works <ArrowUpRight size={13}/></button></div></TabsContent>
- <TabsContent value="leads"><section className="floor lead-surface"><div className="list-heading"><div><span className="eyebrow">THE REVIEW PACKET</span><h2>Every lead has a story.</h2><p>{sourceName} · {leads.length} unique leads · {leads.filter(l=>l.review==='approved').length} reviewed</p></div><div className="export-actions"><button className="button outline" disabled={!completed} onClick={()=>download('o6-lead-review.csv',exportCSV(leads))}><Download size={15}/>Export CSV</button><button className="icon-button" disabled={!completed} aria-label="Export full review packet as JSON" title="Export full packet as JSON" onClick={()=>download('o6-review-packet.json',JSON.stringify({...makeReport(leads,runMode,date),events,usage},null,2),'application/json')}><FileText size={18}/></button></div></div><div className="list-controls"><label className="search-field"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a name or business…" aria-label="Search leads"/></label><Select value={filter} onValueChange={v=>setFilter(v||'all')}><SelectTrigger className="filter-select"><SelectValue/></SelectTrigger><SelectContent>{[['all','All leads'],['ready','Ready for review'],['hold','On hold'],['excluded','Excluded'],['queued','In the inbox'],['approved','Reviewed']].map(([v,l])=><SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent></Select></div><Table className="lead-table"><TableHeader><TableRow><TableHead>CONTACT</TableHead><TableHead>STATUS</TableHead><TableHead>WHAT WE KNOW</TableHead><TableHead>LAST CONTACT</TableHead><TableHead><span className="sr-only">Inspect</span></TableHead></TableRow></TableHeader><TableBody>{visible.map(l=><TableRow key={l.id}><TableCell><button className="contact-button" onClick={()=>inspect(l.id)}><span className="avatar">{l.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</span><span><strong>{l.name}</strong><small>{l.company||l.email}</small></span></button></TableCell><TableCell><span className={`state-badge ${l.review==='held'?'hold':l.state}`}>{status(l)}</span></TableCell><TableCell className="reason-cell">{active[l.id]?`At ${active[l.id]}…`:l.reason}</TableCell><TableCell className="date-cell">{l.last_contact||'Not supplied'}</TableCell><TableCell><button className="icon-button" aria-label={`Inspect ${l.name}`} onClick={()=>inspect(l.id)}><ArrowUpRight size={17}/></button></TableCell></TableRow>)}</TableBody></Table>{!visible.length&&<div className="empty-results">No leads match this view.<button className="text-button" onClick={()=>{setFilter('all');setQuery('');}}>Show all leads</button></div>}<div className="table-note"><ShieldCheck size={15}/>{sample?'All sample names and companies are fictional.':'Imported data stays in this tab unless you explicitly run with AI.'} Review every draft before using it.</div></section></TabsContent>
- <TabsContent value="activity"><section className="floor activity-surface"><div className="list-heading"><div><span className="eyebrow">THE AUDIT TRAIL</span><h2>The work, as it happens.</h2><p>Assignments, results, and handoffs. Click an event to follow its lead.</p></div><span className="pill">{events.length} events</span></div>{events.length?activityList([...activity].reverse()):<div className="empty-results"><Activity size={32}/><h3>A clear trail starts with the first assignment.</h3><p>Start a run from the bar above.</p></div>}</section></TabsContent></Tabs><footer className="site-footer"><span>O6 APPLIED <i>/</i> MAKE INVISIBLE WORK VISIBLE.</span><button className="text-button" onClick={()=>setModal('about')}>Inside the experiment <ArrowUpRight size={13}/></button></footer></div>
- <Dialog open={modal!==null} onOpenChange={open=>{if(!open){setModal(null);setError('');}}}><DialogContent className="office-dialog"><DialogHeader><DialogTitle>{modal==='import'?'Bring your leads to the office':modal==='settings'?'Set the team up for success':'Make invisible work visible.'}</DialogTitle><DialogDescription>{modal==='import'?'Upload or paste a CSV. Up to 25 records, processed in this tab.':modal==='settings'?'Describe your offer, then choose local processing or live AI.':'O6 Invention Lab · Experiment 001'}</DialogDescription></DialogHeader>
- {modal==='import'&&<><label className="file-zone"><Upload size={25}/><strong>Choose a CSV file</strong><span>Up to 250 KB · 25 records</span><input type="file" accept=".csv,text/csv" onChange={e=>void readFile(e.target.files?.[0])}/></label><div className="or-divider">OR PASTE CSV</div><textarea className="field csv-input" value={importText} onChange={e=>setImportText(e.target.value)} placeholder="name,company,email,last_contact,..." aria-label="CSV content"/><p className="field-help">Required headers: <code>name, email, notes</code>. Include <code>last_contact, next_followup, opted_out, active_customer</code> to qualify leads. Dates use YYYY-MM-DD. Unknown contact preferences are held.</p><div className="dialog-actions"><button className="text-button" onClick={()=>download('o6-sample-leads.csv',SAMPLE_CSV)}>Download sample CSV <Download size={14}/></button><button className="button primary" disabled={!importText.trim()} onClick={()=>importCSV(importText,'Pasted CSV')}>Import records <ArrowRight size={15}/></button></div></>}
- {modal==='settings'&&<><label className="field-label" htmlFor="offer">What do you offer?</label><textarea id="offer" className="field" maxLength={2000} value={offer} onChange={e=>setOffer(e.target.value)} placeholder="We help independent businesses…"/><p className="field-help">Drafts use this description. Be specific about what you actually provide.</p><div className="settings-divider"/><label className="field-label" htmlFor="api-key">OpenAI API key <span>OPTIONAL</span></label><input id="api-key" className="field key-input" type="password" autoComplete="off" spellCheck={false} value={apiKey} onChange={e=>setApiKey(e.target.value)} placeholder="sk-…"/><p className="field-help">With a key, Context, Outreach, and Review use GPT-4.1 mini. The key stays in memory and passes through this site’s server to OpenAI. No key or lead is saved by this app. Eligible records are sent to OpenAI; API charges apply. Refreshing clears the key and your run.</p><div className="mode-card"><Zap size={18}/><div><strong>{liveConfigured?'Live AI is selected':'Local processing is selected'}</strong><p>{liveConfigured?'Up to three model calls per eligible lead. Two leads can run in parallel.':'Real record checks and template drafts. No model calls, tokens, or API costs.'}</p></div></div><div className="dialog-actions"><button className="text-button" disabled={running} onClick={()=>{o.resetSample();setSelected(null);setModal(null);setNotice('Sample records loaded.');}}><RotateCcw size={14}/>Load fictional sample</button><button className="button primary" onClick={()=>{if(!offer.trim()){setError('Please describe your offer.');return;}setError('');setModal(null);}}>Save settings <Check size={15}/></button></div></>}
- {modal==='about'&&<div className="about-content"><p>This office turns a lead workflow into a process you can follow. Desks light up when an assignment starts. Click a desk for its work, or a lead for its history and draft.</p><div className="about-grid"><div><strong>Local mode</strong><p>CSV checks, duplicate handling, eligibility rules, and editable template drafts. No AI calls.</p></div><div><strong>Live AI mode</strong><p>Your API key powers three bounded specialists: Context, Outreach, and Review. Reported usage appears during the run.</p></div></div><h3>The first experiment has clear boundaries.</h3><p>Research checks supplied notes only. There is no external enrichment, CRM sync, email sending, or Claude Code, Codex, or Replit connector yet. The office is an event-driven view of this workflow; the illustration itself is static.</p><details><summary>See the qualification rules</summary><p>Opt-outs and active customers are excluded. Missing preferences, invalid contacts or dates, identity conflicts, future follow-ups, contact within 30 days, explicit rejection, and history older than 365 days are held. Other leads need useful notes and a documented follow-up date. These are prototype defaults; readiness always requires human judgment.</p></details><p className="field-help">Data and keys live in this tab’s memory. Export your packet before refreshing. Cost estimates use reported successful calls and published GPT-4.1 mini token rates; failed calls may add usage. The sample is evaluated as of September 6, 2026.</p><a href="https://developers.openai.com/api/docs/models/gpt-4.1-mini" target="_blank" rel="noreferrer" className="text-button">Model and pricing reference <ArrowUpRight size={14}/></a></div>}
- {error&&<div className="error-message" role="alert"><AlertCircle size={17}/>{error}</div>}</DialogContent></Dialog>
- <Sheet open={Boolean(selectedLead)||Boolean(desk)} onOpenChange={open=>{if(!open){setSelected(null);setDesk(null);}}}><SheetContent className="detail-sheet"><SheetHeader><SheetTitle>{selectedLead?selectedLead.name:desk}</SheetTitle><SheetDescription>{selectedLead?selectedLead.company:deskInfo?.type}</SheetDescription></SheetHeader>
- {selectedLead&&<div className="detail-body"><div className="lead-title-row"><span className={`state-badge ${selectedLead.state}`}>{status(selectedLead)}</span><span className="source-count">{selectedLead.sources.length} source record{selectedLead.sources.length>1?'s':''}</span></div><p className="detail-reason">{selectedLead.reason}</p>{selectedLead.aiError&&<div className="error-message"><AlertCircle size={17}/>{selectedLead.aiError}</div>}<div className="detail-facts"><div><span>Email</span><strong>{selectedLead.email||'Not supplied'}</strong></div><div><span>Last contact</span><strong>{selectedLead.last_contact||'Not supplied'}</strong></div><div><span>Follow-up</span><strong>{selectedLead.next_followup||'Not supplied'}</strong></div></div><h3>The story so far</h3><p className="history-summary">{selectedLead.summary||'The Context desk has not processed this lead yet.'}</p><details className="source-details"><summary>Original source notes <span>{selectedLead.sources.length}</span></summary>{selectedLead.sources.map(s=><div className="source-note" key={s.row}><span>CSV ROW {s.row} · {s.last_contact||'NO DATE'}</span><p>{s.notes||'No notes supplied.'}</p><small>Opted out: {s.opted_out||'unknown'} · Active customer: {s.active_customer||'unknown'}</small></div>)}</details>
- {selectedLead.draft&&<div className="draft-editor"><div className="draft-heading"><h3>The next conversation</h3><span>{runMode.startsWith('Live')?'AI DRAFT':'TEMPLATE DRAFT'}</span></div><label htmlFor="draft-subject" className="field-label">Subject</label><input className="field" id="draft-subject" value={editSubject} onChange={e=>setEditSubject(e.target.value)} disabled={running}/><label htmlFor="draft-body" className="field-label">Message</label><textarea id="draft-body" className="field message-field" value={editDraft} onChange={e=>setEditDraft(e.target.value)} disabled={running}/><p className="field-help">Review the original notes and personalize the message. Approval records your decision; it does not send email.</p>{selectedLead.evidence.length>0&&<details className="source-details"><summary>Evidence attached to this draft</summary>{selectedLead.evidence.map((e,i)=><p className="evidence-quote" key={i}>{e}</p>)}</details>}<div className="review-actions"><button className="button outline" disabled={running} onClick={()=>saveReview('held')}>Hold</button><button className="button outline" disabled={running} onClick={()=>{o.updateLead(selectedLead.id,{draft:editDraft,subject:editSubject,review:'pending'});setNotice('Draft saved in this tab.');}}>Save edits</button><button className="button primary" disabled={running||!editDraft.trim()||!editSubject.trim()||selectedLead.state!=='ready'} onClick={()=>saveReview('approved')}><Check size={15}/>Mark reviewed</button></div></div>}
- <h3>This lead’s journey</h3>{activity.some(e=>e.leadId===selectedLead.id)?activityList(activity.filter(e=>e.leadId===selectedLead.id).reverse()):<p className="field-help">Waiting for the first assignment.</p>}</div>}
- {deskInfo&&<div className="detail-body"><div className="department-detail-icon"><deskInfo.icon size={30}/></div><p className="detail-reason">{deskInfo.job}</p><div className="mode-card"><Activity size={19}/><div><strong>{Object.values(active).filter(v=>v===desk).length} active assignments</strong><p>{activity.filter(e=>e.station===(desk??'').toLowerCase()&&e.tone==='completed').length} completed events this run</p></div></div><h3>At this desk</h3>{activity.some(e=>e.station===(desk??'').toLowerCase())?activityList(activity.filter(e=>e.station===(desk??'').toLowerCase()).slice(-10).reverse()):<div className="empty-results"><p>No assignments yet. Start the office to see this department work.</p></div>}</div>}
- </SheetContent></Sheet>{notice&&<output className="notice"><Check size={17}/>{notice}<button aria-label="Dismiss notification" onClick={()=>setNotice('')}><X size={15}/></button></output>}</main>;
+/**
+ * The O6 Invention Lab.
+ *
+ * The office by itself is a demo. This page is what makes it an argument: it says what
+ * the Lab is for, what this experiment is trying to prove, and what the rules are — and
+ * it opens with the office actually running, because the fastest way to explain "make
+ * invisible work visible" is to show somebody invisible work, made visible.
+ *
+ * The hero plays the committed recording of a real run. Not a video, not a mock-up: the
+ * same renderer, the same event contract, the same rules as the product itself.
+ */
+
+import { useMemo, useState } from 'react';
+import { ArrowRight, Play, ShieldCheck, Terminal, Layers3 } from 'lucide-react';
+
+import { OfficeStage } from '@/lib/office-view/three/OfficeStage';
+import { leadReactivationPlan } from '@/lib/floorplans/lead-reactivation';
+import { codingSessionPlan } from '@/lib/floorplans/coding-session';
+import recordedLeadRun from '@/fixtures/recorded-lead-run.json';
+import recordedCodingRun from '@/fixtures/recorded-coding-run.json';
+import type { OfficeEvent } from '@/lib/office-view/core/types';
+import './lab-home.css';
+
+type Mode = 'lead' | 'coding';
+
+/** What each mode is, in the words a visitor needs rather than the words we use. */
+const MODES = {
+  lead: {
+    label: 'Run your work',
+    plan: leadReactivationPlan,
+    events: recordedLeadRun.events as unknown as OfficeEvent[],
+    stamp: 'Recorded run · lead reactivation · fictional sample',
+    speed: 1.6,
+    title: 'Give the office a job',
+    body:
+      'Hand it a CSV of old enquiries. It works out which conversations are worth reopening, ' +
+      'why, and what to say — and you watch it decide, desk by desk.',
+  },
+  coding: {
+    label: 'Connect your work',
+    plan: codingSessionPlan,
+    events: recordedCodingRun.events as unknown as OfficeEvent[],
+    stamp: 'Recorded run · a real Claude Code session',
+    // A 23-minute session, so the hero runs it fast. Playback speed only: the order and
+    // the relative timing of everything that happened are untouched.
+    speed: 14,
+    title: 'Or point it at your own agents',
+    body:
+      'One command runs a local bridge. Your Claude Code session streams into the same ' +
+      'office: every tool call, every subagent walking in, every token — and none of it ' +
+      'leaves your machine.',
+  },
+} as const;
+
+export default function LabHome() {
+  const [mode, setMode] = useState<Mode>('lead');
+  const current = MODES[mode];
+  // Both recordings are static imports; memoising keeps the scheduler from re-running
+  // on every render of this page.
+  const events = useMemo(() => current.events, [current]);
+
+  return (
+    <main className="lab">
+      <header className="lab-top">
+        <span className="lab-brand">
+          <b>O6</b> <span>invention lab</span>
+        </span>
+        <nav className="lab-nav">
+          <a href="/office">The office</a>
+          <a href="https://github.com/Aaltaye/o6-office" rel="noreferrer" target="_blank">
+            Source
+          </a>
+        </nav>
+      </header>
+
+      <section className="lab-hero">
+        <div className="lab-hero-copy">
+          <span className="lab-eyebrow">O6 Applied · Invention Lab</span>
+          <h1>
+            Make invisible <em>work</em> visible.
+          </h1>
+          <p className="lab-lede">
+            Agents do an enormous amount of work that nobody can see. Logs are for engineers;
+            a spinner tells you nothing. So we built an office you can watch — desks,
+            handoffs, a specialist called in for one job, and a reviewer who sends work back.
+          </p>
+          <div className="lab-actions">
+            <a className="lab-button primary" href="/office">
+              <Play size={15} /> Open the office
+            </a>
+            <a className="lab-button" href="#how">
+              How it works <ArrowRight size={15} />
+            </a>
+          </div>
+        </div>
+
+        {/* The office, actually running. A screenshot would have been easier and would
+            have proved nothing. */}
+        <div className="lab-stage">
+          <OfficeStage
+            plan={current.plan}
+            events={events}
+            modeLabel={current.stamp}
+            playing
+            speed={current.speed}
+          />
+        </div>
+      </section>
+
+      <section className="lab-modes" id="how">
+        <div className="lab-mode-switch" role="tablist" aria-label="Which kind of work">
+          {(Object.keys(MODES) as Mode[]).map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={mode === key}
+              className={mode === key ? 'is-on' : ''}
+              onClick={() => setMode(key)}
+            >
+              {key === 'lead' ? <Layers3 size={15} /> : <Terminal size={15} />}
+              {MODES[key].label}
+            </button>
+          ))}
+        </div>
+        <h2>{current.title}</h2>
+        <p>{current.body}</p>
+        <p className="lab-note">
+          The office above is showing this mode — a real recorded run, not a video.
+        </p>
+      </section>
+
+      <section className="lab-rules">
+        <span className="lab-eyebrow">
+          <ShieldCheck size={14} /> The rules it follows
+        </span>
+        <h2>What you see is what happened.</h2>
+        <p className="lab-lede">
+          A visualisation of work is only worth anything if you can trust it. These are
+          enforced in code, as assertions that fail the build — not written down and hoped for.
+        </p>
+        <ul className="lab-rule-list">
+          <li>
+            <strong>Labels are literal.</strong> “Reviewing draft against source notes”, or a
+            tool’s own name and file. Never an invented account of what an agent was thinking.
+          </li>
+          <li>
+            <strong>Nothing is animated that did not happen.</strong> If something moves with no
+            event to justify the journey, it cuts rather than walks. A cut is an honest
+            ellipsis; a walk is a claim.
+          </li>
+          <li>
+            <strong>Simultaneous stays simultaneous.</strong> Parallel tool calls are concurrent.
+            A queue would show you a sequence that never occurred.
+          </li>
+          <li>
+            <strong>Compression is stated.</strong> When time is compressed or items are batched,
+            the office says so on screen.
+          </li>
+          <li>
+            <strong>“Unavailable” is a real answer.</strong> Local mode reports no tokens because
+            it spent none. A confident zero would read as “this was free”.
+          </li>
+          <li>
+            <strong>Only what is live is on the floor.</strong> One agent means one figure. Six
+            subagents means six. There is no roster and no cap.
+          </li>
+        </ul>
+      </section>
+
+      <section className="lab-next">
+        <span className="lab-eyebrow">The lab</span>
+        <h2>Experiment 001 of a series.</h2>
+        <p className="lab-lede">
+          The theme is making familiar work legible by giving it a form people already know.
+          The office is the first one.
+        </p>
+        <div className="lab-cards">
+          <article className="lab-card is-built">
+            <span className="lab-card-tag">Built</span>
+            <h3>001 · The Office</h3>
+            <p>
+              Agentic work as a place. Watch a workflow run, or stream your own coding session
+              into the same floor.
+            </p>
+            <a href="/office">
+              Open it <ArrowRight size={14} />
+            </a>
+          </article>
+          {/* Stated as ideas, not as roadmap. Nothing here is built, and saying otherwise
+              on the page whose whole subject is honesty would be a poor start. */}
+          <article className="lab-card">
+            <span className="lab-card-tag">Idea</span>
+            <h3>The Spreadsheet City</h3>
+            <p>
+              A business’s numbers as a city, where bottlenecks look like traffic and the
+              busiest streets are the ones costing the most.
+            </p>
+          </article>
+          <article className="lab-card">
+            <span className="lab-card-tag">Idea</span>
+            <h3>The Walkable Business Plan</h3>
+            <p>
+              A plan you move through rather than read, where every assumption is a door and
+              the dependencies are corridors.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <footer className="lab-foot">
+        <span>O6 Applied · Invention Lab</span>
+        <span>Experiment 001 · a working prototype, not a product</span>
+      </footer>
+    </main>
+  );
 }

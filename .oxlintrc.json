@@ -43,6 +43,10 @@
     "react/jsx-no-comment-textnodes": "error",
     "react/no-unescaped-entities": "error",
     "react/react-compiler": "error",
+    // This app runs on vinext, not the Next.js router. next/link pulls in a second copy
+    // of React here and throws "Invalid hook call", so plain anchors are the correct
+    // and only working way to navigate between our pages.
+    "nextjs/no-html-link-for-pages": "off",
     "react/require-render-return": "error",
     "react/rules-of-hooks": "error",
     "typescript/ban-ts-comment": "error",
