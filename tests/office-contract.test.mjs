@@ -400,3 +400,18 @@ test('visiting subagents get bare hot desks', () => {
     }
   }
 });
+
+test('label anchors clear the furniture behind each desk', async () => {
+  // A fixed label height worked until departments got their own furniture. A server rack
+  // is more than twice the height of a paper stack, so the clearance has to come from
+  // what each desk actually has on it.
+  const { PROP_SHAPES } = await import('../lib/office-view/art/theme.ts');
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    for (const station of plan.stations.filter((s) => s.props?.length)) {
+      const behind = station.props.filter((p) => (p.layer ?? 'back') === 'back');
+      const tallest = Math.max(...behind.map((p) => PROP_SHAPES[p.kind].h));
+      const anchorZ = Math.max(1.05, tallest + 0.5);
+      assert.ok(anchorZ > tallest, `${station.id}: label would sit inside its own furniture`);
+    }
+  }
+});

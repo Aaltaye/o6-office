@@ -18,7 +18,7 @@
 
 import type { PropKind, World } from '../core/types.ts';
 import { worldToScreen, type Tile } from '../core/projection.ts';
-import { faces, geometry, live, palette, strokes } from './theme.ts';
+import { faces, geometry, live, palette, PROP_SHAPES, strokes } from './theme.ts';
 
 /** Turn world points into an SVG polygon `points` string. */
 function polygon(points: World[], tile: Tile): string {
@@ -267,17 +267,6 @@ export function Folder({
  * cost nothing extra to draw. What distinguishes them is proportion: tall and narrow reads
  * as storage, wide and low reads as a surface, thin and upright reads as a screen.
  */
-const PROP_SHAPES: Record<PropKind, { w: number; d: number; h: number }> = {
-  cabinet: { w: 0.5, d: 0.45, h: 1.1 }, // tall drawers
-  shelf: { w: 1.1, d: 0.3, h: 1.25 }, // wide and tall
-  screen: { w: 0.72, d: 0.12, h: 0.62 }, // thin upright panel
-  rack: { w: 0.55, d: 0.6, h: 1.35 }, // deepest and tallest
-  bench: { w: 1.2, d: 0.55, h: 0.34 }, // low working surface
-  stack: { w: 0.34, d: 0.3, h: 0.26 }, // a pile of paper
-  board: { w: 1.25, d: 0.1, h: 0.85 }, // flat, wide, upright
-  plant: { w: 0.3, d: 0.3, h: 0.5 },
-  crate: { w: 0.55, d: 0.55, h: 0.5 },
-};
 
 /** A few props read better in a lighter or darker tone than the standard furniture. */
 const PROP_TONE: Partial<Record<PropKind, string>> = {

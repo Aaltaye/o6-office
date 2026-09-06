@@ -1,3 +1,5 @@
+import type { PropKind } from '../core/types.ts';
+
 /**
  * office-view/art/theme — the look.
  *
@@ -85,6 +87,18 @@ export const geometry = {
   partition: { h: 0.62, thickness: 0.07 },
   door: { w: 1.1, h: 0.9 },
 } as const;
+
+export const PROP_SHAPES: Record<PropKind, { w: number; d: number; h: number }> = {
+  cabinet: { w: 0.5, d: 0.45, h: 1.1 }, // tall drawers
+  shelf: { w: 1.1, d: 0.3, h: 1.25 }, // wide and tall
+  screen: { w: 0.72, d: 0.12, h: 0.62 }, // thin upright panel
+  rack: { w: 0.55, d: 0.6, h: 1.35 }, // deepest and tallest
+  bench: { w: 1.2, d: 0.55, h: 0.34 }, // low working surface
+  stack: { w: 0.34, d: 0.3, h: 0.26 }, // a pile of paper
+  board: { w: 1.25, d: 0.1, h: 0.85 }, // flat, wide, upright
+  plant: { w: 0.3, d: 0.3, h: 0.5 },
+  crate: { w: 0.55, d: 0.55, h: 0.5 },
+};
 
 /** Motion timings in ms. Playback-facing, not workflow-facing. */
 export const timings = {

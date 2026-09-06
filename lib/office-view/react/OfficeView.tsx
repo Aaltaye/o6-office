@@ -32,13 +32,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { FloorPlan, OfficeEvent, StationId, World } from '../core/types.ts';
+import type { FloorPlan, OfficeEvent, Station, StationId, World } from '../core/types.ts';
 import { compileFloorPlan, aisleBandFor, type CompiledPlan } from '../core/plan.ts';
 import { planBounds, focusBounds, toViewBox, worldToScreen, type Bounds } from '../core/projection.ts';
 import { SimClock } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { Desk, Door, Folder, Prop, RoomPad, Tray, Worker } from '../art/sprites.tsx';
-import { faces, live, palette, timings } from '../art/theme.ts';
+import { faces, live, palette, PROP_SHAPES, timings } from '../art/theme.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from './useAnimationLoop.ts';
 
 /** What the viewer clicked, handed back so the host app can open its own panel. */
@@ -74,6 +74,29 @@ export type OfficeViewProps = {
 
 /** Human-readable positions the loop writes onto nodes each frame. */
 type NodeRegistry = Map<string, SVGGElement | null>;
+
+/** Clear air left between the tallest thing at a desk and its label. */
+const LABEL_CLEARANCE = 0.5;
+/** How far toward the viewer the label is pulled, so it sits over open floor. */
+const LABEL_FORWARD = 0.55;
+
+/**
+ * Where a station's label should float.
+ *
+ * Derived from the department's own furniture rather than fixed: a server rack is more
+ * than twice the height of a paper stack, so one height for every desk either clips the
+ * tall departments or leaves the short ones drifting. Only furniture *behind* the desk
+ * matters, since that is what a label placed above the seat would cover.
+ */
+function labelAnchorFor(station: Station): World {
+  const behind = (station.props ?? []).filter((prop) => (prop.layer ?? 'back') === 'back');
+  const tallest = behind.reduce((max, prop) => Math.max(max, PROP_SHAPES[prop.kind].h), 0);
+  return {
+    x: station.seat.x,
+    y: station.seat.y + LABEL_FORWARD,
+    z: Math.max(1.05, tallest + LABEL_CLEARANCE),
+  };
+}
 
 export function OfficeView({
   plan,
@@ -538,7 +561,12 @@ export function OfficeView({
           .filter((station) => !station.hotDesk)
           .map((station) => {
             const status = readable.stationStatus[station.id] ?? null;
-            const point = toOverlay({ ...station.seat, z: 1.05 });
+            // Float the label clear of this department's own furniture, and pull it a
+            // little toward the viewer so it sits over open floor rather than over the
+            // shelves behind the desk. A fixed height worked until departments got their
+            // own furniture; a rack is more than twice the height of a paper stack, so
+            // the clearance has to come from what this desk actually has on it.
+            const point = toOverlay(labelAnchorFor(station));
             if (!point.visible) return null;
             const isActive = Boolean(status);
             const isSelected = selection?.kind === 'station' && selection.id === station.id;
