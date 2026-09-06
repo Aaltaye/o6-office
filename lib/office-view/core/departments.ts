@@ -41,10 +41,11 @@ export type DeskView = {
 /**
  * Why a department is quiet, distinguished rather than collapsed into one "empty".
  *
- * 'never-used' is only reachable under dynamic staffing: a department the live stream has
- * not touched at all has no busy channel, which is different from one that worked earlier
- * and has gone quiet. Telling those apart is the difference between "nothing has happened
- * here" and "nothing is happening here right now".
+ * 'never-used' means the stream never gave any desk in this department a busy channel at
+ * all, which is different from one that worked earlier and has gone quiet. Telling those
+ * apart is the difference between "nothing has ever happened here" and "nothing is
+ * happening here right now". It is most common under dynamic staffing, but a permanent
+ * office whose desk genuinely never ran will report it too, and that is correct.
  */
 export type DepartmentStatus = 'active' | 'idle' | 'never-used';
 

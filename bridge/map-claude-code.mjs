@@ -114,8 +114,15 @@ export function deskForTool(toolName) {
   return TOOL_DESKS.fallback;
 }
 
-/** A short, factual description of a tool call — never a guess at intent. */
-function describeTool(toolName, input) {
+/**
+ * A short, factual description of a tool call — never a guess at intent.
+ *
+ * Coerces the name first for the same reason deskForTool does: this runs on untrusted
+ * input, and a hook carrying a non-string `tool_name` used to throw here and take the
+ * whole bridge process down mid-session.
+ */
+function describeTool(rawToolName, input) {
+  const toolName = typeof rawToolName === 'string' ? rawToolName : '';
   const short = toolName?.startsWith('mcp__') ? toolName.split('__').slice(-1)[0] : toolName;
   if (!input || typeof input !== 'object') return short ?? 'Running a tool';
 

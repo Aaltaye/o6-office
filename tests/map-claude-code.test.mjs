@@ -279,3 +279,18 @@ test('an unfamiliar tool is still placed, including an unknown MCP server', () =
   assert.equal(typeof deskForTool('SomeToolShippedNextYear'), 'string');
   assert.equal(deskForTool('mcp__brand_new_server__do_thing'), deskForTool('mcp__another__thing'));
 });
+
+test('a malformed tool name survives the whole mapping, not just the router', () => {
+  // deskForTool was hardened first, which was not enough: describeTool had the same flaw
+  // one function along and still threw, so the bridge process still died on this input.
+  for (const toolName of [42, {}, null, ['x'], true]) {
+    let result;
+    assert.doesNotThrow(() => {
+      result = mapHook({ hook_event_name: 'PreToolUse', tool_name: toolName, tool_use_id: 'x' });
+    }, `tool_name ${JSON.stringify(toolName)} took the mapping down`);
+    for (const event of result.events) {
+      assert.equal(typeof event.station, 'string', 'it still lands at a real desk');
+      assert.equal(typeof event.label, 'string', 'and still carries a string label');
+    }
+  }
+});

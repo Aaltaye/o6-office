@@ -229,3 +229,34 @@ test('the compact label size in CSS matches the box placement measures', () => {
     'compact cap drifted',
   );
 });
+
+test('live labels that cannot all fit stay in frame and never land on the same pixel', () => {
+  // Found by adversarial review and reproduced before fixing: every unplaceable live label
+  // was clamped to the same top edge, so several sat on one pixel and read as a single
+  // label — the exact failure this pass exists to prevent, relocated. Cascading by a full
+  // label height instead ran them off the bottom, which the overlay clips just as quietly.
+  for (const [count, frameHeight] of [
+    [5, 120],
+    [8, 320],
+    [3, 200],
+  ]) {
+    const stack = {};
+    for (let i = 0; i < count; i += 1) {
+      stack[`live${i}`] = { left: 175, top: 95 + i, visible: true, active: true };
+    }
+    const spaced = deCollideLabels(stack, { frameHeight });
+    const placed = Object.values(spaced);
+    const tops = placed.map((point) => point.top);
+
+    assert.equal(
+      tops.length - new Set(tops).size,
+      0,
+      `${count} live labels in ${frameHeight}px: some share an exact position`,
+    );
+    for (const point of placed) {
+      assert.equal(point.collapsed, undefined, 'a live label is never collapsed to a dot');
+      assert.ok(point.top - LABEL_BOX.h >= 0, 'nothing is pushed off the top of the frame');
+      assert.ok(point.top <= frameHeight, 'nothing is pushed off the bottom either');
+    }
+  }
+});

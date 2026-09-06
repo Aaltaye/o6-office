@@ -439,6 +439,15 @@ export const LABEL_BOX = { idleW: 80, activeW: 168, h: 45 };
  */
 export const LABEL_BOX_COMPACT = { idleW: 66, activeW: 116, h: 38 };
 
+/**
+ * How far apart to step live labels that could not be placed properly.
+ *
+ * Smaller than a label, deliberately: when there are more live labels than the frame can
+ * hold they must overlap, and the useful thing to preserve is each one's top edge — the
+ * line carrying the role and the first words of its status.
+ */
+const CLAMP_STEP = 16;
+
 /** How wide this particular label is: a live status is much longer than "Standing by". */
 function labelWidth(box: { idleW: number; activeW: number }, active: boolean): number {
   return active ? box.activeW : box.idleW;
@@ -507,6 +516,8 @@ export function deCollideLabels<T extends PlacedLabel>(
   const frameHeight = options.frameHeight ?? null;
   const out: Record<string, T> = {};
   const placed: { left: number; top: number; active: boolean }[] = [];
+  /** How many live labels have had to be clamped, so each lands a step lower. */
+  let clampedLive = 0;
 
   const order = Object.entries(labels)
     .filter(([, point]) => point.visible)
@@ -542,7 +553,19 @@ export function deCollideLabels<T extends PlacedLabel>(
 
     if (!fits) {
       if (active) {
-        top = box.h;
+        /*
+         * A live label is never hidden, so it is brought back inside the frame. Two things
+         * would both be wrong here: clamping every one to the same top edge lands several
+         * on the SAME pixel, where they read as one label; and cascading by a full label
+         * height runs them off the bottom, which the overflow:hidden overlay clips just as
+         * silently. So they step down by a fraction of a label and stay inside the frame —
+         * overlapping when there are genuinely too many, but each one visibly present and
+         * each one's own top edge readable.
+         */
+        const lowest = frameHeight === null ? box.h : Math.max(box.h, frameHeight);
+        top = box.h + clampedLive * CLAMP_STEP;
+        if (top > lowest) top = lowest;
+        clampedLive += 1;
       } else {
         out[id] = { ...point, collapsed: true };
         continue;
