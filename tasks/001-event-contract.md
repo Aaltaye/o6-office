@@ -1,6 +1,6 @@
 # T001 — Event contract & floor-plan schema
 
-**Status:** not_started  
+**Status:** in_progress  
 **Branch:** `task/001-event-contract`  
 **Phase:** 1  
 **Depends on:** none  

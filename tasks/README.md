@@ -7,7 +7,7 @@ tests green, new behaviour ships with a test, smoke clean.
 
 | ID | Title | Status | Branch | Depends on | Parallel-with | Drift |
 |----|-------|--------|--------|------------|---------------|-------|
-| [T001](001-event-contract.md) | Event contract & floor-plan schema | not_started | `task/001-event-contract` | none | T008 | |
+| [T001](001-event-contract.md) | Event contract & floor-plan schema | in_progress | `task/001-event-contract` | none | T008 | |
 | [T002](002-isometric-renderer.md) | Isometric office renderer | not_started | `task/002-isometric-renderer` | T001 | T008 | |
 | [T003](003-port-workflow-to-contract.md) | Port the lead workflow to emit OfficeEvent | not_started | `task/003-port-workflow-to-contract` | T002 | T008 | |
 | [T004](004-wire-office-and-palette.md) | Mount the office, adopt O6 tokens, record the demo | not_started | `task/004-wire-office-and-palette` | T003 | T008 | |

@@ -52,6 +52,28 @@ workflow) and **connect your work** (stream a live Claude Code session into the 
   marker, but no transcript on this machine contained one at planning time. T005 must confirm it
   against a real subagent run; if unavailable, report session totals and say so rather than guessing.
 
+## Lint: two things you need to know
+
+**1. Type-aware lint cannot run on this machine.** `.oxlintrc.json` sets `options.typeAware: true`,
+which makes oxlint spawn `node_modules/@oxlint-tsgolint/win32-x64/tsgolint.exe`. That binary is
+blocked by **Windows Smart App Control / Application Control** ("An Application Control policy has
+blocked this file") because it is unsigned. It is not a mark-of-the-web issue — there is no
+`Zone.Identifier` stream. This is a machine security policy and was deliberately **not** worked
+around. To run type-aware rules, either allow the binary in the Windows security settings or run lint
+in CI on a machine without that policy. `npx tsc --noEmit` is clean and covers much of the same
+ground meanwhile.
+
+To lint without the type-aware rules, generate a temporary config with
+`options.typeAware`/`typeCheck` set to `false` (and `typescript/no-deprecated` removed, since it is
+type-aware) and pass it with `oxlint -c`. Keep it out of the repo.
+
+**2. Lint has never passed on this project.** As of the baseline commit there are ~28 pre-existing
+errors: 15 in `components/ui/**` (vendored shadcn — mostly `jsx-a11y/prefer-tag-over-role`), 10 in
+`app/page.tsx` (react-compiler ref access during render, `no-img-element`, unescaped entities), and
+one each in `lib/lead-engine.ts`, `hooks/use-mobile.ts`. **None were introduced by this work.** Until
+that debt is cleared, the merge gate is applied to *changed files only*, and each task records that
+it did so. `app/page.tsx` is rewritten in T004, which should clear most of the non-vendored half.
+
 ## Env vars in use
 
 None yet. Planned for the bridge (T005): `O6_BRIDGE_PORT`, `O6_BRIDGE_TOKEN`,
