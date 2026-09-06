@@ -125,8 +125,21 @@ export function createBridge(options = {}) {
       (usage) => {
         emit({
           type: 'usage.reported',
-          label: usage.worker ? 'Subagent usage' : 'Session usage',
-          detail: usage.assignment ?? undefined,
+          /*
+           * A catch-up total covers work that happened before the office was watching.
+           * Arrival is not occurrence: it is labelled as a total so it cannot be read as
+           * a burst of activity that just took place.
+           */
+          label: usage.catchUp
+            ? usage.worker
+              ? 'Subagent usage so far'
+              : 'Session usage so far'
+            : usage.worker
+              ? 'Subagent usage'
+              : 'Session usage',
+          detail: usage.catchUp
+            ? `Total of ${usage.messages} messages already in the transcript when the office connected`
+            : (usage.assignment ?? undefined),
           usage: {
             source: 'transcript',
             worker: usage.worker ?? undefined,

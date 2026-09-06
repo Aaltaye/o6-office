@@ -416,51 +416,144 @@ export function buildFolder(): THREE.Mesh {
 }
 
 /**
- * Approximate rendered size of a desk label, measured in the browser rather than guessed.
- * Labels are positioned with `translate(-50%, -100%)`, so `left` is the horizontal centre
- * and `top` is the base of the box.
+ * Rendered label sizes, measured in the browser rather than guessed.
+ *
+ * Two widths, because a label's width depends on what it says. An idle desk reads
+ * "Standing by" and measures 80px; a live desk carries a producer's literal action and
+ * runs to the 168px `max-width` cap. A single averaged constant under-separates exactly
+ * when a label is live — which is when it matters most — so the collision test uses the
+ * width of each of the two labels it is comparing.
+ *
+ * Labels are positioned with `translate(-50%, -100%)`: `left` is the horizontal centre
+ * and `top` the base. Measured height is a uniform 41px; the rest is breathing room.
  */
-export const LABEL_BOX = { w: 92, h: 45 };
+export const LABEL_BOX = { idleW: 80, activeW: 168, h: 45 };
+
+/**
+ * The same at the compact scale a narrow stage uses.
+ *
+ * These MUST stay in step with `.office-view.is-narrow .office-label` in office-view.css,
+ * or de-collision measures a box the browser is not drawing. A test asserts the widths
+ * match the stylesheet, because two files having to agree is exactly the kind of thing
+ * that rots silently.
+ */
+export const LABEL_BOX_COMPACT = { idleW: 66, activeW: 116, h: 38 };
+
+/** How wide this particular label is: a live status is much longer than "Standing by". */
+function labelWidth(box: { idleW: number; activeW: number }, active: boolean): number {
+  return active ? box.activeW : box.idleW;
+}
+
+/**
+ * Should a desk show its label, or collapse to a dot?
+ *
+ * Pure and exported so the honesty invariant below is assertable from a .mjs test, which
+ * cannot import the .tsx renderer.
+ *
+ * The rule: a dot only ever replaces "Standing by" — a string the RENDERER writes for an
+ * idle desk, never something a producer said. A desk with a literal status keeps its
+ * label at every screen size, and so does the desk the viewer selected. So no
+ * producer-authored text is collapsed, ever, and the dot still marks that the desk exists.
+ */
+export function labelModeFor(input: {
+  isNarrow: boolean;
+  status: string | null;
+  isSelected: boolean;
+}): 'label' | 'dot' {
+  if (!input.isNarrow) return 'label';
+  // A literal action is never hidden to save room.
+  if (input.status) return 'label';
+  // Neither is the one the viewer asked for.
+  if (input.isSelected) return 'label';
+  return 'dot';
+}
+
+export type PlacedLabel = {
+  left: number;
+  top: number;
+  visible: boolean;
+  /** Carrying a live status: placed first, and never moved or hidden. */
+  active?: boolean;
+  /** Could not be placed in frame, so the renderer should draw a dot instead. */
+  collapsed?: boolean;
+};
 
 /**
  * Nudge overlapping desk labels apart vertically.
  *
- * Each label is projected from its own desk independently, so two desks that happen to
- * line up along the camera's view direction produce labels stacked on top of each other
- * and one of them becomes unreadable. This is purely a screen-space legibility pass: no
- * desk moves, no status text changes, and nothing is hidden. The label still names the
- * same desk and reports the same thing; it just sits in clear air.
+ * Each label is projected from its own desk independently, so two desks that line up
+ * along the camera's view direction produce labels stacked on top of each other and one
+ * becomes unreadable. This is a screen-space legibility pass only: no desk moves, no
+ * status text changes, and no event is reordered.
  *
- * Front-most labels stay put and labels behind them are lifted, because there is almost
- * always empty room above the back of the room and very little below the front of it.
- * Deterministic for a given set of positions, like everything else the office draws.
+ * Three rules, in priority order:
+ *  1. A live label is placed first and never moves. The one label that must sit on its
+ *     own desk is the one carrying a producer's literal action.
+ *  2. The lift is bounded by the frame. The overlay clips with `overflow: hidden`, so
+ *     lifting a label past the top edge would hide it while still calling it visible —
+ *     a label removed with nothing said, which is the one thing this pass must not do.
+ *  3. When a label cannot fit: an idle one collapses to a dot (it was only going to say
+ *     "Standing by"), and a live one is clamped to the edge and allowed to overlap. An
+ *     ugly frame is honest; a silently clipped one is not.
+ *
+ * Deterministic: ordering is active-first, then bottom-most, then by id, so the sort is
+ * total rather than dependent on object insertion order.
  */
-export function deCollideLabels<T extends { left: number; top: number; visible: boolean }>(
+export function deCollideLabels<T extends PlacedLabel>(
   labels: Record<string, T>,
+  options: { box?: { idleW: number; activeW: number; h: number }; frameHeight?: number | null } = {},
 ): Record<string, T> {
+  const box = options.box ?? LABEL_BOX;
+  const frameHeight = options.frameHeight ?? null;
   const out: Record<string, T> = {};
-  const placed: { left: number; top: number }[] = [];
-  // Bottom-most (nearest the camera) first, so those anchor and the ones behind move.
+  const placed: { left: number; top: number; active: boolean }[] = [];
+
   const order = Object.entries(labels)
     .filter(([, point]) => point.visible)
-    .sort((a, b) => b[1].top - a[1].top);
+    .sort((a, b) => {
+      const byActive = Number(Boolean(b[1].active)) - Number(Boolean(a[1].active));
+      if (byActive !== 0) return byActive;
+      if (b[1].top !== a[1].top) return b[1].top - a[1].top;
+      return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
+    });
 
   for (const [id, point] of order) {
+    const active = Boolean(point.active);
+    const width = labelWidth(box, active);
     let top = point.top;
-    // Bounded: a label can only be lifted so many times before we accept where it is,
-    // which keeps a pathological plan from spinning here.
+    let fits = true;
+
+    // Bounded: a label can only be lifted so many times before we stop, which keeps a
+    // pathological plan from spinning here.
     for (let guard = 0; guard < 24; guard += 1) {
       const hit = placed.find(
-        (q) => Math.abs(q.left - point.left) < LABEL_BOX.w && Math.abs(q.top - top) < LABEL_BOX.h,
+        (other) =>
+          Math.abs(other.left - point.left) < (width + labelWidth(box, other.active)) / 2 &&
+          Math.abs(other.top - top) < box.h,
       );
       if (!hit) break;
-      top = hit.top - LABEL_BOX.h;
+      const lifted = hit.top - box.h;
+      if (frameHeight !== null && lifted - box.h < 0) {
+        fits = false;
+        break;
+      }
+      top = lifted;
     }
-    placed.push({ left: point.left, top });
+
+    if (!fits) {
+      if (active) {
+        top = box.h;
+      } else {
+        out[id] = { ...point, collapsed: true };
+        continue;
+      }
+    }
+
+    placed.push({ left: point.left, top, active });
     out[id] = { ...point, top };
   }
 
-  // Labels that are off-frame keep their position; they are not drawn either way.
+  // Labels outside the frustum keep their position; they are not drawn either way.
   for (const [id, point] of Object.entries(labels)) if (!(id in out)) out[id] = point;
   return out;
 }

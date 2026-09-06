@@ -33,6 +33,9 @@ import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../re
 import type { Selection } from '../react/OfficeView.tsx';
 import {
   deCollideLabels,
+  labelModeFor,
+  LABEL_BOX,
+  LABEL_BOX_COMPACT,
   addLighting,
   deskCentre,
   buildFolder,
@@ -125,7 +128,7 @@ export function OfficeStage({
   const [readable, setReadable] = useState(() => ({
     t: 0,
     stationStatus: {} as Record<string, string | null>,
-    labels: {} as Record<string, { left: number; top: number; visible: boolean }>,
+    labels: {} as Record<string, { left: number; top: number; visible: boolean; active?: boolean; collapsed?: boolean }>,
     presentWorkers: [] as string[],
     outbox: 0,
   }));
@@ -209,6 +212,13 @@ export function OfficeStage({
     clock.current.extend(timeline.duration);
   }, [timeline.duration]);
 
+  /**
+   * Below this the office switches to dots-plus-live-labels. Measured on the stage's own
+   * container rather than the viewport, because this canvas is often one column of a
+   * wider page — the crowding depends on the box the labels are actually drawn in.
+   */
+  const isNarrow = size.width > 0 && size.width < 640;
+
   /** Project a world point to overlay pixels, so an HTML label can sit on it. */
   const project = useCallback(
     (at: World) => {
@@ -285,17 +295,29 @@ export function OfficeStage({
       lastReadableAt.current = t;
 
       const stationStatus: Record<string, string | null> = {};
-      const labels: Record<string, { left: number; top: number; visible: boolean }> = {};
+      const labels: Record<
+        string,
+        { left: number; top: number; visible: boolean; active?: boolean; collapsed?: boolean }
+      > = {};
       for (const [station, channel] of timeline.stationBusy) {
         stationStatus[station] = channel.sampleAt(t) ?? null;
       }
       for (const station of plan.stations) {
         if (station.hotDesk) continue;
-        labels[station.id] = project(labelAnchorFor(station));
+        labels[station.id] = {
+          ...project(labelAnchorFor(station)),
+          // Placement needs to know which labels carry a literal action, so those can be
+          // placed first and never moved.
+          active: Boolean(stationStatus[station.id]),
+        };
       }
       // Desks that line up along the camera's view direction project to labels sitting on
       // top of each other. Separating them is a legibility fix in screen space only.
-      const spacedLabels = deCollideLabels(labels);
+      const spacedLabels = deCollideLabels(labels, {
+        box: isNarrow ? LABEL_BOX_COMPACT : LABEL_BOX,
+        // The overlay clips, so placement has to know where the frame ends.
+        frameHeight: size.height,
+      });
 
       const presentWorkers: string[] = [];
       for (const [id, state] of timeline.workers) {
@@ -311,7 +333,7 @@ export function OfficeStage({
       });
       onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, plan.stations, project],
+    [timeline, plan.stations, project, isNarrow, size.height],
   );
 
   // --- camera ---------------------------------------------------------------
@@ -410,7 +432,10 @@ export function OfficeStage({
   const anyActive = Object.values(readable.stationStatus).some(Boolean);
 
   return (
-    <div className="office-view office-stage" style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div
+      className={`office-view office-stage${isNarrow ? ' is-narrow' : ''}`}
+      style={{ position: 'relative', width: '100%', height: '100%' }}
+    >
       {/* The canvas. Click handling lives on the wrapper so an empty-floor click can
           deselect, which a canvas alone cannot express. */}
       <div
@@ -434,6 +459,23 @@ export function OfficeStage({
             const point = readable.labels[station.id];
             if (!point?.visible) return null;
             const status = readable.stationStatus[station.id] ?? null;
+            const isSelected = selection?.kind === 'station' && selection.id === station.id;
+
+            /* Two ways a desk ends up as a dot: the stage is too narrow to carry six
+               labels, or placement could not fit this one inside the frame. Both only ever
+               happen to a label that would have read "Standing by" — text this renderer
+               wrote, not a producer. A live status is never collapsed, and a tap brings
+               the label back. */
+            if (point.collapsed || labelModeFor({ isNarrow, status, isSelected }) === 'dot') {
+              return (
+                <div
+                  key={station.id}
+                  className="office-dot"
+                  style={{ left: point.left, top: point.top }}
+                />
+              );
+            }
+
             return (
               <div
                 key={station.id}

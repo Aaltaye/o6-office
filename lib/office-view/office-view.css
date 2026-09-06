@@ -135,3 +135,24 @@
     transition: none !important;
   }
 }
+
+/* The compact label scale, used when the stage measures itself too narrow for full
+   labels. Keyed to a class the renderer toggles from its OWN width rather than a @media
+   rule, because this canvas is often one column of a wider page — a viewport query would
+   be wrong in both directions.
+
+   These numbers must stay in step with LABEL_BOX_COMPACT in three/stage-scene.ts, or
+   de-collision measures a box the browser is not drawing. A test asserts they match.
+   Arithmetic: 116 is the max-width cap; 66 is an idle "Standing by" at this scale. */
+.office-view.is-narrow .office-label {
+  font-size: 11px;
+  max-width: 116px;
+  padding: 4px 7px;
+}
+
+.office-view.is-narrow .office-label-status {
+  font-size: 10px;
+  max-width: 102px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -30,6 +30,14 @@ function readUsage(line) {
   const usage = line?.message?.usage;
   if (!usage) return null;
   return {
+    /*
+     * One assistant message is written to the transcript as SEVERAL lines. Each line gets
+     * its own `uuid`, but they share `message.id` and every one of them repeats the same
+     * cumulative usage object. Counting per line therefore reports roughly twice the
+     * tokens actually spent — measured on a real 3,615-line transcript: 1,210 usage lines
+     * for 635 messages. The id is what lets us count a message once.
+     */
+    messageId: line.message?.id ?? line.uuid ?? null,
     model: line.message.model,
     inputTokens: usage.input_tokens ?? 0,
     cachedInputTokens: usage.cache_read_input_tokens ?? 0,
@@ -68,6 +76,10 @@ export class TranscriptWatcher {
     this.offsets = new Map();
     /** agent_id -> meta.json contents, so a subagent's usage can be named. */
     this.agentMeta = new Map();
+    /** `file::messageId` already reported, so one message is never counted twice. */
+    this.seenMessages = new Set();
+    /** Files whose pre-existing backlog has already been folded into a catch-up total. */
+    this.primed = new Set();
     this.timer = null;
   }
 
@@ -129,12 +141,63 @@ export class TranscriptWatcher {
       .filter(Boolean);
   }
 
+  /** New usage from one file, with each assistant message counted exactly once. */
+  freshUsage(path) {
+    const out = [];
+    for (const line of this.readNew(path)) {
+      const usage = readUsage(line);
+      if (!usage) continue;
+      if (usage.messageId) {
+        const key = `${path}::${usage.messageId}`;
+        if (this.seenMessages.has(key)) continue;
+        this.seenMessages.add(key);
+      }
+      out.push(usage);
+    }
+    return out;
+  }
+
+  /**
+   * Report a file's new usage.
+   *
+   * The first read of a transcript is different in kind from every later one: it is the
+   * session *so far*, which happened before the office was watching. Replaying it message
+   * by message would stamp hundreds of events with the current time and show a burst of
+   * work that did not just occur — the same lie as animating movement nothing justifies.
+   * So the backlog is folded into one total that says exactly what it is, and everything
+   * after it is reported as it arrives.
+   */
+  report(path, tag) {
+    const fresh = this.freshUsage(path);
+    if (!fresh.length) return;
+    const first = !this.primed.has(path);
+    this.primed.add(path);
+
+    if (!first || fresh.length === 1) {
+      for (const usage of fresh) this.onUsage({ ...usage, ...tag, catchUp: false, messages: 1 });
+      return;
+    }
+
+    const total = (field) => fresh.reduce((n, usage) => n + (usage[field] ?? 0), 0);
+    const models = new Set(fresh.map((usage) => usage.model).filter(Boolean));
+    this.onUsage({
+      ...tag,
+      catchUp: true,
+      messages: fresh.length,
+      // A backlog can span more than one model, and naming just one of them would be a
+      // quiet fiction.
+      model: models.size === 1 ? [...models][0] : 'mixed',
+      inputTokens: total('inputTokens'),
+      cachedInputTokens: total('cachedInputTokens'),
+      outputTokens: total('outputTokens'),
+      cacheCreationTokens: total('cacheCreationTokens'),
+      thinkingTokens: total('thinkingTokens'),
+    });
+  }
+
   tick() {
     // Main session.
-    for (const line of this.readNew(this.transcriptPath)) {
-      const usage = readUsage(line);
-      if (usage) this.onUsage({ ...usage, worker: null, role: null });
-    }
+    this.report(this.transcriptPath, { worker: null, role: null });
 
     // Subagents. A directory, not a file: new ones appear as they spawn.
     const dir = subagentsDirFor(this.transcriptPath);
@@ -165,18 +228,13 @@ export class TranscriptWatcher {
       }
       const meta = this.agentMeta.get(agentId) ?? {};
 
-      for (const line of this.readNew(join(dir, entry))) {
-        const usage = readUsage(line);
-        if (!usage) continue;
-        this.onUsage({
-          ...usage,
-          // Matches the worker id the hook mapping assigns, so the office can put a
-          // subagent's token burn on that subagent's desk.
-          worker: `agent:${agentId}`,
-          role: meta.agentType ?? null,
-          assignment: meta.description ?? null,
-        });
-      }
+      this.report(join(dir, entry), {
+        // Matches the worker id the hook mapping assigns, so the office can put a
+        // subagent's token burn on that subagent's desk.
+        worker: `agent:${agentId}`,
+        role: meta.agentType ?? null,
+        assignment: meta.description ?? null,
+      });
     }
   }
 }
@@ -208,7 +266,8 @@ export function readSessionUsage(transcriptPath) {
     bucket.inputTokens += usage.inputTokens;
     bucket.cachedInputTokens += usage.cachedInputTokens;
     bucket.outputTokens += usage.outputTokens;
-    bucket.messages += 1;
+    // A catch-up entry stands for many messages, not one.
+    bucket.messages += usage.messages ?? 1;
   });
   watcher.tick();
   return { main: totals.main, agents: [...totals.agents.values()] };

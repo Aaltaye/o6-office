@@ -233,3 +233,49 @@ test('the whole captured session maps to a valid, schedulable stream', async () 
   const prompts = fixture.events.filter((e) => e.hook_event_name === 'UserPromptSubmit').length;
   assert.equal(events.filter((e) => e.type === 'work.received').length, prompts);
 });
+
+/* --- routing has to survive tools nobody here has heard of ------------------
+ *
+ * The bridge is fed by untrusted input — anything on the machine can POST to its port —
+ * and by whatever tools a future Claude Code ships. Both of these were real: a numeric
+ * tool name threw and took the bridge process down, and a tool named `constructor`
+ * resolved against Object.prototype and returned a function where a desk id was expected.
+ */
+
+test('a malformed tool name routes somewhere instead of taking the bridge down', () => {
+  for (const bad of [42, null, undefined, {}, [], true, '']) {
+    const desk = deskForTool(bad);
+    assert.equal(typeof desk, 'string', `${JSON.stringify(bad)} did not produce a desk`);
+    assert.ok(desk.length > 0);
+  }
+});
+
+test('a tool named like an Object property still routes to a real desk', () => {
+  // `TOOL_DESKS.exact['constructor']` used to hand back Object.prototype.constructor.
+  const stations = new Set(codingSessionPlan.stations.map((station) => station.id));
+  for (const name of ['constructor', 'toString', 'valueOf', '__proto__', 'hasOwnProperty']) {
+    const desk = deskForTool(name);
+    assert.equal(typeof desk, 'string', `${name} produced a ${typeof desk}`);
+    assert.ok(stations.has(desk), `${name} routed to "${desk}", which is not a desk in the plan`);
+  }
+});
+
+test('every desk the router can name exists in the plan it is drawn on', () => {
+  // A desk id that no station matches means work silently lands nowhere.
+  const stations = new Set(codingSessionPlan.stations.map((station) => station.id));
+  const named = [
+    ...Object.values(TOOL_DESKS.exact),
+    ...Object.values(TOOL_DESKS.prefix),
+    TOOL_DESKS.fallback,
+  ];
+  for (const desk of named) {
+    assert.ok(stations.has(desk), `the router can send work to "${desk}", which has no station`);
+  }
+});
+
+test('an unfamiliar tool is still placed, including an unknown MCP server', () => {
+  // Abel's requirement is that the office copes with whatever is live, so an unseen tool
+  // must land somewhere rather than being dropped.
+  assert.equal(typeof deskForTool('SomeToolShippedNextYear'), 'string');
+  assert.equal(deskForTool('mcp__brand_new_server__do_thing'), deskForTool('mcp__another__thing'));
+});

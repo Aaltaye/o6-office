@@ -86,12 +86,29 @@ const IGNORED = {
   TeammateIdle: 'agent-team lifecycle, not this session',
 };
 
+/*
+ * Longest prefix first, so `mcp__foo__` beats `mcp__`. Sorted once at module load rather
+ * than on every tool call — this runs for every hook of every session.
+ */
+const PREFIXES = Object.keys(TOOL_DESKS.prefix).sort((a, b) => b.length - a.length);
+
+/**
+ * Which desk a tool call belongs at.
+ *
+ * Deliberately total: this is fed by untrusted input (anything on the machine can POST to
+ * the bridge) and by whatever tools a future Claude Code ships. It must return a desk for
+ * every possible input and must never throw — a mapping that crashes takes the whole
+ * office down mid-session, which is a far worse failure than routing something to the
+ * fallback desk.
+ *
+ * `Object.hasOwn` rather than a bare index read, because a tool named `constructor`,
+ * `toString` or `__proto__` would otherwise resolve against Object.prototype and hand
+ * back a function where a desk id is expected.
+ */
 export function deskForTool(toolName) {
-  if (!toolName) return TOOL_DESKS.fallback;
-  const exact = TOOL_DESKS.exact[toolName];
-  if (exact) return exact;
-  const prefixes = Object.keys(TOOL_DESKS.prefix).sort((a, b) => b.length - a.length);
-  for (const prefix of prefixes) {
+  if (typeof toolName !== 'string' || !toolName) return TOOL_DESKS.fallback;
+  if (Object.hasOwn(TOOL_DESKS.exact, toolName)) return TOOL_DESKS.exact[toolName];
+  for (const prefix of PREFIXES) {
     if (toolName.startsWith(prefix)) return TOOL_DESKS.prefix[prefix];
   }
   return TOOL_DESKS.fallback;
@@ -305,7 +322,7 @@ export function mapHook(payload, state = {}) {
     default:
       return {
         events: [],
-        ignored: IGNORED[hook] ?? 'unknown hook',
+        ignored: Object.hasOwn(IGNORED, hook) ? IGNORED[hook] : 'unknown hook',
       };
   }
 }

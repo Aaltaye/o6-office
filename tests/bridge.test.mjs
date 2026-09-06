@@ -8,7 +8,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, rmSync, appendFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -309,5 +309,138 @@ test('a missing transcript reports usage as unavailable, never as zero', async (
     assert.ok(unavailable, 'the office must be told usage cannot be read');
     assert.equal(unavailable.usage.source, 'unavailable');
     assert.equal(unavailable.usage.inputTokens, undefined, 'no invented number');
+  });
+});
+
+/* --- usage accounting ------------------------------------------------------
+ *
+ * These pin two defects found by pointing the watcher at a real 12 MB Claude Code
+ * transcript. Both produced plausible-looking output, which is exactly why they need
+ * tests rather than a glance: one inflated every token figure by roughly half, and the
+ * other claimed hundreds of messages had just happened the moment the office connected.
+ */
+
+/** One assistant message, as Claude Code writes it: several lines sharing a message id. */
+function messageLines(messageId, usage, lineCount = 2) {
+  return Array.from({ length: lineCount }, (unused, index) =>
+    JSON.stringify({
+      type: 'assistant',
+      uuid: `${messageId}-line-${index}`,
+      message: { id: messageId, model: 'claude-opus-5', usage },
+    }),
+  );
+}
+
+const USAGE = {
+  input_tokens: 10,
+  cache_read_input_tokens: 100,
+  cache_creation_input_tokens: 5,
+  output_tokens: 20,
+  output_tokens_details: { thinking_tokens: 3 },
+};
+
+/** A temp dir holding a transcript, plus the subagent layout the watcher expects. */
+function withTranscript(run) {
+  const dir = mkdtempSync(join(tmpdir(), 'o6-transcript-'));
+  const transcript = join(dir, 'session.jsonl');
+  try {
+    run({ dir, transcript, subagents: subagentsDirFor(transcript) });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test('one assistant message spread over several lines is counted once', () => {
+  // Measured on a real transcript: 1,210 lines carried usage but only 654 were distinct
+  // messages. Counting per line reported roughly 1.8x the tokens actually spent.
+  withTranscript(({ transcript }) => {
+    writeFileSync(
+      transcript,
+      [...messageLines('msg_a', USAGE, 3), ...messageLines('msg_b', USAGE, 2)].join('\n') + '\n',
+    );
+    const seen = [];
+    new TranscriptWatcher(transcript, (usage) => seen.push(usage)).tick();
+
+    assert.equal(seen.length, 1, 'the backlog is one catch-up entry');
+    assert.equal(seen[0].messages, 2, 'two messages, not the five lines that carried them');
+    assert.equal(seen[0].outputTokens, 40, 'each message counted once');
+  });
+});
+
+test('work that predates the connection is reported as a total, not as a burst', () => {
+  // Replaying history message-by-message would stamp every one with the current time and
+  // show a flood of work that did not just happen — the same lie as an unjustified walk.
+  withTranscript(({ transcript }) => {
+    const lines = [];
+    for (let i = 0; i < 40; i += 1) lines.push(...messageLines(`msg_${i}`, USAGE, 2));
+    writeFileSync(transcript, lines.join('\n') + '\n');
+
+    const seen = [];
+    new TranscriptWatcher(transcript, (usage) => seen.push(usage)).tick();
+
+    assert.equal(seen.length, 1, '40 messages arrive as one total, not 40 events');
+    assert.equal(seen[0].catchUp, true, 'and it is flagged as a catch-up, so it can say so');
+    assert.equal(seen[0].messages, 40);
+    assert.equal(seen[0].outputTokens, 800);
+  });
+});
+
+test('usage that arrives after connecting is reported as it happens', () => {
+  withTranscript(({ transcript }) => {
+    writeFileSync(transcript, messageLines('msg_old', USAGE, 2).join('\n') + '\n');
+    const seen = [];
+    const watcher = new TranscriptWatcher(transcript, (usage) => seen.push(usage));
+    watcher.tick();
+    assert.equal(seen.length, 1, 'the backlog');
+
+    watcher.tick();
+    assert.equal(seen.length, 1, 'a tick with nothing new reports nothing');
+
+    appendFileSync(transcript, messageLines('msg_new', USAGE, 2).join('\n') + '\n');
+    watcher.tick();
+    assert.equal(seen.length, 2, 'new work is reported');
+    assert.equal(seen[1].catchUp, false, 'and it is live, not a catch-up');
+    assert.equal(seen[1].messages, 1);
+  });
+});
+
+test('a subagent’s tokens are attributed to that subagent, not to the session', () => {
+  // This is the beat the whole product is built around: a specialist called in for one
+  // job, and you can see what that job cost. It has to be real, not apportioned.
+  withTranscript(({ transcript, subagents }) => {
+    writeFileSync(transcript, messageLines('msg_main', USAGE, 2).join('\n') + '\n');
+    mkdirSync(subagents, { recursive: true });
+    writeFileSync(
+      join(subagents, 'agent-abc123.jsonl'),
+      messageLines('msg_sub', USAGE, 2).join('\n') + '\n',
+    );
+    writeFileSync(
+      join(subagents, 'agent-abc123.meta.json'),
+      JSON.stringify({ agentType: 'Plan', description: 'Design the renderer' }),
+    );
+
+    const seen = [];
+    new TranscriptWatcher(transcript, (usage) => seen.push(usage)).tick();
+
+    const sub = seen.find((usage) => usage.worker === 'agent:abc123');
+    assert.ok(sub, 'the subagent is reported under the same id the hook mapping uses');
+    assert.equal(sub.role, 'Plan', 'named from its meta, not guessed');
+    assert.equal(sub.assignment, 'Design the renderer');
+    assert.equal(sub.outputTokens, 20, 'its own tokens only');
+
+    const main = seen.find((usage) => usage.worker === null);
+    assert.equal(main.outputTokens, 20, 'the session keeps its own, unmixed');
+  });
+});
+
+test('session totals count messages, not the lines they were written across', () => {
+  withTranscript(({ transcript }) => {
+    writeFileSync(
+      transcript,
+      [...messageLines('msg_a', USAGE, 3), ...messageLines('msg_b', USAGE, 3)].join('\n') + '\n',
+    );
+    const totals = readSessionUsage(transcript);
+    assert.equal(totals.main.messages, 2, 'two messages across six lines');
+    assert.equal(totals.main.outputTokens, 40);
   });
 });

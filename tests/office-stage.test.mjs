@@ -9,6 +9,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   toScene,
@@ -17,7 +18,9 @@ import {
   colorForWorker,
   WORKER_COLORS,
   deCollideLabels,
+  labelModeFor,
   LABEL_BOX,
+  LABEL_BOX_COMPACT,
 } from '../lib/office-view/three/stage-scene.ts';
 import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
 import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
@@ -120,4 +123,109 @@ test('label separation is deterministic, so a replay looks like the run it came 
   assert.deepEqual(deCollideLabels(input), deCollideLabels(input));
   // Already-separated labels are a fixed point: running the pass twice changes nothing.
   assert.deepEqual(deCollideLabels(deCollideLabels(input)), deCollideLabels(input));
+});
+
+/* --- narrow stages ---------------------------------------------------------
+ *
+ * Six full-size labels cannot be placed on a phone-width canvas. What matters is not that
+ * they fit, but WHICH text is allowed to disappear when they do not: never a producer's.
+ */
+
+test('a dot never replaces a literal status, at any width', () => {
+  // The honesty invariant, as an assertion over the whole cross product. "Standing by" is
+  // written by the renderer for an idle desk; every other status came from a producer.
+  for (const isNarrow of [true, false]) {
+    for (const isSelected of [true, false]) {
+      assert.equal(
+        labelModeFor({ isNarrow, status: 'Reading src/app.ts', isSelected }),
+        'label',
+        'a desk doing something always says what',
+      );
+    }
+  }
+  assert.equal(labelModeFor({ isNarrow: true, status: null, isSelected: false }), 'dot');
+  assert.equal(
+    labelModeFor({ isNarrow: true, status: null, isSelected: true }),
+    'label',
+    'the desk the viewer picked keeps its label',
+  );
+  assert.equal(
+    labelModeFor({ isNarrow: false, status: null, isSelected: false }),
+    'label',
+    'nothing collapses on a wide stage',
+  );
+});
+
+test('the label carrying a live status is never the one that moves', () => {
+  const spaced = deCollideLabels({
+    idle: { left: 200, top: 300, visible: true },
+    live: { left: 210, top: 320, visible: true, active: true },
+  });
+  assert.equal(spaced.live.top, 320, 'the live label stays on its own desk');
+  assert.notEqual(spaced.idle.top, 300, 'the idle one gives way');
+  assert.ok(
+    Math.abs(spaced.live.top - spaced.idle.top) >= LABEL_BOX.h,
+    'and they no longer overlap',
+  );
+});
+
+test('no label is ever lifted out of the frame in silence', () => {
+  // The overlay clips with overflow:hidden, so an unbounded lift could hide a label while
+  // still calling it visible. A dot is an honest "there is a desk here"; a clipped label
+  // is just missing.
+  // A frame with room for about three stacked labels, and six desks that all project to
+  // the same spot — so some genuinely cannot be placed.
+  const stack = {};
+  for (let i = 0; i < 6; i += 1) stack[`desk${i}`] = { left: 160, top: 140 + i, visible: true };
+  const spaced = deCollideLabels(stack, { frameHeight: 150 });
+
+  for (const [id, point] of Object.entries(spaced)) {
+    if (point.collapsed) continue;
+    assert.ok(point.top - LABEL_BOX.h >= 0, `${id} was placed off the top of the frame`);
+  }
+  assert.ok(
+    Object.values(spaced).some((point) => point.collapsed),
+    'the ones that could not fit say so, rather than vanishing',
+  );
+  assert.equal(Object.keys(spaced).length, 6, 'every desk is still accounted for');
+});
+
+test('a live label that cannot fit overlaps rather than disappearing', () => {
+  const stack = { live: { left: 160, top: 20, visible: true, active: true } };
+  for (let i = 0; i < 5; i += 1) {
+    stack[`idle${i}`] = { left: 160, top: 300 + i, visible: true };
+  }
+  const spaced = deCollideLabels(stack, { frameHeight: 200 });
+  assert.equal(spaced.live.collapsed, undefined, 'a live label is never collapsed to a dot');
+  assert.ok(spaced.live.visible, 'and never hidden');
+});
+
+test('placement measures the box it is told to, not a hard-coded one', () => {
+  const pair = {
+    a: { left: 100, top: 300, visible: true },
+    b: { left: 172, top: 320, visible: true },
+  };
+  // 72px apart: overlapping at the full idle width of 80, clear at the compact 66.
+  const full = deCollideLabels(pair, { box: LABEL_BOX });
+  const compact = deCollideLabels(pair, { box: LABEL_BOX_COMPACT });
+  // b is bottom-most, so it anchors and a is the one that has to give way - or not.
+  assert.notEqual(full.a.top, 300, 'the full-size boxes collide, so a is lifted');
+  assert.equal(compact.a.top, 300, 'the compact ones clear each other, so nothing moves');
+});
+
+test('the compact label size in CSS matches the box placement measures', () => {
+  // These numbers have to live in two files. A test is the only thing that keeps them
+  // equal, and a silent mismatch means de-collision measures a box nobody is drawing.
+  const css = readFileSync(new URL('../lib/office-view/office-view.css', import.meta.url), 'utf8');
+  const widthIn = (selector) => {
+    const block = css.slice(css.indexOf(selector));
+    const match = block.slice(0, block.indexOf('}')).match(/max-width:\s*(\d+)px/);
+    return match ? Number(match[1]) : null;
+  };
+  assert.equal(widthIn('.office-label {'), LABEL_BOX.activeW, 'full-size cap drifted');
+  assert.equal(
+    widthIn('.office-view.is-narrow .office-label {'),
+    LABEL_BOX_COMPACT.activeW,
+    'compact cap drifted',
+  );
 });
