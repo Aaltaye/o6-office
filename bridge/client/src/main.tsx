@@ -12,7 +12,8 @@
 import { StrictMode, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { OfficeView, type Selection } from '../../../lib/office-view/react/OfficeView.tsx';
+import type { Selection } from '../../../lib/office-view/react/OfficeView.tsx';
+import { OfficeStage } from '../../../lib/office-view/three/OfficeStage.tsx';
 import { isOfficeEvent } from '../../../lib/office-view/core/events.ts';
 import type { OfficeEvent } from '../../../lib/office-view/core/types.ts';
 import { codingSessionPlan } from '../../../lib/floorplans/coding-session.ts';
@@ -131,7 +132,7 @@ function App() {
       ) : null}
 
       <div className="bridge-floor">
-        <OfficeView
+        <OfficeStage
           plan={codingSessionPlan}
           events={events}
           modeLabel="Live · your Claude Code session"

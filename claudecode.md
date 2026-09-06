@@ -76,6 +76,26 @@ workflow) and **connect your work** (stream a live Claude Code session into the 
   Note the background-task `.output` files under `AppData\Local\Temp\claude\...\tasks\` are NOT this
   data — they are zero bytes once an agent completes. Do not read them for usage.
 
+## Two renderers
+
+The office has two, behind the same event contract — which is the payoff of keeping `core/`
+DOM-free. Both consume the identical scheduled timeline.
+
+- **`three/OfficeStage`** — three.js. The default in the product and the bridge. Real depth,
+  soft shadows, coloured figures. Costs about 240 kB gzipped; the bridge bundle went from
+  119 kB to 359 kB. Fine over loopback, worth knowing before shipping it anywhere metered.
+- **`react/OfficeView`** — SVG. Crisp, tiny, and still the one with DOM hit-testing. Kept
+  as the lightweight alternative; `/lab` toggles between them, which is the fastest way to
+  confirm the seam still holds.
+
+What both keep: HTML labels (text is what WebGL is worst at), the accessibility outline
+(a canvas is opaque to a screen reader, so it matters *more* in 3D), a camera that never
+chases the action, and violet meaning only "live".
+
+Art direction split: the **architecture** stays porcelain and calm, the **people** carry
+colour. Everything colourful leaves the eye nowhere to land, and the point is seeing who
+is working. No worker may wear violet — a test enforces it.
+
 ## vinext traps
 
 - **Do not import `next/link`.** It pulls a second copy of React and the page dies with

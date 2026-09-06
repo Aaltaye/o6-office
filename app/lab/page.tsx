@@ -13,6 +13,7 @@
 import { useMemo, useState } from 'react';
 
 import { OfficeView, type Selection } from '@/lib/office-view/react/OfficeView';
+import { OfficeStage } from '@/lib/office-view/three/OfficeStage';
 import { demoLeadRun, demoBurst } from '@/lib/office-view/dev/demo-stream';
 import {
   leadReactivationPlan,
@@ -24,6 +25,9 @@ type StreamName = 'lead-run' | 'burst';
 export default function LabPage() {
   const [streamName, setStreamName] = useState<StreamName>('lead-run');
   const [compact, setCompact] = useState(false);
+  // Two renderers, one contract. Switching between them is the clearest proof that the
+  // seam works: identical events, identical timeline, completely different pixels.
+  const [threeD, setThreeD] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
   const [seek, setSeek] = useState<number | null>(null);
@@ -81,6 +85,10 @@ export default function LabPage() {
         </label>
 
         <label style={{ fontSize: 13 }}>
+          <input type="checkbox" checked={threeD} onChange={(e) => setThreeD(e.target.checked)} /> 3D
+        </label>
+
+        <label style={{ fontSize: 13 }}>
           <input
             type="checkbox"
             checked={compact}
@@ -107,6 +115,19 @@ export default function LabPage() {
       />
 
       <div style={{ height: '68vh', border: '1px solid #e5e8ef', borderRadius: 12, overflow: 'hidden' }}>
+        {threeD ? (
+          <OfficeStage
+            plan={plan}
+            events={events}
+            modeLabel="Synthetic stream · lab · 3D"
+            playing={playing}
+            speed={speed}
+            seekMs={seek}
+            selection={selection}
+            onSelect={(next) => { setSelection(next); setSeek(null); }}
+            onTime={(t, duration) => { setProgress({ t, duration }); if (seek !== null && Math.abs(t - seek) > 60) setSeek(null); }}
+          />
+        ) : (
         <OfficeView
           plan={plan}
           events={events}
@@ -125,6 +146,7 @@ export default function LabPage() {
             if (seek !== null && Math.abs(t - seek) > 50) setSeek(null);
           }}
         />
+        )}
       </div>
 
       <p style={{ marginTop: 10, fontSize: 13, color: '#374151' }}>

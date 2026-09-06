@@ -9,7 +9,8 @@ import {Progress} from '@/components/ui/progress';
 import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
 import {SAMPLE_CSV,exportCSV,makeReport,type Lead,type Department} from '@/lib/lead-engine';
 import {useOffice,toActivity,type ActivityItem} from '@/lib/use-office';
-import {OfficeView,type Selection} from '@/lib/office-view/react/OfficeView';
+import {type Selection} from '@/lib/office-view/react/OfficeView';
+import {OfficeStage} from '@/lib/office-view/three/OfficeStage';
 import {leadReactivationPlan,leadReactivationCompactPlan} from '@/lib/floorplans/lead-reactivation';
 import {useIsMobile} from '@/hooks/use-mobile';
 import recordedRun from '@/fixtures/recorded-lead-run.json';
@@ -71,7 +72,7 @@ export default function Home(){
  {error&&!modal&&<div className="error-message" role="alert"><AlertCircle size={18}/>{error}<button className="text-button" onClick={()=>setModal('settings')}>Settings</button></div>}
  <Tabs value={tab} onValueChange={v=>setTab(String(v))}><div className="viewbar"><TabsList variant="line" className="view-tabs"><TabsTrigger value="office"><LayoutGrid/>Office floor</TabsTrigger><TabsTrigger value="leads"><ListFilter/>Lead workspace {ready>0&&<span className="count-badge">{ready}</span>}</TabsTrigger><TabsTrigger value="activity"><Activity/>Activity</TabsTrigger></TabsList><span className="subtle">{phase==='idle'?(liveConfigured?'AI READY · GPT-4.1 MINI':sample?'SAMPLE MODE · NO AI CALLS':'LOCAL RULES · NO AI CALLS'):runMode.toUpperCase()}</span></div>
  <TabsContent value="office"><div className="office-layout"><section className="floor"><div className="floor-heading"><div><span className="eyebrow">THE REACTIVATION TEAM</span><h2>{running?'The right work, in the right hands.':phase==='completed'?'The next conversation is yours.':'Six desks. One shared goal.'}</h2></div><span className={`pill ${running?'live-pill':''}`}><span className="status-dot"/>{running?`${Object.keys(active).length} active assignments`:phase==='completed'?'Run complete':phase==='stopped'?'Run stopped':'Ready when you are'}</span></div><div className={`office-map ${running?'is-running':''}`}>
-        <OfficeView
+        <OfficeStage
           plan={isMobile?leadReactivationCompactPlan:leadReactivationPlan}
           events={officeEvents}
           modeLabel={officeModeLabel}
