@@ -1,6 +1,6 @@
 # T008 — Add Anthropic as a selectable provider
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/008-anthropic-provider`  
 **Phase:** 2  
 **Depends on:** none  
@@ -40,3 +40,31 @@ _(blank — fill if scope changed during execution)_
 ## Notes
 
 _(blockers, decisions, paused reasons)_
+
+## Notes (execution)
+
+**Provider is inferred from the key** (`sk-ant-` → Anthropic, else OpenAI), so there is no
+extra setting to configure and nothing to get out of sync with the key you pasted. The
+run-mode label on screen names whichever provider actually ran.
+
+**One validation path, deliberately.** The schema check and the exact-source-quote check
+are shared, and a test proves invented evidence is rejected on the Anthropic path too.
+Forking them per provider would have meant one quietly getting weaker guarantees — and the
+quote check is the thing standing between a personalised draft and an invented one.
+
+**Raw HTTP rather than the Anthropic SDK.** This is one small proxy running in a
+Cloudflare Worker that already spoke raw HTTP to OpenAI; adding an SDK for one provider
+only would leave the file half in each idiom. Noted because the Claude API guidance
+prefers the SDK by default.
+
+**Model defaults are the vendors' current general models** (`claude-opus-5`,
+`gpt-4.1-mini`), overridable via `O6_ANTHROPIC_MODEL` / `O6_OPENAI_MODEL`. Deliberately
+not defaulted to the cheapest Claude tier: choosing a smaller model to save money is a
+decision for whoever pays the bill, so it is exposed rather than assumed.
+
+**Cost estimates are an upper bound.** Where a cached-input rate is not pinned for a
+model, cached tokens are priced at the full input rate, and an unknown model returns null
+rather than a fabricated figure. Prices carry a verification date.
+
+A refusal is surfaced as a refusal rather than as unreadable output — an honest outcome
+deserves an honest message.

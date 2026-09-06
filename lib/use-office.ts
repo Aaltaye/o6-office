@@ -103,10 +103,14 @@ async function callAgentViaProxy(
     error?: string;
     output: AgentResult['output'];
     usage: { input: number; output: number; estimatedCost: number };
+    // The proxy reports which provider and model actually ran. The client does not
+    // assume — guessing would put a wrong model name on the office's own meter.
+    model?: string;
+    provider?: string;
   };
   // Fail loudly: swallowing this would show the office completing work it never did.
   if (!response.ok) throw new Error(body.error || 'The assignment failed.');
-  return { output: body.output, usage: { ...body.usage, model: 'gpt-4.1-mini' } };
+  return { output: body.output, usage: { ...body.usage, model: body.model ?? 'unknown model' } };
 }
 
 /**
@@ -296,8 +300,11 @@ export function useOffice() {
       setError('Add a short description of your offer in run settings.');
       return { error: 'Offer required' };
     }
-    if (key && !/^sk-[\w-]{10,}$/.test(key)) {
-      setError('Check the API key in run settings.');
+    // Either provider's key shape. Which one runs is inferred from the key itself, so
+    // there is nothing extra to configure and nothing to get wrong.
+    const isAnthropic = key.startsWith('sk-ant-');
+    if (key && !(isAnthropic ? /^sk-ant-[\w-]{20,}$/ : /^sk-[\w-]{10,}$/).test(key)) {
+      setError('Check the API key in run settings. OpenAI and Anthropic keys are both accepted.');
       return { error: 'Invalid key' };
     }
 
@@ -322,7 +329,11 @@ export function useOffice() {
     clock.current = Date.now();
     setPhase('running');
     setRunMode(
-      key ? 'Live AI · GPT-4.1 mini' : isSample ? 'Sample · local rules' : 'Your data · local rules',
+      key
+        ? `Live AI · ${isAnthropic ? 'Anthropic' : 'OpenAI'}`
+        : isSample
+          ? 'Sample · local rules'
+          : 'Your data · local rules',
     );
 
     // The workflow itself lives in lead-workflow.ts, with no React in it, so its event
