@@ -414,3 +414,53 @@ export function buildFolder(): THREE.Mesh {
   folder.castShadow = true;
   return folder;
 }
+
+/**
+ * Approximate rendered size of a desk label, measured in the browser rather than guessed.
+ * Labels are positioned with `translate(-50%, -100%)`, so `left` is the horizontal centre
+ * and `top` is the base of the box.
+ */
+export const LABEL_BOX = { w: 92, h: 45 };
+
+/**
+ * Nudge overlapping desk labels apart vertically.
+ *
+ * Each label is projected from its own desk independently, so two desks that happen to
+ * line up along the camera's view direction produce labels stacked on top of each other
+ * and one of them becomes unreadable. This is purely a screen-space legibility pass: no
+ * desk moves, no status text changes, and nothing is hidden. The label still names the
+ * same desk and reports the same thing; it just sits in clear air.
+ *
+ * Front-most labels stay put and labels behind them are lifted, because there is almost
+ * always empty room above the back of the room and very little below the front of it.
+ * Deterministic for a given set of positions, like everything else the office draws.
+ */
+export function deCollideLabels<T extends { left: number; top: number; visible: boolean }>(
+  labels: Record<string, T>,
+): Record<string, T> {
+  const out: Record<string, T> = {};
+  const placed: { left: number; top: number }[] = [];
+  // Bottom-most (nearest the camera) first, so those anchor and the ones behind move.
+  const order = Object.entries(labels)
+    .filter(([, point]) => point.visible)
+    .sort((a, b) => b[1].top - a[1].top);
+
+  for (const [id, point] of order) {
+    let top = point.top;
+    // Bounded: a label can only be lifted so many times before we accept where it is,
+    // which keeps a pathological plan from spinning here.
+    for (let guard = 0; guard < 24; guard += 1) {
+      const hit = placed.find(
+        (q) => Math.abs(q.left - point.left) < LABEL_BOX.w && Math.abs(q.top - top) < LABEL_BOX.h,
+      );
+      if (!hit) break;
+      top = hit.top - LABEL_BOX.h;
+    }
+    placed.push({ left: point.left, top });
+    out[id] = { ...point, top };
+  }
+
+  // Labels that are off-frame keep their position; they are not drawn either way.
+  for (const [id, point] of Object.entries(labels)) if (!(id in out)) out[id] = point;
+  return out;
+}

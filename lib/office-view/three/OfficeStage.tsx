@@ -32,6 +32,7 @@ import { PROP_SHAPES } from '../art/theme.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
 import type { Selection } from '../react/OfficeView.tsx';
 import {
+  deCollideLabels,
   addLighting,
   deskCentre,
   buildFolder,
@@ -292,6 +293,9 @@ export function OfficeStage({
         if (station.hotDesk) continue;
         labels[station.id] = project(labelAnchorFor(station));
       }
+      // Desks that line up along the camera's view direction project to labels sitting on
+      // top of each other. Separating them is a legibility fix in screen space only.
+      const spacedLabels = deCollideLabels(labels);
 
       const presentWorkers: string[] = [];
       for (const [id, state] of timeline.workers) {
@@ -301,7 +305,7 @@ export function OfficeStage({
       setReadable({
         t,
         stationStatus,
-        labels,
+        labels: spacedLabels,
         presentWorkers,
         outbox: timeline.outboxCount.sampleAt(t) ?? 0,
       });

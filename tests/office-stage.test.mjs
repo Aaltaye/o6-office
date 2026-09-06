@@ -16,6 +16,8 @@ import {
   planRadius,
   colorForWorker,
   WORKER_COLORS,
+  deCollideLabels,
+  LABEL_BOX,
 } from '../lib/office-view/three/stage-scene.ts';
 import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
 import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
@@ -71,4 +73,51 @@ test('the cast is colourful but the architecture is not', () => {
   }
   assert.ok(WORKER_COLORS.length >= 6, 'enough identities that subagents stay distinguishable');
   assert.equal(new Set(WORKER_COLORS).size, WORKER_COLORS.length, 'no duplicate identities');
+});
+
+test('labels that collide on screen are pushed apart, and ones that do not are left alone', () => {
+  // The real numbers, measured in the browser: Research and Context project 25px apart
+  // vertically with overlapping horizontal extents, so Context was drawn over Research.
+  const spaced = deCollideLabels({
+    research: { left: 392, top: 433, visible: true },
+    context: { left: 441, top: 458, visible: true },
+    review: { left: 384, top: 562, visible: true },
+  });
+
+  assert.equal(spaced.review.top, 562, 'the front-most label is the anchor and does not move');
+  assert.ok(
+    Math.abs(spaced.research.top - spaced.context.top) >= LABEL_BOX.h,
+    `research and context still overlap: ${spaced.research.top} vs ${spaced.context.top}`,
+  );
+  assert.ok(spaced.research.top < 433, 'the label behind is lifted, not dropped off the floor');
+  assert.equal(spaced.context.top, 458, 'the nearer of the pair keeps its projected position');
+});
+
+test('separating labels never changes what a label says or which desk it belongs to', () => {
+  // The whole point of the office is that nothing on screen is invented. A legibility
+  // pass may move a box; it may not drop one, rename one, or reassign it to another desk.
+  const input = {
+    a: { left: 100, top: 200, visible: true },
+    b: { left: 100, top: 210, visible: true },
+    c: { left: 900, top: 900, visible: false },
+  };
+  const spaced = deCollideLabels(input);
+
+  assert.deepEqual(Object.keys(spaced).sort(), ['a', 'b', 'c'], 'every desk keeps its label');
+  for (const id of ['a', 'b', 'c']) {
+    assert.equal(spaced[id].left, input[id].left, `${id} was moved sideways, off its desk`);
+    assert.equal(spaced[id].visible, input[id].visible, `${id} changed visibility`);
+  }
+  assert.deepEqual(spaced.c, input.c, 'an off-frame label is left exactly as it was');
+});
+
+test('label separation is deterministic, so a replay looks like the run it came from', () => {
+  const input = {
+    a: { left: 100, top: 300, visible: true },
+    b: { left: 120, top: 320, visible: true },
+    c: { left: 140, top: 340, visible: true },
+  };
+  assert.deepEqual(deCollideLabels(input), deCollideLabels(input));
+  // Already-separated labels are a fixed point: running the pass twice changes nothing.
+  assert.deepEqual(deCollideLabels(deCollideLabels(input)), deCollideLabels(input));
 });
