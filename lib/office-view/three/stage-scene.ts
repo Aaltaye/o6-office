@@ -21,6 +21,19 @@ import * as THREE from 'three';
 
 import type { FloorPlan, PropKind, World } from '../core/types.ts';
 import { palette, PROP_SHAPES, geometry } from '../art/theme.ts';
+import {
+  buildBooks,
+  buildCooler,
+  buildDeskKit,
+  buildMeetingArea,
+  buildPlant,
+  buildRoomShell,
+  buildRug,
+  buildStickies,
+  buildWallDisplay,
+  planBox,
+  room,
+} from './room-kit.ts';
 
 /** Floor-plan space to three.js space. `y` is up in three, `z` is up in the plan. */
 export function toScene(at: World): THREE.Vector3 {
@@ -33,13 +46,17 @@ export function createMaterials() {
     new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness, metalness: 0 });
 
   return {
-    // A warm mid-grey ground, so porcelain furniture standing on it actually reads as
-    // standing on something. Straight porcelain-on-porcelain looked like fog.
-    floor: surface('#CFCEC7', 0.98),
-    room: surface('#E4E3DC', 0.95),
-    desk: surface('#FBFBF9', 0.75),
-    deskEdge: surface(palette.titanium, 0.85),
-    structure: surface('#A9AEB8', 0.9),
+    // The room shell supplies the floor now; this is only a fallback.
+    floor: surface(room.floor, 0.9),
+    // Room pads are barely-there mats on the wood, not slabs. Under a wood floor they
+    // want to be quiet — the walls and the daylight do the work of defining space.
+    room: surface('#D9C4A6', 0.95),
+    // Desks are pale wood rather than porcelain. This is the single biggest step toward
+    // the reference: a white desk on a wood floor reads as a laboratory, a wood desk
+    // reads as somewhere people work.
+    desk: surface(room.wood, 0.78),
+    deskEdge: surface('#B08F67', 0.85),
+    structure: surface('#DCD8CF', 0.9),
     // Props that want to read as equipment rather than furniture.
     dark: surface('#3E4450', 0.6),
     board: surface('#FDFDFB', 0.65),
@@ -68,10 +85,14 @@ export type Materials = ReturnType<typeof createMaterials>;
 export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
   const centre = planCentre(plan);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9c8c1, 1.15));
+  // Sky above, warm bounce off the wood below.
+  scene.add(new THREE.HemisphereLight(0xf4f8ff, 0xc8a984, 1.0));
 
-  const key = new THREE.DirectionalLight(0xfff4e4, 2.6);
-  key.position.set(centre.x + 9, 16, centre.z - 7);
+  // Daylight, coming through the window wall on the west so the shadows agree with the
+  // architecture. A key light from nowhere is the fastest way to make a room feel fake.
+  const bounds = planBox(plan);
+  const key = new THREE.DirectionalLight(0xfff1dc, 2.9);
+  key.position.set(bounds.minX - 6, 11, centre.z + 4);
   key.target.position.set(centre.x, 0, centre.z);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -91,8 +112,8 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
   scene.add(key, key.target);
 
   // A cool bounce from the opposite side so shadowed faces keep their form.
-  const fill = new THREE.DirectionalLight(0xe8ecff, 0.55);
-  fill.position.set(centre.x - 10, 7, centre.z + 9);
+  const fill = new THREE.DirectionalLight(0xdfe8ff, 0.6);
+  fill.position.set(centre.x + 8, 9, centre.z + 10);
   scene.add(fill);
 }
 
@@ -144,6 +165,27 @@ function mesh(
   return m;
 }
 
+/** Which way is 'forward' for a worker at a desk, in scene space. */
+export function facingVector(facing: string): { x: number; y: number } {
+  if (facing === 'e') return { x: 1, y: 0 };
+  if (facing === 'w') return { x: -1, y: 0 };
+  if (facing === 'n') return { x: 0, y: -1 };
+  return { x: 0, y: 1 };
+}
+
+/**
+ * Where a desk stands relative to the person using it.
+ *
+ * The plan's seat is where the worker is. The desk goes in front of them — obvious in
+ * a real room, and easy to get wrong once you have been drawing top-down sprites where
+ * the two could overlap harmlessly.
+ */
+export const DESK_OFFSET = 0.62;
+export function deskCentre(seat: { x: number; y: number }, facing: string) {
+  const dir = facingVector(facing);
+  return { x: seat.x + dir.x * DESK_OFFSET, y: seat.y + dir.y * DESK_OFFSET };
+}
+
 /** Props that should read as equipment rather than furniture. */
 const DARK_PROPS = new Set<PropKind>(['screen', 'rack']);
 
@@ -160,34 +202,32 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
   const liveMeshes = new Map<string, THREE.Mesh[]>();
   const stationAnchors = new Map<string, THREE.Vector3>();
 
-  // Ground: one large plane so the office sits on something, with the room pads as
-  // slightly raised islands on top of it.
+  // The shell: wood floor, two walls, and a window wall the daylight comes through.
+  // Only two walls, and only the ones furthest from the camera — a fully enclosed room
+  // would be architecturally honest and completely unusable.
   const centre = planCentre(plan);
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(200, 200),
-    materials.floor,
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(centre.x, -0.02, centre.z);
-  ground.receiveShadow = true;
-  root.add(ground);
+  const shell = buildRoomShell(plan);
+  root.add(shell.group);
+  const bounds = shell.bounds;
 
-  for (const room of plan.rooms) {
-    const pad = new THREE.Mesh(new THREE.BoxGeometry(room.size.w, 0.04, room.size.h), materials.room);
-    pad.position.set(room.origin.x + room.size.w / 2, 0, room.origin.y + room.size.h / 2);
+  for (const area of plan.rooms) {
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(area.size.w, 0.02, area.size.h), materials.room);
+    pad.position.set(area.origin.x + area.size.w / 2, 0.012, area.origin.y + area.size.h / 2);
     pad.receiveShadow = true;
+    pad.castShadow = false;
     root.add(pad);
   }
 
   for (const station of plan.stations) {
     const size = station.hotDesk ? geometry.hotDesk : geometry.desk;
+    const desk = deskCentre(station.seat, station.facing);
     const glowing: THREE.Mesh[] = [];
 
     // The desk top, and a slimmer base under it so it does not read as a solid block.
     const top = mesh(
       roundedBox(size.w, 0.08, size.d),
       materials.desk,
-      new THREE.Vector3(station.seat.x, size.h, station.seat.y),
+      new THREE.Vector3(desk.x, size.h, desk.y),
     );
     root.add(top);
     glowing.push(top);
@@ -195,9 +235,17 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
     const base = mesh(
       roundedBox(size.w * 0.82, size.h, size.d * 0.7),
       materials.deskEdge,
-      new THREE.Vector3(station.seat.x, size.h / 2, station.seat.y),
+      new THREE.Vector3(desk.x, size.h / 2, desk.y),
     );
     root.add(base);
+
+    if (!station.hotDesk) {
+      // A monitor, a keyboard and a lamp. These three objects are what make a desk read
+      // as a workstation rather than a table, and the reference leans on them heavily.
+      root.add(buildDeskKit(desk, size.h, station.facing as 'e' | 'w' | 'n' | 's'));
+      // A rug anchors the desk to the floor and gives the eye somewhere warm to land.
+      root.add(buildRug({ x: (station.seat.x + desk.x) / 2, y: (station.seat.y + desk.y) / 2 }, 2.6, 2.2));
+    }
 
     for (const trayAt of [station.inTray, station.outTray]) {
       root.add(
@@ -212,7 +260,7 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
     // Department furniture — the same data the SVG office draws, in three dimensions.
     for (const prop of station.props ?? []) {
       const shape = PROP_SHAPES[prop.kind];
-      const at = { x: station.seat.x + prop.at.x, y: station.seat.y + prop.at.y };
+      const at = { x: desk.x + prop.at.x, y: desk.y + prop.at.y };
       const material =
         prop.kind === 'plant'
           ? materials.foliage
@@ -222,29 +270,36 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
               ? materials.dark
               : materials.desk;
 
-      root.add(
-        mesh(
-          roundedBox(shape.w, shape.h, shape.d),
-          material,
-          new THREE.Vector3(at.x, shape.h / 2, at.y),
-        ),
-      );
-
-      // A plant gets a canopy, so it does not read as another crate.
       if (prop.kind === 'plant') {
+        root.add(buildPlant(at, 1.05));
+      } else {
         root.add(
           mesh(
-            new THREE.SphereGeometry(0.26, 16, 12),
-            materials.foliage,
-            new THREE.Vector3(at.x, shape.h + 0.14, at.y),
+            roundedBox(shape.w, shape.h, shape.d),
+            material,
+            new THREE.Vector3(at.x, shape.h / 2, at.y),
           ),
         );
+      }
+
+      if (prop.kind === 'shelf') root.add(buildBooks(at, shape.w, shape.h));
+      if (prop.kind === 'board') {
+        root.add(buildStickies(at, shape.w, shape.h, station.facing === 'w' ? 'w' : 'e'));
       }
     }
 
     liveMeshes.set(station.id, glowing);
-    stationAnchors.set(station.id, new THREE.Vector3(station.seat.x, size.h + 0.1, station.seat.y));
+    stationAnchors.set(station.id, new THREE.Vector3(desk.x, size.h + 0.1, desk.y));
   }
+
+  // Communal scenery. None of it carries data — it exists so the space reads as a
+  // workplace rather than a diagram, which is the whole reason a non-technical viewer
+  // understands what they are looking at.
+  root.add(buildWallDisplay(bounds.minX + 0.2, centre.z - 2.2, 2.4));
+  root.add(buildMeetingArea({ x: bounds.maxX - 2.2, y: bounds.maxY - 2.4 }));
+  root.add(buildCooler({ x: bounds.minX + 1.1, y: bounds.minY + 1.0 }));
+  root.add(buildPlant({ x: bounds.maxX - 1.4, y: bounds.minY + 1.3 }, 1.5));
+  root.add(buildPlant({ x: bounds.minX + 1.3, y: bounds.maxY - 1.6 }, 1.3));
 
   // Inbox and outbox: where work enters and leaves the building.
   for (const endpoint of [plan.inbox, plan.outbox]) {
@@ -287,21 +342,31 @@ export function buildWorker(color: string): THREE.Group {
     metalness: 0,
   });
 
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.26, 0.3, 6, 16), material);
-  body.position.y = 0.42;
+  // Big head, small body. That proportion is what makes the reference's figures read as
+  // characters rather than as pieces on a board, and it survives being small on screen.
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.27, 0.22, 6, 18), material);
+  body.position.y = 0.36;
   body.castShadow = true;
   group.add(body);
 
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 20, 16), material);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.34, 22, 18), material);
   head.position.y = 0.92;
   head.castShadow = true;
   group.add(head);
 
+  // Two small ears, straight from the reference silhouette.
+  for (const side of [-1, 1]) {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), material);
+    ear.position.set(side * 0.3, 1.08, 0);
+    ear.castShadow = true;
+    group.add(ear);
+  }
+
   // Stubby arms, so the silhouette reads as a person rather than a pill.
   for (const side of [-1, 1]) {
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.18, 4, 8), material);
-    arm.position.set(side * 0.29, 0.48, 0);
-    arm.rotation.z = side * 0.35;
+    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.2, 4, 10), material);
+    arm.position.set(side * 0.31, 0.42, 0);
+    arm.rotation.z = side * 0.5;
     arm.castShadow = true;
     group.add(arm);
   }

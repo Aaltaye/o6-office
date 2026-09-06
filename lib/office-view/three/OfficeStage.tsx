@@ -33,6 +33,7 @@ import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../re
 import type { Selection } from '../react/OfficeView.tsx';
 import {
   addLighting,
+  deskCentre,
   buildFolder,
   buildStaticScene,
   buildWorker,
@@ -63,7 +64,9 @@ const LABEL_CLEARANCE = 0.55;
 function labelAnchorFor(station: Station): World {
   const behind = (station.props ?? []).filter((prop) => (prop.layer ?? 'back') === 'back');
   const tallest = behind.reduce((max, prop) => Math.max(max, PROP_SHAPES[prop.kind].h), 0);
-  return { x: station.seat.x, y: station.seat.y, z: Math.max(1.2, tallest + LABEL_CLEARANCE) };
+  // Above the desk, not above the person: the desk is what the label names.
+  const desk = deskCentre(station.seat, station.facing);
+  return { x: desk.x, y: desk.y, z: Math.max(1.6, tallest + LABEL_CLEARANCE) };
 }
 
 export function OfficeStage({
@@ -139,14 +142,16 @@ export function OfficeStage({
     // Physically-ish correct tone mapping. Without it the porcelain blows out and the
     // whole office reads as flat white paper rather than a lit room.
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.15;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#DEDDD6');
+    scene.background = new THREE.Color('#E9E4DA');
+    // A little haze so the far wall does not read as a hard cut-out.
+    scene.fog = new THREE.Fog('#E9E4DA', 26, 62);
     addLighting(scene, plan);
 
     const materials = createMaterials();
@@ -155,7 +160,7 @@ export function OfficeStage({
 
     const centre = planCentre(plan);
     const radius = planRadius(plan);
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.5, 200);
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.5, 200);
 
     stage.current = {
       renderer,
@@ -324,22 +329,22 @@ export function OfficeStage({
         // real space; not enough to feel like a game camera following the action.
         const cam = cameraState.current;
         if (cam.distance === 0) {
-          cam.distance = current.radius * 2.6;
+          cam.distance = current.radius * 2.15;
           cam.target.copy(current.centre);
         }
         const wantTarget = focus
           ? new THREE.Vector3(focus.x, 0.6, focus.y)
           : current.centre.clone();
-        const wantDistance = focus ? current.radius * 1.25 : current.radius * 2.6;
+        const wantDistance = focus ? current.radius * 1.1 : current.radius * 2.15;
 
         if (!reducedMotion) cam.angle += deltaMs * 0.000018;
         cam.target.lerp(wantTarget, 0.06);
         cam.distance += (wantDistance - cam.distance) * 0.06;
 
         current.camera.position.set(
-          cam.target.x + Math.cos(cam.angle) * cam.distance * 0.72,
-          cam.distance * 0.78,
-          cam.target.z + Math.sin(cam.angle) * cam.distance * 0.72,
+          cam.target.x + Math.cos(cam.angle) * cam.distance * 0.78,
+          cam.distance * 0.62,
+          cam.target.z + Math.sin(cam.angle) * cam.distance * 0.78,
         );
         current.camera.lookAt(cam.target);
 
