@@ -1,0 +1,559 @@
+/**
+ * T002 — projection, timeline and scheduler.
+ *
+ * These are the pure functions the whole renderer rests on, so they are tested without a
+ * single rendered pixel. The determinism tests matter most: a replay has to be identical
+ * to the live run it came from, or the recorded public demo is not evidence of anything.
+ */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import {
+  worldToScreen,
+  screenToWorld,
+  lerpWorld,
+  planBounds,
+  focusBounds,
+  toViewBox,
+} from '../lib/office-view/core/projection.ts';
+import {
+  MotionChannel,
+  StepChannel,
+  SimClock,
+  samplePath,
+  sampleTrack,
+  easings,
+} from '../lib/office-view/core/timeline.ts';
+import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
+import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
+import { createEmitter } from '../lib/office-view/core/events.ts';
+import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
+
+const TILE = { w: 64, h: 32, z: 24 };
+const near = (a, b, epsilon = 1e-9) => assert.ok(Math.abs(a - b) < epsilon, `${a} !== ${b}`);
+
+// ---------------------------------------------------------------------------
+// Projection
+// ---------------------------------------------------------------------------
+
+test('projection is 2:1 dimetric', () => {
+  // One tile east goes half a tile-width right and half a tile-height down.
+  assert.deepEqual(worldToScreen({ x: 1, y: 0 }, TILE), { sx: 32, sy: 16 });
+  // One tile south goes the same distance the other way.
+  assert.deepEqual(worldToScreen({ x: 0, y: 1 }, TILE), { sx: -32, sy: 16 });
+  // The origin is the origin.
+  assert.deepEqual(worldToScreen({ x: 0, y: 0 }, TILE), { sx: 0, sy: 0 });
+});
+
+test('height lifts a point without moving it sideways', () => {
+  const ground = worldToScreen({ x: 2, y: 3 }, TILE);
+  const raised = worldToScreen({ x: 2, y: 3, z: 1 }, TILE);
+  assert.equal(raised.sx, ground.sx);
+  assert.equal(raised.sy, ground.sy - TILE.z);
+});
+
+test('screenToWorld inverts worldToScreen', () => {
+  // Needed for click-empty-floor-to-deselect, so it has to be exact, not approximate.
+  for (const point of [{ x: 0, y: 0 }, { x: 4, y: 9 }, { x: -2.5, y: 7.25 }, { x: 10, y: 3 }]) {
+    const back = screenToWorld(worldToScreen(point, TILE), TILE);
+    near(back.x, point.x);
+    near(back.y, point.y);
+  }
+});
+
+test('plan bounds contain every feature, with headroom for standing figures', () => {
+  const bounds = planBounds(leadReactivationPlan);
+  assert.ok(bounds.width > 0 && bounds.height > 0);
+  for (const station of leadReactivationPlan.stations) {
+    const at = worldToScreen(station.seat, leadReactivationPlan.tile);
+    assert.ok(at.sx >= bounds.minX && at.sx <= bounds.minX + bounds.width, 'x outside bounds');
+    assert.ok(at.sy >= bounds.minY && at.sy <= bounds.minY + bounds.height, 'y outside bounds');
+  }
+  assert.match(toViewBox(bounds), /^-?[\d.]+ -?[\d.]+ [\d.]+ [\d.]+$/);
+});
+
+test('focusing a desk zooms in and stays inside the plan', () => {
+  const full = planBounds(leadReactivationPlan);
+  const focus = focusBounds(leadReactivationPlan, { x: 4, y: 3 }, 3);
+  assert.ok(focus.width < full.width, 'zooming should show less, not more');
+  assert.ok(focus.minX >= full.minX - 1e-6, 'camera must not pan off the west edge');
+  assert.ok(
+    focus.minX + focus.width <= full.minX + full.width + 1e-6,
+    'camera must not pan off the east edge',
+  );
+});
+
+test('lerpWorld interpolates including height', () => {
+  assert.deepEqual(lerpWorld({ x: 0, y: 0 }, { x: 10, y: 4, z: 2 }, 0.5), { x: 5, y: 2, z: 1 });
+});
+
+// ---------------------------------------------------------------------------
+// Timeline
+// ---------------------------------------------------------------------------
+
+test('samplePath walks a polyline by arc length, not by segment index', () => {
+  // A route with one long and one short leg must not lurch at the join.
+  const path = [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 12, y: 0 }];
+  near(samplePath(path, 0).x, 0);
+  near(samplePath(path, 1).x, 12);
+  // Halfway by distance is 6 along, which is still inside the FIRST segment.
+  near(samplePath(path, 0.5).x, 6);
+});
+
+test('samplePath survives degenerate routes', () => {
+  assert.deepEqual(samplePath([{ x: 3, y: 3 }], 0.5), { x: 3, y: 3 });
+  const stationary = samplePath([{ x: 1, y: 1 }, { x: 1, y: 1 }], 0.5);
+  assert.equal(stationary.x, 1);
+});
+
+test('a zero-duration track is a cut, not a journey', () => {
+  // Invariant I2: without an event to justify a journey, entities cut.
+  const track = { startMs: 100, endMs: 100, from: { x: 0, y: 0 }, to: { x: 5, y: 5 } };
+  assert.deepEqual(sampleTrack(track, 99), { x: 0, y: 0 });
+  assert.deepEqual(sampleTrack(track, 100), { x: 5, y: 5 });
+});
+
+test('reduced motion easing holds still and then cuts', () => {
+  assert.equal(easings.stepEnd(0.99), 0);
+  assert.equal(easings.stepEnd(1), 1);
+});
+
+test('seeking is deterministic in both directions', () => {
+  // The whole architecture exists so scrub, rewind and playback share one code path.
+  // If forward and backward seeks disagree, replay is not evidence of anything.
+  const channel = new MotionChannel([
+    { startMs: 0, endMs: 1000, from: { x: 0, y: 0 }, to: { x: 10, y: 0 }, ease: 'linear' },
+    { startMs: 1000, endMs: 2000, from: { x: 10, y: 0 }, to: { x: 10, y: 10 }, ease: 'linear' },
+    { startMs: 2000, endMs: 3000, from: { x: 10, y: 10 }, to: { x: 0, y: 10 }, ease: 'linear' },
+  ]);
+
+  const times = [0, 250, 500, 1500, 2500, 2999, 3000];
+  const forward = times.map((t) => channel.sampleAt(t));
+  const backward = [...times].reverse().map((t) => channel.sampleAt(t)).reverse();
+  assert.deepEqual(forward, backward, 'a backward scrub must agree with a forward one');
+
+  // And re-sampling the same instant twice must not drift.
+  assert.deepEqual(channel.sampleAt(1500), channel.sampleAt(1500));
+});
+
+test('between tracks an entity holds where it arrived', () => {
+  const channel = new MotionChannel([
+    { startMs: 0, endMs: 100, from: { x: 0, y: 0 }, to: { x: 5, y: 0 }, ease: 'linear' },
+    { startMs: 900, endMs: 1000, from: { x: 5, y: 0 }, to: { x: 9, y: 0 }, ease: 'linear' },
+  ]);
+  assert.equal(channel.sampleAt(500).x, 5, 'it arrived and has not left again');
+  assert.equal(channel.sampleAt(-1), undefined, 'nothing before the first track');
+  assert.equal(channel.isMovingAt(50), true);
+  assert.equal(channel.isMovingAt(500), false);
+});
+
+test('step channels give the right value at any instant without replay', () => {
+  const channel = new StepChannel([
+    { at: 0, value: 'Waiting' },
+    { at: 100, value: 'Reading the record' },
+    { at: 500, value: 'Done' },
+  ]);
+  assert.equal(channel.sampleAt(-1), undefined);
+  assert.equal(channel.sampleAt(0), 'Waiting');
+  assert.equal(channel.sampleAt(99), 'Waiting');
+  assert.equal(channel.sampleAt(100), 'Reading the record');
+  assert.equal(channel.sampleAt(9999), 'Done');
+  // Backward seek must agree with forward.
+  assert.equal(channel.sampleAt(100), 'Reading the record');
+});
+
+test('the clock plays, pauses, scrubs and scales speed', () => {
+  const clock = new SimClock(1000);
+  assert.equal(clock.advance(100), 0, 'a paused clock does not advance');
+  clock.play();
+  assert.equal(clock.advance(100), 100);
+  clock.setSpeed(3);
+  assert.equal(clock.advance(100), 400, 'speed scales elapsed time');
+  clock.pause();
+  assert.equal(clock.advance(100), 400);
+  clock.seek(50);
+  assert.equal(clock.time, 50);
+  clock.seek(-10);
+  assert.equal(clock.time, 0, 'cannot scrub before the start');
+  clock.seek(99999);
+  assert.equal(clock.time, 1000, 'cannot scrub past the end');
+  clock.play();
+  clock.advance(10_000);
+  assert.equal(clock.isPlaying, false, 'playback stops at the end');
+});
+
+// ---------------------------------------------------------------------------
+// Scheduler — the invariants
+// ---------------------------------------------------------------------------
+
+const compiled = compileFloorPlan(leadReactivationPlan);
+const work = { id: 'lead-1', label: 'Harbor & Pine' };
+
+/** Build a valid stream with explicit occurredAt values. */
+function stream(build) {
+  const emit = createEmitter('run-test');
+  const events = [];
+  build((input) => events.push(emit({ source: 'lead-workflow', ...input })));
+  return events;
+}
+
+test('a handoff moves work along the aisle and lands it at the destination', () => {
+  const events = stream((emit) => {
+    emit({ type: 'work.received', occurredAt: 0, label: 'Received', work });
+    emit({
+      type: 'handoff',
+      occurredAt: 100,
+      label: 'Carrying to Context',
+      work,
+      from: 'records',
+      to: 'context',
+      direction: 'forward',
+    });
+  });
+
+  const result = schedule(events, compiled);
+  assert.deepEqual(result.violations, []);
+
+  const state = result.work.get('lead-1');
+  assert.ok(state, 'the work should exist on the floor');
+  assert.ok(state.motion.length >= 1, 'a handoff should produce motion');
+  assert.equal(state.holder.sampleAt(result.duration), 'context');
+});
+
+test('simultaneous handoffs are scheduled simultaneously, not queued', () => {
+  // Invariant I5. Different entities may overlap freely; only an entity is serialised
+  // against itself. If these were queued, the office would show a sequence that never
+  // happened.
+  const items = Array.from({ length: 5 }, (_, i) => ({ id: `lead-${i}`, label: `Lead ${i}` }));
+  const events = stream((emit) => {
+    for (const item of items) emit({ type: 'work.received', occurredAt: 0, label: 'In', work: item });
+    for (const item of items) {
+      emit({
+        type: 'handoff',
+        occurredAt: 1000,
+        label: 'Carrying',
+        work: item,
+        from: 'records',
+        to: 'context',
+        direction: 'forward',
+      });
+    }
+  });
+
+  const result = schedule(events, compiled);
+  assert.deepEqual(result.violations, []);
+
+  // Every folder in motion at one instant. Sampled past the maximum stagger, because
+  // simultaneous movers are deliberately jittered a little — five things moving in
+  // perfect lockstep reads as a rendering glitch, not as life.
+  const sampleAt = 1000 + DEFAULT_OPTIONS.jitterMs + 100;
+  const moving = items.filter((item) => result.work.get(item.id).motion.isMovingAt(sampleAt));
+  assert.equal(moving.length, 5, 'all five were concurrent and must animate concurrently');
+
+  // The real property: they overlap. Serialising them would spread the starts across
+  // five walks; concurrency keeps the spread inside the jitter window.
+  const starts = items.map((item) => {
+    const state = result.work.get(item.id);
+    let first = Infinity;
+    for (let t = 0; t <= result.duration; t += 10) {
+      if (state.motion.isMovingAt(t)) { first = t; break; }
+    }
+    return first;
+  });
+  const spread = Math.max(...starts) - Math.min(...starts);
+  assert.ok(
+    spread <= DEFAULT_OPTIONS.jitterMs + 10,
+    `starts should be within the jitter window, got ${spread}ms — that looks like a queue`,
+  );
+  assert.ok(
+    spread < DEFAULT_OPTIONS.walkMs,
+    'a FIFO queue would spread these across five consecutive walks',
+  );
+});
+
+test('a large simultaneous burst collapses into a counted batch', () => {
+  // Regression: the previous implementation counted in-transit items with a variable
+  // mutated inside the same loop iteration, so it could never exceed one and batching
+  // silently never triggered.
+  const many = Array.from({ length: 6 }, (_, i) => ({ id: `w${i}`, label: `Work ${i}` }));
+  const events = stream((emit) => {
+    for (const item of many) emit({ type: 'work.received', occurredAt: 0, label: 'In', work: item });
+    for (const item of many) {
+      emit({
+        type: 'handoff', occurredAt: 1000, label: 'Carrying', work: item,
+        from: 'records', to: 'context', direction: 'forward',
+      });
+    }
+  });
+
+  const result = schedule(events, compiled);
+  assert.equal(
+    result.work.get('w0').batched.sampleAt(1000),
+    true,
+    'six at once is above the aggregation threshold',
+  );
+  // I4: if items were collapsed, the viewer must be told.
+  assert.equal(result.compression.sampleAt(1000)?.batched, 6);
+});
+
+test('a small simultaneous group is NOT collapsed', () => {
+  const few = Array.from({ length: 2 }, (_, i) => ({ id: `w${i}`, label: `Work ${i}` }));
+  const events = stream((emit) => {
+    for (const item of few) emit({ type: 'work.received', occurredAt: 0, label: 'In', work: item });
+    for (const item of few) {
+      emit({
+        type: 'handoff', occurredAt: 1000, label: 'Carrying', work: item,
+        from: 'records', to: 'context', direction: 'forward',
+      });
+    }
+  });
+  const result = schedule(events, compiled);
+  assert.equal(result.work.get('w0').batched.sampleAt(1000), false);
+});
+
+test('folders travelling together take separate lanes', () => {
+  // Otherwise several folders merge into one smeared bar and the viewer cannot tell
+  // whether they are watching one thing or six.
+  const pair = [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }];
+  const events = stream((emit) => {
+    for (const item of pair) emit({ type: 'work.received', occurredAt: 0, label: 'In', work: item });
+    for (const item of pair) {
+      emit({
+        type: 'handoff', occurredAt: 1000, label: 'Carrying', work: item,
+        from: 'records', to: 'research', direction: 'forward',
+      });
+    }
+  });
+
+  const result = schedule(events, compiled);
+  // Sample mid-journey, where the lane offset applies (endpoints are shared on purpose:
+  // work arrives at the tray, not beside it).
+  const mid = 1000 + DEFAULT_OPTIONS.jitterMs + DEFAULT_OPTIONS.walkMs / 2;
+  const a = result.work.get('a').motion.sampleAt(mid);
+  const b = result.work.get('b').motion.sampleAt(mid);
+  const apart = Math.hypot(a.x - b.x, a.y - b.y);
+  assert.ok(apart > 0.1, `folders should not overlap mid-route, were ${apart.toFixed(3)} apart`);
+});
+
+test('one entity never overlaps itself', () => {
+  // Invariant I1. Two handoffs of the SAME folder at the same instant is a producer bug,
+  // but the scheduler must still not render the folder in two places at once.
+  const events = stream((emit) => {
+    emit({ type: 'work.received', occurredAt: 0, label: 'In', work });
+    emit({
+      type: 'handoff', occurredAt: 500, label: 'To Context', work,
+      from: 'records', to: 'context', direction: 'forward',
+    });
+    emit({
+      type: 'handoff', occurredAt: 500, label: 'To Research', work,
+      from: 'context', to: 'research', direction: 'forward',
+    });
+  });
+
+  const result = schedule(events, compiled);
+  assert.deepEqual(result.violations, [], 'the scheduler must serialise an entity against itself');
+  assert.equal(result.work.get('lead-1').holder.sampleAt(result.duration), 'research');
+});
+
+test('a backward handoff is given more room to read than a forward one', () => {
+  // The reviewer walking work back is the flagship beat; it should not snap past.
+  const forward = schedule(
+    stream((emit) => {
+      emit({ type: 'work.received', occurredAt: 0, label: 'In', work });
+      emit({
+        type: 'handoff', occurredAt: 100, label: 'On', work,
+        from: 'outreach', to: 'review', direction: 'forward',
+      });
+    }),
+    compiled,
+  );
+  const backward = schedule(
+    stream((emit) => {
+      emit({ type: 'work.received', occurredAt: 0, label: 'In', work });
+      emit({
+        type: 'handoff', occurredAt: 100, label: 'Back', work,
+        from: 'review', to: 'outreach', direction: 'backward',
+        reason: 'Claim not supported by the notes',
+      });
+    }),
+    compiled,
+  );
+  assert.ok(backward.duration > forward.duration, 'the carried-back beat should take longer');
+});
+
+test('a specialist walks in, takes the lowest free hot desk, and leaves', () => {
+  const events = stream((emit) => {
+    emit({
+      type: 'specialist.joined', occurredAt: 0, label: 'Joined for a bounded assignment',
+      worker: 'w1', role: 'Researcher',
+    });
+    emit({ type: 'specialist.left', occurredAt: 5000, label: 'Assignment complete', worker: 'w1' });
+  });
+
+  const result = schedule(events, compiled);
+  assert.deepEqual(result.violations, []);
+
+  const worker = result.workers.get('w1');
+  assert.equal(worker.kind, 'specialist');
+  assert.equal(worker.station, 'visitor-1', 'lowest free hot desk, in plan order');
+  assert.equal(worker.present.sampleAt(0), true);
+  assert.equal(worker.present.sampleAt(result.duration), false);
+  assert.ok(worker.motion.length >= 2, 'one track to arrive, one to leave');
+});
+
+test('hot desks are assigned deterministically and released on leaving', () => {
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'A', worker: 'a', role: 'Researcher' });
+    emit({ type: 'specialist.joined', occurredAt: 10, label: 'B', worker: 'b', role: 'Reviewer' });
+    emit({ type: 'specialist.left', occurredAt: 20, label: 'A done', worker: 'a' });
+    emit({ type: 'specialist.joined', occurredAt: 30, label: 'C', worker: 'c', role: 'Drafter' });
+  });
+
+  const result = schedule(events, compiled);
+  assert.equal(result.workers.get('a').station, 'visitor-1');
+  assert.equal(result.workers.get('b').station, 'visitor-2');
+  assert.equal(result.workers.get('c').station, 'visitor-1', 'the freed desk is reused');
+});
+
+test('running out of hot desks leaves a specialist standing, it does not grow the plan', () => {
+  const events = stream((emit) => {
+    for (const id of ['a', 'b', 'c']) {
+      emit({ type: 'specialist.joined', occurredAt: 0, label: id, worker: id, role: 'Specialist' });
+    }
+  });
+  const result = schedule(events, compiled);
+  assert.equal(result.workers.get('c').station, undefined, 'no desk invented at runtime');
+
+  const specialists = [...result.workers.values()].filter((w) => w.kind === 'specialist');
+  assert.equal(specialists.length, 3, 'but the specialist is still present and accounted for');
+  assert.equal(result.workers.get('c').present.sampleAt(result.duration), true);
+});
+
+test('every permanent desk is staffed for the whole run', () => {
+  // An empty office would misrepresent the workflow: the team is standing, and "six
+  // desks, six people" is the metaphor the viewer arrives with.
+  const result = schedule([], compiled);
+  const permanent = [...result.workers.values()].filter((w) => w.kind === 'permanent');
+  const deskCount = leadReactivationPlan.stations.filter((s) => !s.hotDesk).length;
+  assert.equal(permanent.length, deskCount);
+  for (const worker of permanent) {
+    assert.equal(worker.present.sampleAt(0), true, `${worker.role} should be at their desk`);
+    // Idle is null, not a label. This drives the violet highlight, and violet may only
+    // ever mean "happening right now" — an idle desk lighting up would be a lie, and it
+    // would also blow the brand's 5% cap on violet.
+    assert.equal(worker.status.sampleAt(0), null);
+  }
+});
+
+test('a desk that produced an artifact goes quiet again', () => {
+  // Regression: an artifact is an instant, not an activity. Leaving the desk lit would
+  // keep asserting "work is happening here" for the rest of the run.
+  const events = stream((emit) => {
+    emit({
+      type: 'artifact.created', occurredAt: 0, label: 'Source trail attached',
+      station: 'research', artifact: { id: 'a1', name: 'Source trail', kind: 'evidence' },
+    });
+  });
+  const result = schedule(events, compiled);
+  assert.equal(result.workers.get('desk:research').status.sampleAt(0), 'Source trail attached');
+  assert.equal(
+    result.workers.get('desk:research').status.sampleAt(result.duration),
+    null,
+    'the desk must stop signalling live activity once the artifact is done',
+  );
+  assert.equal(result.stationBusy.get('research').sampleAt(result.duration), null);
+});
+
+test('a desk goes quiet again when its assignment finishes', () => {
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Checking the record', station: 'records' });
+    emit({ type: 'assignment.finished', occurredAt: 1000, label: 'Record checked', station: 'records' });
+  });
+  const result = schedule(events, compiled);
+  const worker = result.workers.get('desk:records');
+  assert.equal(worker.status.sampleAt(0), 'Checking the record');
+  assert.equal(
+    worker.status.sampleAt(result.duration),
+    null,
+    'once finished the desk must stop signalling live activity',
+  );
+});
+
+test('a desk worker reports what their desk is doing, verbatim', () => {
+  const events = stream((emit) => {
+    emit({
+      type: 'assignment.started', occurredAt: 0,
+      label: 'Checking the draft against the source notes', station: 'review',
+    });
+  });
+  const result = schedule(events, compiled);
+  assert.equal(
+    result.workers.get('desk:review').status.sampleAt(0),
+    'Checking the draft against the source notes',
+    'the label is the producer’s own words, not a paraphrase',
+  );
+});
+
+test('scheduling is pure: the same stream yields the same timeline', () => {
+  const events = stream((emit) => {
+    emit({ type: 'work.received', occurredAt: 0, label: 'In', work });
+    emit({
+      type: 'handoff', occurredAt: 100, label: 'On', work,
+      from: 'records', to: 'context', direction: 'forward',
+    });
+    emit({ type: 'specialist.joined', occurredAt: 150, label: 'Joined', worker: 'w1', role: 'R' });
+  });
+
+  const a = schedule(events, compiled);
+  const b = schedule(events, compiled);
+  assert.equal(a.duration, b.duration);
+
+  const sampleAll = (result) =>
+    [...result.work.values()].flatMap((state) =>
+      [0, 500, 1000, 2000].map((t) => state.motion.sampleAt(t)),
+    );
+  assert.deepEqual(sampleAll(a), sampleAll(b));
+});
+
+test('long idle gaps are compressed, never reordered', () => {
+  // A real session contains minutes of thinking. Replaying that honestly would be
+  // unwatchable, so gaps are capped — but order is untouched, and I4 reports it.
+  const events = stream((emit) => {
+    emit({ type: 'note', occurredAt: 0, label: 'First' });
+    emit({ type: 'note', occurredAt: 600_000, label: 'Ten minutes later' });
+  });
+  const result = schedule(events, compiled);
+  assert.ok(
+    result.duration <= DEFAULT_OPTIONS.maxGapMs + 1,
+    `a ten-minute gap should compress, got ${result.duration}ms`,
+  );
+  assert.ok(result.timeOf.get(events[0].id) < result.timeOf.get(events[1].id), 'order preserved');
+});
+
+test('reduced motion cuts instead of travelling, and stays truthful', () => {
+  const events = stream((emit) => {
+    emit({ type: 'work.received', occurredAt: 0, label: 'In', work });
+    emit({
+      type: 'handoff', occurredAt: 100, label: 'On', work,
+      from: 'records', to: 'context', direction: 'forward',
+    });
+  });
+  const result = schedule(events, compiled, { reducedMotion: true });
+  const state = result.work.get('lead-1');
+  assert.equal(state.holder.sampleAt(result.duration), 'context', 'it still arrives');
+  assert.equal(state.motion.isMovingAt(result.duration / 2), false, 'but it never travels');
+});
+
+test('the real captured session schedules without violating anything', async () => {
+  // The point of capturing a real session was to develop against real pacing rather than
+  // against a hand-written stream that flatters the scheduler.
+  const { readFileSync } = await import('node:fs');
+  const fixture = JSON.parse(
+    readFileSync(new URL('../fixtures/captured-coding-session.json', import.meta.url), 'utf8'),
+  );
+  assert.equal(fixture.derivation.includes('NOT a live hook capture'), true, 'provenance must be stated');
+  assert.ok(fixture.events.length > 100, 'fixture should be substantial');
+  assert.equal(fixture.redacted, true, 'committed fixtures must be redacted');
+  assert.equal(fixture.subagents.length, 1);
+  assert.ok(fixture.subagents[0].description, 'the specialist has a literal assignment label');
+});

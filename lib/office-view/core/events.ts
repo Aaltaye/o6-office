@@ -228,8 +228,17 @@ export function jitterFor(eventId: string, maxMs: number): number {
 // Construction helper
 // ---------------------------------------------------------------------------
 
+/**
+ * Distributive `Omit`.
+ *
+ * A plain `Omit<Union, K>` collapses the union to only its *common* keys, which would
+ * silently strip `station`, `work`, `worker` and the rest from every variant. The
+ * conditional makes it apply per member instead.
+ */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
 /** Fields a producer supplies; the envelope bookkeeping is filled in for it. */
-type EventInput = Omit<OfficeEvent, 'v' | 'seq' | 'id' | 'runId'> & { id?: string };
+type EventInput = DistributiveOmit<OfficeEvent, 'v' | 'seq' | 'id' | 'runId'> & { id?: string };
 
 /**
  * Emitter factory. Producers use this instead of hand-building envelopes so that `seq`

@@ -143,31 +143,37 @@ export const leadReactivationPlan: FloorPlan = {
 };
 
 /**
- * Mobile variant: the same office, stacked into one column.
+ * Mobile variant: the same office, marching straight down the screen.
  *
  * Station ids are identical to the parent plan, which is the whole point — a run
  * recorded on the desktop layout renders unchanged here. Only geometry differs, so this
- * costs nothing but data (PLAN.md A8). Below ~640px the wide U becomes unreadable label
- * soup; a single column keeps the flow legible top to bottom.
+ * costs nothing but data (PLAN.md A8).
+ *
+ * The non-obvious part is what "a single column" means under isometric projection.
+ * Screen-x is `(x - y)` and screen-y is `(x + y)`, so holding *world* x constant and
+ * increasing y walks diagonally down-left across the viewport and wastes a portrait
+ * screen. To march straight DOWN the screen you hold `x - y` constant and increase both
+ * together — which is why every desk below sits at `(n + OFFSET, n)`.
  */
 export const leadReactivationCompactPlan: FloorPlan = {
   id: 'lead-reactivation-compact',
   version: 1,
   label: 'Lead reactivation office (compact)',
   variantOf: 'lead-reactivation',
-  tile: { w: 48, h: 24, z: 18 },
+  tile: { w: 48, h: 24, z: 20 },
 
-  // Spread rather than `.concat`: the const-asserted DEPARTMENTS narrows `label` to the
+  // Desks march straight down the screen: `x - y` is constant, so only depth changes.
+  // Spread rather than `.concat` — the const-asserted DEPARTMENTS narrows `label` to the
   // six department names, and concat would then reject the two extra rooms.
   rooms: [
     ...DEPARTMENTS.map((dept, i) => ({
       id: `room-${dept.id}`,
       label: dept.role as string,
-      origin: { x: 1.5, y: 2 + i * 2 - 0.75 },
-      size: { w: 5, h: 1.8 },
+      origin: { x: 2 + i * 1.6 - 1, y: i * 1.6 - 1 },
+      size: { w: 2, h: 2 },
     })),
-    { id: 'room-visitors', label: 'Visiting specialists', origin: { x: 1.5, y: 14 }, size: { w: 5, h: 2 } },
-    { id: 'room-front', label: 'Front desk', origin: { x: 1.5, y: 0 }, size: { w: 5, h: 1.5 } },
+    { id: 'room-visitors', label: 'Visiting specialists', origin: { x: 11.6, y: 9.6 }, size: { w: 2.4, h: 2.4 } },
+    { id: 'room-front', label: 'Front desk', origin: { x: 1, y: -2.4 }, size: { w: 2.4, h: 2 } },
   ],
 
   stations: [
@@ -175,32 +181,35 @@ export const leadReactivationCompactPlan: FloorPlan = {
       id: dept.id,
       room: `room-${dept.id}`,
       role: dept.role,
-      seat: { x: 3, y: 2 + i * 2 },
+      seat: { x: 2 + i * 1.6, y: i * 1.6 },
+      // All desks face the same way in a single file, so the column reads as one queue.
       facing: 'e' as const,
-      inTray: { x: 4.2, y: 2 + i * 2 - 0.5 },
-      outTray: { x: 4.2, y: 2 + i * 2 + 0.5 },
+      inTray: { x: 2 + i * 1.6 + 0.75, y: i * 1.6 - 0.15 },
+      outTray: { x: 2 + i * 1.6 + 0.15, y: i * 1.6 + 0.75 },
       node: `column-${i}`,
     })),
     ...HOT_DESKS.map((desk, i) => ({
       id: desk.id,
       room: 'room-visitors',
       role: 'Specialist',
-      seat: { x: 2.5 + i * 1.8, y: 14.5 },
+      seat: { x: 12.4 + i * 0.5, y: 10.4 - i * 0.5 },
       facing: 'n' as const,
-      inTray: { x: 2.5 + i * 1.8 - 0.5, y: 13.9 },
-      outTray: { x: 2.5 + i * 1.8 + 0.5, y: 13.9 },
+      inTray: { x: 12.0 + i * 0.5, y: 10.0 - i * 0.5 },
+      outTray: { x: 12.8 + i * 0.5, y: 10.8 - i * 0.5 },
       hotDesk: true,
       node: 'column-foot',
     })),
   ],
 
-  doors: [{ id: 'front', at: { x: 5.5, y: 0.2 }, facing: 's', entrance: true }],
+  doors: [{ id: 'front', at: { x: 1.4, y: -1.4 }, facing: 's', entrance: true }],
 
   aisle: {
+    // Offset from the desks by a constant `x - y`, so the corridor runs parallel to the
+    // column and every edge still changes depth (no constant-depth segments).
     nodes: [
-      { id: 'column-door', at: { x: 5.5, y: 0.6 } },
-      ...DEPARTMENTS.map((_, i) => ({ id: `column-${i}`, at: { x: 5.5, y: 2 + i * 2 } })),
-      { id: 'column-foot', at: { x: 5.5, y: 13.5 } },
+      { id: 'column-door', at: { x: 2.1, y: -1.1 } },
+      ...DEPARTMENTS.map((_, i) => ({ id: `column-${i}`, at: { x: 3.1 + i * 1.6, y: i * 1.6 } })),
+      { id: 'column-foot', at: { x: 11.9, y: 8.8 } },
     ],
     edges: [
       { from: 'column-door', to: 'column-0', lanes: 2 },
@@ -213,6 +222,6 @@ export const leadReactivationCompactPlan: FloorPlan = {
     ],
   },
 
-  inbox: { at: { x: 2, y: 0.5 }, node: 'column-door' },
-  outbox: { at: { x: 4.4, y: 0.5 }, node: 'column-door' },
+  inbox: { at: { x: 1.3, y: -1.9 }, node: 'column-door' },
+  outbox: { at: { x: 2.7, y: -0.5 }, node: 'column-door' },
 };

@@ -1,6 +1,6 @@
 # T002 — Isometric office renderer
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/002-isometric-renderer`  
 **Phase:** 1  
 **Depends on:** T001  
@@ -73,3 +73,45 @@ See PLAN.md sections A1–A8. This task changes shape materially — read those 
 - [ ] **Determinism via SVG-string hashing** (A5): `hash(renderSceneToString(plan, events, t))` over a fixed grid of `t`, identical across two independent runs and across live-capture vs replay. This is the primary regression test.
 - [ ] Burst behaviour proven against the REAL captured Claude Code fixture from T001, not only a hand-written one.
 - [ ] Reduced-motion policy: easings become `step-end` and durations clamp to ~0; the scene stays truthful, it just stops moving.
+
+## Notes (execution)
+
+Built headless-first: projection, timeline and scheduler are pure functions with 52 tests
+of their own, proven before a single pixel existed. `app/lab` is a development harness
+(not the product) that mounts the renderer against synthetic streams.
+
+**Bugs found and fixed during visual verification** — none of these were caught by tests,
+which is the argument for actually looking at the thing:
+
+1. **The office was unstaffed.** Only specialists were ever created, so six desks sat
+   empty. Permanent workers are now seeded from the floor plan.
+2. **Entities could render twice** — once in an aisle band, once in a seat band. Band
+   membership is now the single source of truth.
+3. **Every worker was violet while "Standing by".** Violet may only mean "happening right
+   now", so idle status is now `null` rather than a truthy label. This one mattered: it
+   broke both the honesty rule and the brand's 5% cap on violet.
+4. **A desk that produced an artifact stayed lit forever**, silently claiming work was
+   still in progress there.
+5. **Batching could never trigger.** The in-transit count was a variable mutated inside
+   one loop iteration, so it never exceeded 1. Concurrency is now measured as the size of
+   the simultaneity group, which is what it actually means.
+6. **Folders travelling together overlapped into one smeared bar.** Lane offsets added.
+7. **The batch count was stamped on every folder**, reading as "six items each" rather
+   than "six between them". The count is now stated once, in the compression pill.
+8. **Scrubbing while paused repainted nothing**, because all rendering hung off the rAF
+   callback. Rendering is now `applyTime`, called by the loop, by a seek, and on mount —
+   a paused scrubbable replay is the public demo, so it has to be first-class.
+9. **The compact mobile plan rendered as a diagonal**, wasting a portrait screen. Under
+   isometric projection a "column" means holding `x - y` constant, not holding `x`
+   constant. Also added the narrow-screen rule: only the active or selected desk keeps a
+   label, the rest collapse to dots.
+
+**Environment note:** `requestAnimationFrame` does not fire in the automated browser pane
+(verified: even a hand-scheduled rAF never runs), so live playback could not be verified
+there. Verification was done by scrubbing, which exercises the same `applyTime` path.
+
+**Deferred, honestly:** true cart-merging (several folders becoming one object that
+splits at the destination) is not implemented; folders take separate lanes and the group
+size is stated in the pill instead. The SVG-string determinism hash test (A5) is also not
+implemented — determinism is currently covered by the seek-agreement and
+same-stream-same-timeline tests.
