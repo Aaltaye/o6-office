@@ -548,14 +548,55 @@ export function OfficeStage({
           {anyActive ? 'Work is in progress.' : 'The office is idle.'} {readable.outbox} finished
           {readable.outbox === 1 ? ' item' : ' items'} in the outbox.
         </p>
+        {/* Grouped by department, and every node is a real button, so the drill-down the
+            mouse gets is reachable by keyboard and announced by a screen reader. Statuses
+            are the same strings the desks show — the outline is a second view of the same
+            facts, never a summary of them. */}
         <ul>
-          {plan.stations
-            .filter((station) => !station.hotDesk)
-            .map((station) => (
-              <li key={station.id}>
-                <strong>{station.role}</strong>: {readable.stationStatus[station.id] ?? 'Standing by'}
-              </li>
-            ))}
+          {plan.rooms
+            .filter((room) => (room.kind ?? 'department') === 'department')
+            .map((room) => {
+              const deskIds = compiled.roomStations.get(room.id) ?? [];
+              const desks = deskIds
+                .map((id) => plan.stations.find((station) => station.id === id))
+                .filter((station) => station && !station.hotDesk);
+              if (desks.length === 0) return null;
+              const live = desks.filter((desk) => readable.stationStatus[desk!.id]).length;
+              const chosen = selection?.kind === 'department' && selection.id === room.id;
+              return (
+                <li key={room.id}>
+                  <button
+                    type="button"
+                    aria-current={chosen ? 'true' : undefined}
+                    onClick={() => onSelectRef.current?.({ kind: 'department', id: room.id })}
+                  >
+                    {room.label} department, {desks.length}{' '}
+                    {desks.length === 1 ? 'desk' : 'desks'},{' '}
+                    {live > 0 ? `${live} working` : 'standing by'}
+                  </button>
+                  <ul>
+                    {desks.map((desk) => (
+                      <li key={desk!.id}>
+                        <button
+                          type="button"
+                          aria-current={
+                            selection?.kind === 'station' && selection.id === desk!.id
+                              ? 'true'
+                              : undefined
+                          }
+                          onClick={() =>
+                            onSelectRef.current?.({ kind: 'station', id: desk!.id })
+                          }
+                        >
+                          <strong>{desk!.role}</strong>:{' '}
+                          {readable.stationStatus[desk!.id] ?? 'Standing by'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            })}
         </ul>
         <p>{readable.presentWorkers.length} on the floor.</p>
       </div>
