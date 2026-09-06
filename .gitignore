@@ -47,3 +47,4 @@ next-env.d.ts
 # Scratch diagnostics written by investigation agents; never part of the product.
 _crit*.mjs
 tmp-*.mjs
+_crit*
