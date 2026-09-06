@@ -134,7 +134,11 @@ exists to avoid.
   tracing claims back to the records you supplied.
 - Readiness rules are conservative heuristics, not a predictive model. Unknown flags,
   invalid dates and ambiguous records are held rather than guessed at.
-- Live-AI mode uses your own API key, held in browser memory and sent over the site's own
+- Live-AI mode accepts **either an OpenAI or an Anthropic key** — which provider runs is
+  inferred from the key, so there is nothing to configure. Models default to each vendor's
+  current general model and are overridable with `O6_ANTHROPIC_MODEL` / `O6_OPENAI_MODEL`.
+  Both go through the same schema and exact-source-quote validation.
+- Your key is held in browser memory and sent over the site's own
   HTTPS connection to its own server, then to the provider. It is never persisted or
   logged here. Usage is counted from completed responses, so failed or aborted calls may
   cost money that is not reported.
