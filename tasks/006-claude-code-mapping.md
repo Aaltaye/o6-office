@@ -1,6 +1,6 @@
 # T006 — Claude Code hook mapping & coding floor plan
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/006-claude-code-mapping`  
 **Phase:** 2  
 **Depends on:** T001  
@@ -41,3 +41,27 @@ _(blank — fill if scope changed during execution)_
 ## Notes
 
 _(blockers, decisions, paused reasons)_
+
+## Notes (execution)
+
+Done before T005 rather than in parallel: the bridge consumes this mapping, so building
+it first meant the server had something real to serve.
+
+**On simultaneity.** Parallel tool calls each fire their own `PreToolUse`, arriving a few
+milliseconds apart rather than at one instant, so `groupSimultaneous` will not collapse
+them. That is left alone deliberately. The scheduler orders by `occurredAt` and preserves
+real gaps, so calls milliseconds apart still animate together (per-event jitter is 220ms),
+while genuinely sequential calls seconds apart do not. Rounding timestamps to force one
+group would invent a simultaneity the session never reported.
+
+`PostToolBatch` is recognised and skipped with a stated reason: every call in the batch
+already fired its own Pre/PostToolUse, so mapping it too would double-count.
+
+**Unknown hooks are ignored but never silently.** Claude Code gains hook events over
+time; the mapping returns an `ignored` reason and the bridge logs it, so a new event
+shows up as a gap to fill rather than disappearing.
+
+Verified against the whole captured session (261 hook records): every hook recognised,
+every mapped event valid, the stream schedules onto the coding plan with no invariant
+violations, the single subagent arrives and leaves correlated by `agent_id`, and all nine
+real failures stay failures.
