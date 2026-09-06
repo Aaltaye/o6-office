@@ -1,0 +1,2119 @@
+{
+  "v": 1,
+  "kind": "recorded-run",
+  "recordedAt": "2026-09-06T21:12:47.533Z",
+  "plan": "lead-reactivation",
+  "provenance": "A real run of the lead workflow over the built-in fictional sample data, in local-rules mode. No model calls were made, so the run reports no specialists and no usage. The contacts are invented; the run is not.",
+  "status": "completed",
+  "uniqueLeads": 9,
+  "durationMs": 33477,
+  "events": [
+    {
+      "type": "run.started",
+      "label": "The office opens",
+      "plan": "lead-reactivation",
+      "source": "lead-workflow",
+      "occurredAt": 40,
+      "v": 1,
+      "id": "recorded-lead-run-1",
+      "seq": 1,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "note",
+      "label": "10 records received",
+      "detail": "9 unique leads. 1 duplicate records merged by email. Local rules and templates; no model calls, so no specialists and no usage.",
+      "source": "lead-workflow",
+      "occurredAt": 80,
+      "v": 1,
+      "id": "recorded-lead-run-2",
+      "seq": 2,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Harbor & Pine arrives in the inbox",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 120,
+      "v": 1,
+      "id": "recorded-lead-run-3",
+      "seq": 3,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Northline Print arrives in the inbox",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 160,
+      "v": 1,
+      "id": "recorded-lead-run-4",
+      "seq": 4,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Kindred Studio arrives in the inbox",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 200,
+      "v": 1,
+      "id": "recorded-lead-run-5",
+      "seq": 5,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Cedar Supply arrives in the inbox",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 240,
+      "v": 1,
+      "id": "recorded-lead-run-6",
+      "seq": 6,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Fieldwork Services arrives in the inbox",
+      "work": {
+        "id": "lead-5",
+        "label": "Fieldwork Services"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 280,
+      "v": 1,
+      "id": "recorded-lead-run-7",
+      "seq": 7,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Studio Vale arrives in the inbox",
+      "work": {
+        "id": "lead-6",
+        "label": "Studio Vale"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 320,
+      "v": 1,
+      "id": "recorded-lead-run-8",
+      "seq": 8,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Elm Street Fitness arrives in the inbox",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 360,
+      "v": 1,
+      "id": "recorded-lead-run-9",
+      "seq": 9,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Juniper Events arrives in the inbox",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 400,
+      "v": 1,
+      "id": "recorded-lead-run-10",
+      "seq": 10,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "work.received",
+      "label": "Westhaven Repairs arrives in the inbox",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 440,
+      "v": 1,
+      "id": "recorded-lead-run-11",
+      "seq": 11,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Records",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 480,
+      "v": 1,
+      "id": "recorded-lead-run-12",
+      "seq": 12,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 520,
+      "v": 1,
+      "id": "recorded-lead-run-13",
+      "seq": 13,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Records",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 1260,
+      "v": 1,
+      "id": "recorded-lead-run-14",
+      "seq": 14,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 1300,
+      "v": 1,
+      "id": "recorded-lead-run-15",
+      "seq": 15,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "2 source rows joined; all contact preferences preserved.",
+      "station": "records",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 2040,
+      "v": 1,
+      "id": "recorded-lead-run-16",
+      "seq": 16,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Context",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 2080,
+      "v": 1,
+      "id": "recorded-lead-run-17",
+      "seq": 17,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 2120,
+      "v": 1,
+      "id": "recorded-lead-run-18",
+      "seq": 18,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 2860,
+      "v": 1,
+      "id": "recorded-lead-run-19",
+      "seq": 19,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Context",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 2900,
+      "v": 1,
+      "id": "recorded-lead-run-20",
+      "seq": 20,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 2940,
+      "v": 1,
+      "id": "recorded-lead-run-21",
+      "seq": 21,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "2 source records attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 3680,
+      "v": 1,
+      "id": "recorded-lead-run-22",
+      "seq": 22,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Research",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 3720,
+      "v": 1,
+      "id": "recorded-lead-run-23",
+      "seq": 23,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 3760,
+      "v": 1,
+      "id": "recorded-lead-run-24",
+      "seq": 24,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 4500,
+      "v": 1,
+      "id": "recorded-lead-run-25",
+      "seq": 25,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Research",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 4540,
+      "v": 1,
+      "id": "recorded-lead-run-26",
+      "seq": 26,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 4580,
+      "v": 1,
+      "id": "recorded-lead-run-27",
+      "seq": 27,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "2 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "artifact": {
+        "id": "evidence-lead-1",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 5320,
+      "v": 1,
+      "id": "recorded-lead-run-28",
+      "seq": 28,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Opportunity",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 5360,
+      "v": 1,
+      "id": "recorded-lead-run-29",
+      "seq": 29,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 5400,
+      "v": 1,
+      "id": "recorded-lead-run-30",
+      "seq": 30,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "artifact": {
+        "id": "evidence-lead-2",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 6140,
+      "v": 1,
+      "id": "recorded-lead-run-31",
+      "seq": 31,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Opportunity",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 6180,
+      "v": 1,
+      "id": "recorded-lead-run-32",
+      "seq": 32,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 6220,
+      "v": 1,
+      "id": "recorded-lead-run-33",
+      "seq": 33,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "A conversation worth reviewing",
+      "detail": "Requested follow-up is due; ready for human review",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 6960,
+      "v": 1,
+      "id": "recorded-lead-run-34",
+      "seq": 34,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "opportunity",
+      "to": "outreach",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 7000,
+      "v": 1,
+      "id": "recorded-lead-run-35",
+      "seq": 35,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Preparing a draft",
+      "station": "outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 7040,
+      "v": 1,
+      "id": "recorded-lead-run-36",
+      "seq": 36,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "A conversation worth reviewing",
+      "detail": "Requested follow-up is due; ready for human review",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 7780,
+      "v": 1,
+      "id": "recorded-lead-run-37",
+      "seq": 37,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "opportunity",
+      "to": "outreach",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 7820,
+      "v": 1,
+      "id": "recorded-lead-run-38",
+      "seq": 38,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Preparing a draft",
+      "station": "outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 7860,
+      "v": 1,
+      "id": "recorded-lead-run-39",
+      "seq": 39,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Draft prepared",
+      "detail": "A local template is ready.",
+      "station": "outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "artifact": {
+        "id": "draft-lead-1-1",
+        "name": "Follow-up draft",
+        "kind": "draft"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 8600,
+      "v": 1,
+      "id": "recorded-lead-run-40",
+      "seq": 40,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "outreach",
+      "to": "review",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 8640,
+      "v": 1,
+      "id": "recorded-lead-run-41",
+      "seq": 41,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the draft against the notes",
+      "station": "review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 8680,
+      "v": 1,
+      "id": "recorded-lead-run-42",
+      "seq": 42,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Draft prepared",
+      "detail": "A local template is ready.",
+      "station": "outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "artifact": {
+        "id": "draft-lead-2-1",
+        "name": "Follow-up draft",
+        "kind": "draft"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 9420,
+      "v": 1,
+      "id": "recorded-lead-run-43",
+      "seq": 43,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "outreach",
+      "to": "review",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 9460,
+      "v": 1,
+      "id": "recorded-lead-run-44",
+      "seq": 44,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the draft against the notes",
+      "station": "review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 9500,
+      "v": 1,
+      "id": "recorded-lead-run-45",
+      "seq": 45,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.failed",
+      "label": "Revision required",
+      "station": "review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "reason": "The draft does not reference anything this contact actually said — it reads as a mass email. Ground it in the supplied notes.",
+      "source": "lead-workflow",
+      "occurredAt": 10240,
+      "v": 1,
+      "id": "recorded-lead-run-46",
+      "seq": 46,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine back to Outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "review",
+      "to": "outreach",
+      "direction": "backward",
+      "reason": "The draft does not reference anything this contact actually said — it reads as a mass email. Ground it in the supplied notes.",
+      "source": "lead-workflow",
+      "occurredAt": 10280,
+      "v": 1,
+      "id": "recorded-lead-run-47",
+      "seq": 47,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Preparing a draft",
+      "station": "outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 10320,
+      "v": 1,
+      "id": "recorded-lead-run-48",
+      "seq": 48,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.failed",
+      "label": "Revision required",
+      "station": "review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "reason": "The draft does not reference anything this contact actually said — it reads as a mass email. Ground it in the supplied notes.",
+      "source": "lead-workflow",
+      "occurredAt": 11060,
+      "v": 1,
+      "id": "recorded-lead-run-49",
+      "seq": 49,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print back to Outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "review",
+      "to": "outreach",
+      "direction": "backward",
+      "reason": "The draft does not reference anything this contact actually said — it reads as a mass email. Ground it in the supplied notes.",
+      "source": "lead-workflow",
+      "occurredAt": 11100,
+      "v": 1,
+      "id": "recorded-lead-run-50",
+      "seq": 50,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Preparing a draft",
+      "station": "outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 11140,
+      "v": 1,
+      "id": "recorded-lead-run-51",
+      "seq": 51,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Draft revised",
+      "detail": "Rewritten around a quote from the supplied notes.",
+      "station": "outreach",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "artifact": {
+        "id": "draft-lead-1-2",
+        "name": "Follow-up draft",
+        "kind": "draft"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 11880,
+      "v": 1,
+      "id": "recorded-lead-run-52",
+      "seq": 52,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Harbor & Pine to Review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "outreach",
+      "to": "review",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 11920,
+      "v": 1,
+      "id": "recorded-lead-run-53",
+      "seq": 53,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the draft against the notes",
+      "station": "review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 11960,
+      "v": 1,
+      "id": "recorded-lead-run-54",
+      "seq": 54,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Draft revised",
+      "detail": "Rewritten around a quote from the supplied notes.",
+      "station": "outreach",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "artifact": {
+        "id": "draft-lead-2-2",
+        "name": "Follow-up draft",
+        "kind": "draft"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 12700,
+      "v": 1,
+      "id": "recorded-lead-run-55",
+      "seq": 55,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Northline Print to Review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "outreach",
+      "to": "review",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 12740,
+      "v": 1,
+      "id": "recorded-lead-run-56",
+      "seq": 56,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the draft against the notes",
+      "station": "review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 12780,
+      "v": 1,
+      "id": "recorded-lead-run-57",
+      "seq": 57,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Handed to you for review",
+      "detail": "The draft references the supplied history (reduce, manual, inquiry).",
+      "station": "review",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 13520,
+      "v": 1,
+      "id": "recorded-lead-run-58",
+      "seq": 58,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Finished work leaves the building",
+      "work": {
+        "id": "lead-1",
+        "label": "Harbor & Pine"
+      },
+      "from": "review",
+      "to": "outbox",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 13560,
+      "v": 1,
+      "id": "recorded-lead-run-59",
+      "seq": 59,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Handed to you for review",
+      "detail": "The draft references the supplied history (organize, quote, requests).",
+      "station": "review",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 13600,
+      "v": 1,
+      "id": "recorded-lead-run-60",
+      "seq": 60,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Finished work leaves the building",
+      "work": {
+        "id": "lead-2",
+        "label": "Northline Print"
+      },
+      "from": "review",
+      "to": "outbox",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 13640,
+      "v": 1,
+      "id": "recorded-lead-run-61",
+      "seq": 61,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Kindred Studio to Records",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 13680,
+      "v": 1,
+      "id": "recorded-lead-run-62",
+      "seq": 62,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 13720,
+      "v": 1,
+      "id": "recorded-lead-run-63",
+      "seq": 63,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Cedar Supply to Records",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 14460,
+      "v": 1,
+      "id": "recorded-lead-run-64",
+      "seq": 64,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 14500,
+      "v": 1,
+      "id": "recorded-lead-run-65",
+      "seq": 65,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 15240,
+      "v": 1,
+      "id": "recorded-lead-run-66",
+      "seq": 66,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Kindred Studio to Context",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 15280,
+      "v": 1,
+      "id": "recorded-lead-run-67",
+      "seq": 67,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 15320,
+      "v": 1,
+      "id": "recorded-lead-run-68",
+      "seq": 68,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 16060,
+      "v": 1,
+      "id": "recorded-lead-run-69",
+      "seq": 69,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Cedar Supply to Context",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 16100,
+      "v": 1,
+      "id": "recorded-lead-run-70",
+      "seq": 70,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 16140,
+      "v": 1,
+      "id": "recorded-lead-run-71",
+      "seq": 71,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 16880,
+      "v": 1,
+      "id": "recorded-lead-run-72",
+      "seq": 72,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Kindred Studio to Research",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 16920,
+      "v": 1,
+      "id": "recorded-lead-run-73",
+      "seq": 73,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 16960,
+      "v": 1,
+      "id": "recorded-lead-run-74",
+      "seq": 74,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 17700,
+      "v": 1,
+      "id": "recorded-lead-run-75",
+      "seq": 75,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Cedar Supply to Research",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 17740,
+      "v": 1,
+      "id": "recorded-lead-run-76",
+      "seq": 76,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 17780,
+      "v": 1,
+      "id": "recorded-lead-run-77",
+      "seq": 77,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "artifact": {
+        "id": "evidence-lead-3",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 18520,
+      "v": 1,
+      "id": "recorded-lead-run-78",
+      "seq": 78,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Kindred Studio to Opportunity",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 18560,
+      "v": 1,
+      "id": "recorded-lead-run-79",
+      "seq": 79,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 18600,
+      "v": 1,
+      "id": "recorded-lead-run-80",
+      "seq": 80,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "artifact": {
+        "id": "evidence-lead-4",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 19340,
+      "v": 1,
+      "id": "recorded-lead-run-81",
+      "seq": 81,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Cedar Supply to Opportunity",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 19380,
+      "v": 1,
+      "id": "recorded-lead-run-82",
+      "seq": 82,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 19420,
+      "v": 1,
+      "id": "recorded-lead-run-83",
+      "seq": 83,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Follow-up held",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-3",
+        "label": "Kindred Studio"
+      },
+      "waitingOn": "Needs a documented follow-up date and useful context",
+      "source": "lead-workflow",
+      "occurredAt": 20160,
+      "v": 1,
+      "id": "recorded-lead-run-84",
+      "seq": 84,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Follow-up held",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-4",
+        "label": "Cedar Supply"
+      },
+      "waitingOn": "Missing or invalid email address",
+      "source": "lead-workflow",
+      "occurredAt": 20200,
+      "v": 1,
+      "id": "recorded-lead-run-85",
+      "seq": 85,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Fieldwork Services to Records",
+      "work": {
+        "id": "lead-5",
+        "label": "Fieldwork Services"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 20240,
+      "v": 1,
+      "id": "recorded-lead-run-86",
+      "seq": 86,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-5",
+        "label": "Fieldwork Services"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 20280,
+      "v": 1,
+      "id": "recorded-lead-run-87",
+      "seq": 87,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Studio Vale to Records",
+      "work": {
+        "id": "lead-6",
+        "label": "Studio Vale"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 21020,
+      "v": 1,
+      "id": "recorded-lead-run-88",
+      "seq": 88,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-6",
+        "label": "Studio Vale"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 21060,
+      "v": 1,
+      "id": "recorded-lead-run-89",
+      "seq": 89,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-5",
+        "label": "Fieldwork Services"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 21800,
+      "v": 1,
+      "id": "recorded-lead-run-90",
+      "seq": 90,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Removed from outreach",
+      "station": "records",
+      "work": {
+        "id": "lead-5",
+        "label": "Fieldwork Services"
+      },
+      "waitingOn": "Opted out — no outreach",
+      "source": "lead-workflow",
+      "occurredAt": 21840,
+      "v": 1,
+      "id": "recorded-lead-run-91",
+      "seq": 91,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-6",
+        "label": "Studio Vale"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 21880,
+      "v": 1,
+      "id": "recorded-lead-run-92",
+      "seq": 92,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Removed from outreach",
+      "station": "records",
+      "work": {
+        "id": "lead-6",
+        "label": "Studio Vale"
+      },
+      "waitingOn": "Active customer — use the existing relationship",
+      "source": "lead-workflow",
+      "occurredAt": 21920,
+      "v": 1,
+      "id": "recorded-lead-run-93",
+      "seq": 93,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Elm Street Fitness to Records",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 21960,
+      "v": 1,
+      "id": "recorded-lead-run-94",
+      "seq": 94,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 22000,
+      "v": 1,
+      "id": "recorded-lead-run-95",
+      "seq": 95,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Juniper Events to Records",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 22740,
+      "v": 1,
+      "id": "recorded-lead-run-96",
+      "seq": 96,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 22780,
+      "v": 1,
+      "id": "recorded-lead-run-97",
+      "seq": 97,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 23520,
+      "v": 1,
+      "id": "recorded-lead-run-98",
+      "seq": 98,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Elm Street Fitness to Context",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 23560,
+      "v": 1,
+      "id": "recorded-lead-run-99",
+      "seq": 99,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 23600,
+      "v": 1,
+      "id": "recorded-lead-run-100",
+      "seq": 100,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 24340,
+      "v": 1,
+      "id": "recorded-lead-run-101",
+      "seq": 101,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Juniper Events to Context",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 24380,
+      "v": 1,
+      "id": "recorded-lead-run-102",
+      "seq": 102,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 24420,
+      "v": 1,
+      "id": "recorded-lead-run-103",
+      "seq": 103,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 25160,
+      "v": 1,
+      "id": "recorded-lead-run-104",
+      "seq": 104,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Elm Street Fitness to Research",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 25200,
+      "v": 1,
+      "id": "recorded-lead-run-105",
+      "seq": 105,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 25240,
+      "v": 1,
+      "id": "recorded-lead-run-106",
+      "seq": 106,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 25980,
+      "v": 1,
+      "id": "recorded-lead-run-107",
+      "seq": 107,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Juniper Events to Research",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 26020,
+      "v": 1,
+      "id": "recorded-lead-run-108",
+      "seq": 108,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 26060,
+      "v": 1,
+      "id": "recorded-lead-run-109",
+      "seq": 109,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "artifact": {
+        "id": "evidence-lead-7",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 26800,
+      "v": 1,
+      "id": "recorded-lead-run-110",
+      "seq": 110,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Elm Street Fitness to Opportunity",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 26840,
+      "v": 1,
+      "id": "recorded-lead-run-111",
+      "seq": 111,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 26880,
+      "v": 1,
+      "id": "recorded-lead-run-112",
+      "seq": 112,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "artifact": {
+        "id": "evidence-lead-8",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 27620,
+      "v": 1,
+      "id": "recorded-lead-run-113",
+      "seq": 113,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Juniper Events to Opportunity",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 27660,
+      "v": 1,
+      "id": "recorded-lead-run-114",
+      "seq": 114,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 27700,
+      "v": 1,
+      "id": "recorded-lead-run-115",
+      "seq": 115,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Follow-up held",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-7",
+        "label": "Elm Street Fitness"
+      },
+      "waitingOn": "Requested follow-up is not due yet",
+      "source": "lead-workflow",
+      "occurredAt": 28440,
+      "v": 1,
+      "id": "recorded-lead-run-116",
+      "seq": 116,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Follow-up held",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-8",
+        "label": "Juniper Events"
+      },
+      "waitingOn": "No supported reason to reopen this conversation",
+      "source": "lead-workflow",
+      "occurredAt": 28480,
+      "v": 1,
+      "id": "recorded-lead-run-117",
+      "seq": 117,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Westhaven Repairs to Records",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "from": "inbox",
+      "to": "records",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 28520,
+      "v": 1,
+      "id": "recorded-lead-run-118",
+      "seq": 118,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the record",
+      "station": "records",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 28560,
+      "v": 1,
+      "id": "recorded-lead-run-119",
+      "seq": 119,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "Record checked",
+      "detail": "Email, dates, and contact preferences checked.",
+      "station": "records",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 29300,
+      "v": 1,
+      "id": "recorded-lead-run-120",
+      "seq": 120,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Westhaven Repairs to Context",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "from": "records",
+      "to": "context",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 29340,
+      "v": 1,
+      "id": "recorded-lead-run-121",
+      "seq": 121,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Reading the conversation history",
+      "station": "context",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 29380,
+      "v": 1,
+      "id": "recorded-lead-run-122",
+      "seq": 122,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.finished",
+      "label": "History assembled",
+      "detail": "1 source record attached.",
+      "station": "context",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 30120,
+      "v": 1,
+      "id": "recorded-lead-run-123",
+      "seq": 123,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Westhaven Repairs to Research",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "from": "context",
+      "to": "research",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 30160,
+      "v": 1,
+      "id": "recorded-lead-run-124",
+      "seq": 124,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the source trail",
+      "station": "research",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 30200,
+      "v": 1,
+      "id": "recorded-lead-run-125",
+      "seq": 125,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "artifact.created",
+      "label": "Source trail attached",
+      "detail": "1 references to supplied notes. No external web research was performed.",
+      "station": "research",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "artifact": {
+        "id": "evidence-lead-9",
+        "name": "Source trail",
+        "kind": "evidence"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 30940,
+      "v": 1,
+      "id": "recorded-lead-run-126",
+      "seq": 126,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "handoff",
+      "label": "Carrying Westhaven Repairs to Opportunity",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "from": "research",
+      "to": "opportunity",
+      "direction": "forward",
+      "source": "lead-workflow",
+      "occurredAt": 30980,
+      "v": 1,
+      "id": "recorded-lead-run-127",
+      "seq": 127,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "assignment.started",
+      "label": "Checking the follow-up window",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "source": "lead-workflow",
+      "occurredAt": 31020,
+      "v": 1,
+      "id": "recorded-lead-run-128",
+      "seq": 128,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "blocked",
+      "label": "Follow-up held",
+      "station": "opportunity",
+      "work": {
+        "id": "lead-9",
+        "label": "Westhaven Repairs"
+      },
+      "waitingOn": "History is over a year old — verify it first",
+      "source": "lead-workflow",
+      "occurredAt": 31760,
+      "v": 1,
+      "id": "recorded-lead-run-129",
+      "seq": 129,
+      "runId": "recorded-lead-run"
+    },
+    {
+      "type": "run.finished",
+      "label": "The office has finished",
+      "detail": "Review your leads and export the packet. No messages were sent.",
+      "outcome": "completed",
+      "source": "lead-workflow",
+      "occurredAt": 31800,
+      "v": 1,
+      "id": "recorded-lead-run-130",
+      "seq": 130,
+      "runId": "recorded-lead-run"
+    }
+  ]
+}

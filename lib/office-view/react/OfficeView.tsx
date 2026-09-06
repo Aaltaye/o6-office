@@ -141,6 +141,15 @@ export function OfficeView({
 
   const lastReadableAt = useRef(0);
 
+  // Host callbacks are almost always inline arrows, so their identity changes every
+  // render. Holding them in refs keeps `applyTime` and `select` stable.
+  const onTimeRef = useRef(onTime);
+  const onSelectRef = useRef(onSelect);
+  useEffect(() => {
+    onTimeRef.current = onTime;
+    onSelectRef.current = onSelect;
+  });
+
   /**
    * Render the office at time `t`.
    *
@@ -238,9 +247,13 @@ export function OfficeView({
         return next;
       });
 
-      onTime?.(t, timeline.duration);
+      onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, compiled, plan.tile, onTime],
+    // Deliberately excludes the callbacks: hosts pass inline arrows, so depending on
+    // them would give `applyTime` a new identity every render, which re-fires the
+    // mount-paint effect, which sets state, which renders again — an infinite loop.
+    // They are read through refs instead.
+    [timeline, compiled, plan.tile],
   );
 
   // The animation loop only advances the clock; rendering is applyTime's job.
@@ -290,10 +303,10 @@ export function OfficeView({
 
   const select = useCallback(
     (next: Selection, at: World | null) => {
-      onSelect?.(next);
+      onSelectRef.current?.(next);
       focusOn(next ? at : null);
     },
-    [onSelect, focusOn],
+    [focusOn],
   );
 
   // --- Overlay geometry -----------------------------------------------------
