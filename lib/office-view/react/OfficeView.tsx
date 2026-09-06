@@ -37,7 +37,7 @@ import { compileFloorPlan, aisleBandFor, type CompiledPlan } from '../core/plan.
 import { planBounds, focusBounds, toViewBox, worldToScreen, type Bounds } from '../core/projection.ts';
 import { SimClock } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
-import { Desk, Door, Folder, RoomPad, Tray, Worker } from '../art/sprites.tsx';
+import { Desk, Door, Folder, Prop, RoomPad, Tray, Worker } from '../art/sprites.tsx';
 import { faces, live, palette, timings } from '../art/theme.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from './useAnimationLoop.ts';
 
@@ -446,6 +446,18 @@ export function OfficeView({
           if (band.kind === 'station-back') {
             return (
               <g key={band.id} data-band={band.id}>
+                {/* What makes this department look like itself — declared by the plan,
+                    never by the renderer. Behind the desk, so it never hides anyone. */}
+                {(station.props ?? [])
+                  .filter((prop) => (prop.layer ?? 'back') === 'back')
+                  .map((prop, i) => (
+                    <Prop
+                      key={`${station.id}-prop-${i}`}
+                      kind={prop.kind}
+                      at={{ x: station.seat.x + prop.at.x, y: station.seat.y + prop.at.y }}
+                      tile={plan.tile}
+                    />
+                  ))}
                 <Desk at={station.seat} tile={plan.tile} hot={station.hotDesk} active={isActive} />
               </g>
             );
@@ -466,6 +478,16 @@ export function OfficeView({
             <g key={band.id} data-band={band.id}>
               <Tray at={station.inTray} tile={plan.tile} />
               <Tray at={station.outTray} tile={plan.tile} />
+              {(station.props ?? [])
+                .filter((prop) => prop.layer === 'front')
+                .map((prop, i) => (
+                  <Prop
+                    key={`${station.id}-frontprop-${i}`}
+                    kind={prop.kind}
+                    at={{ x: station.seat.x + prop.at.x, y: station.seat.y + prop.at.y }}
+                    tile={plan.tile}
+                  />
+                ))}
               <g
                 role="button"
                 tabIndex={0}

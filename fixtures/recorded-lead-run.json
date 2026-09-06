@@ -1,7 +1,7 @@
 {
   "v": 1,
   "kind": "recorded-run",
-  "recordedAt": "2026-09-06T21:12:47.533Z",
+  "recordedAt": "2026-09-06T22:07:16.278Z",
   "plan": "lead-reactivation",
   "provenance": "A real run of the lead workflow over the built-in fictional sample data, in local-rules mode. No model calls were made, so the run reports no specialists and no usage. The contacts are invented; the run is not.",
   "status": "completed",

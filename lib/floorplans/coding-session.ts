@@ -19,7 +19,54 @@
  * `compileFloorPlan` warns about both.
  */
 
-import type { FloorPlan } from '../office-view/core/types.ts';
+import type { FloorPlan, PropKind, World } from '../office-view/core/types.ts';
+
+/**
+ * What each department is made of.
+ *
+ * A company is legible because its rooms are not interchangeable — you know the server
+ * room from the library by looking. Six identical desks would make this a labelled
+ * diagram; giving each department its own furniture makes it a place, and a live session
+ * becomes something you can read at a glance rather than decode.
+ *
+ * Offsets are relative to the desk's seat. A negative y is behind the desk, where things
+ * stand without hiding whoever is working.
+ */
+const DEPARTMENT_PROPS: Record<string, { kind: PropKind; at: World; layer?: 'back' | 'front' }[]> = {
+  // The front desk plans and delegates: a board, and a plant because it is the entrance.
+  frontdesk: [
+    { kind: 'board', at: { x: -0.3, y: -1.15 } },
+    { kind: 'plant', at: { x: 0.95, y: -0.9 } },
+  ],
+  // The reading room is the library. Two shelves and nothing else — unmistakable.
+  reading: [
+    { kind: 'shelf', at: { x: -0.55, y: -1.1 } },
+    { kind: 'shelf', at: { x: 0.6, y: -1.1 } },
+  ],
+  // Research looks things up: a screen, and somewhere to keep what it found.
+  research: [
+    { kind: 'screen', at: { x: -0.55, y: -1.05 } },
+    { kind: 'shelf', at: { x: 0.5, y: -1.1 } },
+  ],
+  // Operations runs commands. Racks, because that is what a machine room looks like.
+  operations: [
+    { kind: 'rack', at: { x: -0.6, y: -1.05 } },
+    { kind: 'rack', at: { x: 0.05, y: -1.05 } },
+    { kind: 'screen', at: { x: 0.85, y: -0.95 } },
+  ],
+  // The workshop makes things: a bench, and a crate of parts.
+  workshop: [
+    { kind: 'bench', at: { x: -0.2, y: -1.1 } },
+    { kind: 'crate', at: { x: 0.85, y: -0.95 } },
+  ],
+  // Approvals is where a human decides. A board and the paperwork waiting on them.
+  approvals: [
+    { kind: 'board', at: { x: -0.35, y: -1.15 } },
+    { kind: 'stack', at: { x: 0.55, y: -0.9 } },
+    { kind: 'plant', at: { x: -1.0, y: 0.55 }, layer: 'front' },
+  ],
+};
+
 
 const WEST_X = 4;
 const EAST_X = 10;
@@ -62,6 +109,7 @@ function station(dept: (typeof DEPARTMENTS)[number]) {
     inTray: { x: trayX, y: dept.row - 0.6 },
     outTray: { x: trayX, y: dept.row + 0.6 },
     node: dept.node,
+    props: DEPARTMENT_PROPS[dept.id],
   };
 }
 

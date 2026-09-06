@@ -45,6 +45,8 @@ test('the provider is inferred from the key, with no extra configuration', async
       assert.ok(sent.output_config?.format?.schema, 'must constrain the response schema');
       assert.equal(init.headers['anthropic-version'], '2023-06-01');
       assert.equal(init.headers['x-api-key'], anthropicKey);
+      // Haiku does not accept an effort setting; sending one is an error, not a no-op.
+      assert.equal(sent.output_config.effort, undefined, 'effort must not be sent to Haiku');
       return Response.json({
         content: [{ type: 'text', text: JSON.stringify({ summary: 'Asked to reconnect.', evidence: [] }) }],
         usage: { input_tokens: 200, output_tokens: 40, cache_read_input_tokens: 10 },
@@ -55,7 +57,7 @@ test('the provider is inferred from the key, with no extra configuration', async
     const body = await res.json();
     assert.equal(calledUrl, 'https://api.anthropic.com/v1/messages');
     assert.equal(body.provider, 'anthropic');
-    assert.equal(body.model, 'claude-opus-5');
+    assert.equal(body.model, 'claude-haiku-4-5');
     // Cache reads count toward input, and are reported separately so the meter can be
     // honest about what was actually charged at the full rate.
     assert.equal(body.usage.input, 210);
@@ -128,4 +130,44 @@ test('a rejected key is reported as a key problem, naming the vendor', async () 
   } finally {
     globalThis.fetch = original;
   }
+});
+
+test('effort is sent only to models that accept it', async () => {
+  // A cheap default is only cheap if it works: `effort` on Haiku 4.5 is a request error,
+  // not a field the API ignores. This pins the distinction so a future model swap cannot
+  // quietly start failing every assignment.
+  const original = globalThis.fetch;
+  const seen = {};
+  try {
+    globalThis.fetch = async (_url, init) => {
+      const sent = JSON.parse(init.body);
+      seen[sent.model] = sent.output_config?.effort ?? null;
+      return Response.json({
+        content: [{ type: 'text', text: JSON.stringify({ summary: 'ok', evidence: [] }) }],
+        usage: { input_tokens: 1, output_tokens: 1 },
+      });
+    };
+
+    // Default: Haiku, no effort.
+    await POST(anthropicRequest());
+    assert.equal(seen['claude-haiku-4-5'], null);
+
+    // An explicit larger model does get it.
+    process.env.O6_ANTHROPIC_MODEL = 'claude-opus-5';
+    await POST(anthropicRequest());
+    assert.equal(seen['claude-opus-5'], 'low');
+  } finally {
+    delete process.env.O6_ANTHROPIC_MODEL;
+    globalThis.fetch = original;
+  }
+});
+
+test('a cheaper default still costs less per assignment', async () => {
+  // The reason for the default, made checkable rather than asserted in a comment.
+  const { estimateCost } = await import(compile('../app/api/agent/providers.ts', []));
+  const haiku = estimateCost('claude-haiku-4-5', 10_000, 1_000, 0);
+  const opus = estimateCost('claude-opus-5', 10_000, 1_000, 0);
+  assert.ok(haiku < opus, `haiku ${haiku} should undercut opus ${opus}`);
+  assert.equal(estimateCost('some-model-released-next-year', 10, 10, 0), null,
+    'an unknown model reports no cost rather than a fabricated one');
 });

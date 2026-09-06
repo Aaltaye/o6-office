@@ -19,7 +19,53 @@
  * beyond the department names a human reads.
  */
 
-import type { FloorPlan } from '../office-view/core/types.ts';
+import type { FloorPlan, PropKind, World } from '../office-view/core/types.ts';
+/**
+ * What each department is made of.
+ *
+ * A company is legible because its rooms are not interchangeable — you know the archive
+ * from the mailroom by looking. Six identical desks would make this a labelled diagram;
+ * giving each department its own furniture makes it a place.
+ *
+ * Offsets are relative to the desk's seat. A negative y is behind the desk, where things
+ * stand without hiding whoever is working.
+ */
+const DEPARTMENT_PROPS: Record<string, { kind: PropKind; at: World; layer?: 'back' | 'front' }[]> = {
+  // Records keeps things: drawers, and a crate of what has not been filed yet.
+  records: [
+    { kind: 'cabinet', at: { x: -0.7, y: -1.05 } },
+    { kind: 'cabinet', at: { x: -0.1, y: -1.05 } },
+    { kind: 'crate', at: { x: 0.75, y: -0.95 } },
+  ],
+  // Context reads the history, so it is the room with the shelf.
+  context: [
+    { kind: 'shelf', at: { x: -0.25, y: -1.1 } },
+    { kind: 'stack', at: { x: 0.8, y: -0.85 } },
+  ],
+  // Research traces claims back to sources: a screen and something to pin findings to.
+  research: [
+    { kind: 'screen', at: { x: -0.55, y: -1.05 } },
+    { kind: 'board', at: { x: 0.45, y: -1.15 } },
+  ],
+  // Opportunity is where the judgement happens — a board, and a plant to soften it.
+  opportunity: [
+    { kind: 'board', at: { x: -0.3, y: -1.15 } },
+    { kind: 'plant', at: { x: 0.95, y: -0.9 } },
+  ],
+  // Outreach writes: paper, and a screen to write it on.
+  outreach: [
+    { kind: 'screen', at: { x: -0.55, y: -1.05 } },
+    { kind: 'stack', at: { x: 0.25, y: -0.9 } },
+    { kind: 'stack', at: { x: 0.7, y: -0.85 } },
+  ],
+  // Review checks and decides: a board, the files it checks against, a plant by the door.
+  review: [
+    { kind: 'board', at: { x: -0.35, y: -1.15 } },
+    { kind: 'cabinet', at: { x: 0.7, y: -1.05 } },
+    { kind: 'plant', at: { x: -1.0, y: 0.55 }, layer: 'front' },
+  ],
+};
+
 
 /** Desks on the west side of the aisle face east, toward it, and vice versa. */
 const WEST_X = 4;
@@ -70,6 +116,7 @@ function station(dept: (typeof DEPARTMENTS)[number]) {
     inTray: { x: trayX, y: dept.row - 0.6 },
     outTray: { x: trayX, y: dept.row + 0.6 },
     node: dept.node,
+    props: DEPARTMENT_PROPS[dept.id],
   };
 }
 

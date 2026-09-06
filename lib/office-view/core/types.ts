@@ -274,6 +274,40 @@ export type Room = {
 };
 
 /**
+ * The furniture vocabulary a department can be built from.
+ *
+ * Six identical desks with six different labels is a diagram, not an office — you have
+ * to read it to use it. Giving each department its own silhouette means you can tell the
+ * workshop from the reading room across the floor, before any text loads, which is the
+ * whole point of showing work as a place.
+ *
+ * Deliberately a small closed set: this is a company, not a furniture catalogue, and the
+ * renderer has to be able to draw every one of them.
+ */
+export type PropKind =
+  | 'cabinet' // tall filing drawers — records, archives
+  | 'shelf' // bookshelf — reading, reference
+  | 'screen' // a monitor or display board — research, dashboards
+  | 'rack' // server rack — operations
+  | 'bench' // low workbench — making things
+  | 'stack' // stacked paper — drafting, correspondence
+  | 'board' // whiteboard or pinboard — planning, review
+  | 'plant' // a plant — softens a corner, no meaning
+  | 'crate'; // storage crate — overflow, intake
+
+export type StationProp = {
+  kind: PropKind;
+  /** Offset from the station's seat, in tile units. */
+  at: World;
+  /**
+   * Which paint layer. `back` (the default) puts it behind whoever is at the desk;
+   * `front` puts it between them and the viewer, which is how a low object reads as
+   * being on the near side of the desk.
+   */
+  layer?: 'back' | 'front';
+};
+
+/**
  * A desk. Note the three tray positions: work arrives in `inTray`, is worked on at
  * `seat`, and leaves from `outTray`. Giving them distinct positions is what makes a
  * handoff read as a physical act rather than a value teleporting.
@@ -293,6 +327,8 @@ export type Station = {
   hotDesk?: boolean;
   /** Which aisle node this desk attaches to, for pathfinding. */
   node: AisleNodeId;
+  /** What makes this department look like itself. Data, so the renderer stays generic. */
+  props?: StationProp[];
 };
 
 export type Door = {

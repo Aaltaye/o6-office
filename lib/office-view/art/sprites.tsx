@@ -16,7 +16,7 @@
  * Boundary rule: imports core types and the theme. Never app code, never the lead engine.
  */
 
-import type { World } from '../core/types.ts';
+import type { PropKind, World } from '../core/types.ts';
 import { worldToScreen, type Tile } from '../core/projection.ts';
 import { faces, geometry, live, palette, strokes } from './theme.ts';
 
@@ -251,6 +251,81 @@ export function Folder({
         />
       ) : null}
       <IsoBox at={origin} size={size} tile={tile} active={moving} />
+    </g>
+  );
+}
+
+/**
+ * Department furniture.
+ *
+ * Six identical desks with six different captions is a diagram you have to read. Giving
+ * each department its own silhouette means you can tell the workshop from the reading
+ * room across the floor before any label loads — which is the point of showing work as a
+ * place rather than a list.
+ *
+ * Every prop is built from the same three-face box, so they share one visual language and
+ * cost nothing extra to draw. What distinguishes them is proportion: tall and narrow reads
+ * as storage, wide and low reads as a surface, thin and upright reads as a screen.
+ */
+const PROP_SHAPES: Record<PropKind, { w: number; d: number; h: number }> = {
+  cabinet: { w: 0.5, d: 0.45, h: 1.1 }, // tall drawers
+  shelf: { w: 1.1, d: 0.3, h: 1.25 }, // wide and tall
+  screen: { w: 0.72, d: 0.12, h: 0.62 }, // thin upright panel
+  rack: { w: 0.55, d: 0.6, h: 1.35 }, // deepest and tallest
+  bench: { w: 1.2, d: 0.55, h: 0.34 }, // low working surface
+  stack: { w: 0.34, d: 0.3, h: 0.26 }, // a pile of paper
+  board: { w: 1.25, d: 0.1, h: 0.85 }, // flat, wide, upright
+  plant: { w: 0.3, d: 0.3, h: 0.5 },
+  crate: { w: 0.55, d: 0.55, h: 0.5 },
+};
+
+/** A few props read better in a lighter or darker tone than the standard furniture. */
+const PROP_TONE: Partial<Record<PropKind, string>> = {
+  screen: '#3E4450',
+  rack: '#4A505C',
+  board: '#FFFFFF',
+  plant: '#8FA37E',
+};
+
+export function Prop({ kind, at, tile }: { kind: PropKind; at: World; tile: Tile }) {
+  const size = PROP_SHAPES[kind];
+  const origin = { x: at.x - size.w / 2, y: at.y - size.d / 2 };
+  const box = isoBox(origin, size, tile);
+  const tone = PROP_TONE[kind];
+
+  return (
+    <g>
+      <polygon points={box.contact} fill={faces.contact} />
+      <polygon points={box.south} fill={tone ?? faces.south} opacity={tone ? 0.82 : 1} />
+      <polygon points={box.east} fill={tone ?? faces.east} opacity={tone ? 0.92 : 1} />
+      <polygon
+        points={box.top}
+        fill={tone ?? faces.top}
+        stroke={palette.titanium}
+        strokeWidth={strokes.hairline}
+        strokeLinejoin="round"
+      />
+      {/* A shelf gets one dividing line, a cabinet two — just enough to read as drawers
+          or shelves rather than as a blank slab. */}
+      {kind === 'shelf' || kind === 'cabinet' ? (
+        <polygon
+          points={isoBox(origin, { ...size, h: size.h * (kind === 'shelf' ? 0.62 : 0.5) }, tile).top}
+          fill="none"
+          stroke={palette.titanium}
+          strokeWidth={strokes.hairline}
+          strokeOpacity={0.75}
+        />
+      ) : null}
+      {/* Foliage: one soft blob so a plant does not read as another crate. */}
+      {kind === 'plant' ? (
+        <ellipse
+          cx={worldToScreen({ ...at, z: size.h }, tile).sx}
+          cy={worldToScreen({ ...at, z: size.h }, tile).sy - tile.z * 0.12}
+          rx={tile.w * 0.11}
+          ry={tile.h * 0.16}
+          fill="#8FA37E"
+        />
+      ) : null}
     </g>
   );
 }

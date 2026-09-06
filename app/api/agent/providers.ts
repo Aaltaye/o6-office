@@ -27,15 +27,36 @@ export type ProviderResult = {
 /**
  * Model choice is configuration, not a constant.
  *
- * The defaults are each vendor's current general model. They are deliberately not the
- * cheapest option available: picking a smaller model to save money is a decision for
- * whoever is paying, so it is exposed rather than assumed. Override with
- * `O6_ANTHROPIC_MODEL` / `O6_OPENAI_MODEL`.
+ * Both defaults are each vendor's small fast model, chosen deliberately. These
+ * assignments are short, tightly specified, and constrained by a strict schema —
+ * summarise a few notes, draft a hundred words, check a draft against its sources. That
+ * is not work a frontier model is needed for, and the office can process a whole CSV in
+ * one run, so the per-lead cost is what matters.
+ *
+ * Override with `O6_ANTHROPIC_MODEL` / `O6_OPENAI_MODEL` when a run needs more.
  */
 export const DEFAULT_MODELS: Record<ProviderId, string> = {
-  anthropic: 'claude-opus-5',
+  anthropic: 'claude-haiku-4-5',
   openai: 'gpt-4.1-mini',
 };
+
+/**
+ * Models that accept `output_config.effort`.
+ *
+ * Not cosmetic: sending `effort` to a model that does not support it is an error, not a
+ * silently ignored field. Haiku 4.5 is one of those, so the default Anthropic model must
+ * not receive it — this list is why the request builder asks before adding it.
+ */
+const SUPPORTS_EFFORT = new Set([
+  'claude-opus-5',
+  'claude-opus-4-8',
+  'claude-opus-4-7',
+  'claude-opus-4-6',
+  'claude-sonnet-5',
+  'claude-sonnet-4-6',
+  'claude-fable-5',
+  'claude-fable-5-1',
+]);
 
 /**
  * Prices in US dollars per million tokens, verified 2026-09-06 against each vendor's
@@ -136,10 +157,9 @@ async function callAnthropic(request: ProviderRequest): Promise<ProviderResult> 
       // uses, so the validation downstream is genuinely identical for both providers.
       output_config: {
         format: { type: 'json_schema', schema: request.schema },
-        // These are short, tightly specified extraction and drafting tasks against a
-        // strict schema. Low effort is the honest setting for the work, not a quiet
-        // cost saving at the expense of quality.
-        effort: 'low',
+        // `effort` is only sent to models that accept it — on the rest it is an error,
+        // not an ignored field. Low is the honest setting for work this bounded.
+        ...(SUPPORTS_EFFORT.has(request.model) ? { effort: 'low' } : {}),
       },
     }),
   });

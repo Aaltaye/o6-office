@@ -32,6 +32,7 @@ import {
   leadReactivationPlan,
   leadReactivationCompactPlan,
 } from '../lib/floorplans/lead-reactivation.ts';
+import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
 
 /** Envelope fields every event needs, so each case below states only what it varies. */
 const base = {
@@ -349,4 +350,53 @@ test('a constant-depth aisle edge is reported', () => {
   // aisle-upper is (7,3) => depth 10; diag is (8,2) => depth 10.
   const warnings = compileFloorPlan(plan).warnings;
   assert.ok(warnings.some((w) => w.includes('constant depth')), warnings.join('\n'));
+});
+
+test('every department has its own furniture', () => {
+  // Six identical desks with six different captions is a labelled diagram. A company is
+  // legible because its rooms are not interchangeable, so each department must have a
+  // distinct silhouette — and no two may be built from the same set.
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    const departments = plan.stations.filter((s) => !s.hotDesk);
+    const signatures = new Set();
+
+    for (const station of departments) {
+      assert.ok(station.props?.length, `${plan.id}/${station.id} has no furniture`);
+      const signature = station.props.map((p) => p.kind).sort().join('+');
+      assert.equal(
+        signatures.has(signature),
+        false,
+        `${plan.id}: ${station.id} looks identical to another department (${signature})`,
+      );
+      signatures.add(signature);
+    }
+  }
+});
+
+test('furniture stands behind the desk, inside its own room', () => {
+  // Props must not cover the person working, and must not spill into the aisle where
+  // folders travel.
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    for (const station of plan.stations) {
+      for (const prop of station.props ?? []) {
+        if ((prop.layer ?? 'back') === 'back') {
+          assert.ok(prop.at.y < 0, `${station.id}: a back prop must sit behind the seat`);
+        }
+        assert.ok(
+          Math.abs(prop.at.x) <= 1.5 && Math.abs(prop.at.y) <= 1.5,
+          `${station.id}: furniture is outside its own room`,
+        );
+      }
+    }
+  }
+});
+
+test('visiting subagents get bare hot desks', () => {
+  // A hot desk is temporary by definition. Furnishing one would make a visitor look like
+  // another department.
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    for (const station of plan.stations.filter((s) => s.hotDesk)) {
+      assert.equal(station.props, undefined, `${station.id} should stay bare`);
+    }
+  }
 });
