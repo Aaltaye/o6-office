@@ -26,10 +26,10 @@ import {
   parseCSV,
   deduplicate,
   type Lead,
-} from './lead-engine';
-import { runLeadWorkflow, type AgentResult, type AgentTask } from './lead-workflow';
-import type { OfficeEvent, StationId } from './office-view/core/types';
-import { createEmitter } from './office-view/core/events';
+} from './lead-engine.ts';
+import { runLeadWorkflow, type AgentResult, type AgentTask } from './lead-workflow.ts';
+import type { OfficeEvent, StationId } from './office-view/core/types.ts';
+import { createEmitter } from './office-view/core/events.ts';
 
 /**
  * A display row for the activity trail and inspection panels.
@@ -41,6 +41,13 @@ export type ActivityItem = {
   id: string;
   at: number;
   station?: StationId;
+  /**
+   * The two ends of a handoff. A handoff happens *between* desks, so it has no single
+   * station — without these it belongs to no department and silently vanishes from every
+   * per-department view, which is exactly where work arriving and leaving matters most.
+   */
+  from?: string;
+  to?: string;
   leadId?: string;
   title: string;
   detail?: string;
@@ -133,6 +140,8 @@ export function toActivity(events: readonly OfficeEvent[]): ActivityItem[] {
       id: event.id,
       at: event.occurredAt,
       station: 'station' in event ? (event.station as StationId) : undefined,
+      from: 'from' in event ? (event.from as string) : undefined,
+      to: 'to' in event ? (event.to as string) : undefined,
       leadId: 'work' in event ? event.work?.id : undefined,
       title: event.label,
       detail: event.detail,

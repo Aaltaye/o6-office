@@ -51,7 +51,9 @@ export default function Home(){
  const roomDesks=roomInfo?officePlan.stations.filter(st=>st.room===roomInfo.id):[];
  const liveStations=new Set(Object.values(active));
  const roomLive=roomDesks.filter(st=>liveStations.has(st.id)).length;
- const roomActivity=activity.filter(e=>roomDesks.some(st=>st.id===e.station));
+ /* A department's trail is what happened AT its desks plus what arrived at or left them.
+    Filtering on station alone would drop every handoff, which is most of the story. */
+ const roomActivity=activity.filter(e=>roomDesks.some(st=>st.id===e.station||st.id===e.from||st.id===e.to));
  const visible=leads.filter(l=>(filter==='all'||(filter==='approved'?l.review==='approved':l.state===filter))&&`${l.name} ${l.company} ${l.email}`.toLowerCase().includes(query.toLowerCase()));
  const liveConfigured=Boolean(apiKey.trim());
  useEffect(()=>{if(!notice)return;const id=setTimeout(()=>setNotice(''),4500);return()=>clearTimeout(id);},[notice]);

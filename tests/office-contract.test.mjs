@@ -21,6 +21,7 @@ import {
   createEmitter,
 } from '../lib/office-view/core/events.ts';
 import { OFFICE_EVENT_TYPES, OFFICE_EVENT_VERSION } from '../lib/office-view/core/types.ts';
+import { toActivity } from '../lib/use-office.ts';
 import {
   compileFloorPlan,
   validateFloorPlan,
@@ -414,4 +415,33 @@ test('label anchors clear the furniture behind each desk', async () => {
       assert.ok(anchorZ > tallest, `${station.id}: label would sit inside its own furniture`);
     }
   }
+});
+
+test('a handoff belongs to the departments at both of its ends', () => {
+  // A handoff happens *between* desks, so it carries `from`/`to` and no `station`. Any
+  // per-department view that filters on station alone drops every one of them — and in the
+  // lead workflow handoffs are most of the story, including the rework loop that carries
+  // work backward.
+  const emit = createEmitter({ runId: 'trail', source: 'lead-workflow' });
+  const handoff = emit({
+    type: 'handoff',
+    label: 'Handed to review',
+    work: { id: 'lead-1', label: 'Northline Print' },
+    from: 'outreach',
+    to: 'review',
+    direction: 'forward',
+    occurredAt: 100,
+  });
+
+  const [item] = toActivity([handoff]);
+  assert.equal(item.station, undefined, 'a handoff genuinely has no single desk');
+  assert.equal(item.from, 'outreach', 'but it does have two ends, and they must survive');
+  assert.equal(item.to, 'review');
+
+  // The filter a department panel uses must therefore match on all three.
+  const belongsTo = (deskId) =>
+    [item.station, item.from, item.to].includes(deskId);
+  assert.ok(belongsTo('outreach'), 'the department it left');
+  assert.ok(belongsTo('review'), 'and the one it arrived at');
+  assert.ok(!belongsTo('records'), 'and nowhere else');
 });
