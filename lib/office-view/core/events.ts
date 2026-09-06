@@ -241,6 +241,19 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
 type EventInput = DistributiveOmit<OfficeEvent, 'v' | 'seq' | 'id' | 'runId'> & { id?: string };
 
 /**
+ * What a workflow describes when it reports something, with every envelope field left
+ * to its host: `source` and `occurredAt` as well as the emitter's own bookkeeping.
+ *
+ * Exported so a producer can be type-checked against the contract at compile time
+ * rather than only at the runtime validator — a workflow that forgets `direction` on a
+ * handoff should fail to build, not fail to animate correctly.
+ */
+export type ProducerEvent = DistributiveOmit<
+  OfficeEvent,
+  'v' | 'seq' | 'id' | 'runId' | 'source' | 'occurredAt'
+> & { id?: string };
+
+/**
  * Emitter factory. Producers use this instead of hand-building envelopes so that `seq`
  * is genuinely monotonic and ids are stable and unique within the run.
  *
