@@ -1,0 +1,137 @@
+/**
+ * office-view.css — everything the renderer needs to look right, and nothing else.
+ *
+ * Self-contained on purpose: the tokens are declared on `.office-view` rather than
+ * borrowed from the host page, so the office renders identically inside the product, the
+ * lab, and the local bridge's standalone page. That is the same extractability rule the
+ * TypeScript follows — the renderer knows a FloorPlan, an OfficeEvent and a theme, and
+ * nothing about whoever is hosting it.
+ *
+ * O6 Violet is a signal colour, capped by the brand at 5% or less of any application. In
+ * here it means exactly one thing: work happening right now.
+ */
+
+.office-view {
+  --porcelain: #f7f7f4;
+  --mist: #e8e8f0;
+  --titanium: #b6bbc5;
+  --ink: #1f2228;
+  --signal: #7446ff;
+  --subtle: #6e7480;
+  --line: #dfe0e5;
+
+  position: relative;
+  overflow: hidden;
+  background: var(--porcelain);
+  color: var(--ink);
+  font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Desk labels are HTML, not SVG text, so they inherit a real type system —
+   font stack, wrapping, truncation — instead of a parallel one that never matches. */
+.office-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid var(--titanium);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.25;
+  max-width: 168px;
+  white-space: nowrap;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.office-label-role {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* The literal action, verbatim from the producer. Truncated rather than paraphrased —
+   the office reports what happened, it never narrates. */
+.office-label-status {
+  color: var(--subtle);
+  font-size: 11px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.office-label.is-active {
+  border-color: var(--signal);
+  background: #fff;
+}
+
+.office-label.is-active .office-label-status {
+  color: var(--signal);
+}
+
+/* Narrow screens: only the active or selected desk keeps a label; the rest become dots.
+   Six overlapping labels on a phone destroy the diorama read entirely. */
+.office-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 999px;
+  background: var(--titanium);
+  border: 1px solid #fff;
+}
+
+/* Invariant I4: compression and batching are always stated on screen. A compromise said
+   out loud is information; unstated it would be a lie. */
+.office-compression {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--signal);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.office-mode-stamp {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  pointer-events: none;
+}
+
+/* The screen-reader outline of the office. Visually hidden, structurally real: this
+   product exists to make work legible, so a non-visual reader must be able to answer
+   "what is happening right now?" too. */
+.office-outline {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.office-view svg [role='button']:focus-visible {
+  outline: 3px solid #b9a6ff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .office-view svg,
+  .office-label {
+    transition: none !important;
+  }
+}

@@ -171,11 +171,19 @@ function reconstruct(lines, { agentId, agentType, sessionId, raw }) {
   /** tool_use_id -> the PreToolUse we emitted, so a result can be paired to its call. */
   const pending = new Map();
 
+  /**
+   * Real hooks carry a `prompt_id` identifying the turn, and everything downstream uses
+   * it to know which unit of work is in flight. The transcript does not label turns, so
+   * one is derived from the prompt line's own uuid and carried until the next prompt.
+   */
+  let promptId = null;
+
   const push = (hook, at, extra) => {
     events.push({
       hook_event_name: hook,
       occurred_at: at,
       session_id: sessionId,
+      ...(promptId ? { prompt_id: promptId } : {}),
       ...(agentId ? { agent_id: agentId, agent_type: agentType } : {}),
       ...extra,
     });
@@ -189,6 +197,7 @@ function reconstruct(lines, { agentId, agentType, sessionId, raw }) {
     if (line.type === 'user') {
       // A user line is either a real prompt or the tool results coming back.
       if (typeof content === 'string') {
+        promptId = line.uuid ?? `turn-${events.length}`;
         push('UserPromptSubmit', at, { prompt: summariseText(content, raw) });
       } else if (Array.isArray(content)) {
         for (const block of content) {
@@ -278,6 +287,26 @@ function main() {
   const subagents = loadSubagents(sessionPath);
 
   const events = reconstruct(lines, { agentId: null, agentType: null, sessionId, raw: args.raw });
+
+  // The session did start and end; the transcript simply has no line for either. Adding
+  // them is a faithful reconstruction, not an invention — without them the office has no
+  // opening or closing and a replay never finishes.
+  // The first and last lines of a transcript are often bookkeeping without a timestamp,
+  // so take the first and last that actually carry one.
+  const stamped = lines.map(ts).filter((value) => value !== null);
+  const firstAt = stamped[0] ?? null;
+  const lastAt = stamped[stamped.length - 1] ?? null;
+  if (firstAt !== null) {
+    events.unshift({ hook_event_name: 'SessionStart', occurred_at: firstAt, session_id: sessionId });
+  }
+  if (lastAt !== null) {
+    events.push({
+      hook_event_name: 'SessionEnd',
+      occurred_at: lastAt,
+      session_id: sessionId,
+      end_reason: 'capture ended',
+    });
+  }
 
   // Splice each specialist in at the moment the parent called Task, so arrival and
   // departure land at the right points on the timeline.

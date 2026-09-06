@@ -10,7 +10,10 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "build:bridge": "vite build --config vite.bridge.config.ts",
+    "bridge": "node bridge/cli.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

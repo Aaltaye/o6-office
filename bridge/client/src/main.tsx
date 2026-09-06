@@ -1,0 +1,157 @@
+/**
+ * bridge/client — the office, watching your own Claude Code session.
+ *
+ * Deliberately small. This is not the product page; it is the one thing the bridge
+ * exists to show, on the bridge's own origin so there is no CORS and no mixed content.
+ *
+ * The token is read from the URL fragment (`#token=…`) rather than the query string,
+ * because a fragment is never sent to a server or written to server logs. The bridge
+ * prints the full URL when it starts.
+ */
+
+import { StrictMode, useEffect, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { OfficeView, type Selection } from '../../../lib/office-view/react/OfficeView.tsx';
+import { isOfficeEvent } from '../../../lib/office-view/core/events.ts';
+import type { OfficeEvent } from '../../../lib/office-view/core/types.ts';
+import { codingSessionPlan } from '../../../lib/floorplans/coding-session.ts';
+import '../../../lib/office-view/office-view.css';
+import './bridge.css';
+
+/** The bridge prints a URL containing this; without it the stream is refused. */
+function readToken(): string {
+  const fragment = new URLSearchParams(window.location.hash.slice(1));
+  return fragment.get('token') ?? new URLSearchParams(window.location.search).get('token') ?? '';
+}
+
+type Status = 'connecting' | 'live' | 'error';
+
+function App() {
+  const token = useMemo(() => readToken(), []);
+  const [events, setEvents] = useState<OfficeEvent[]>([]);
+  /** State of the socket only. Whether we have a token is a separate question. */
+  const [connection, setConnection] = useState<Status>('connecting');
+  const [selection, setSelection] = useState<Selection>(null);
+  /** Batch incoming events into one render per frame rather than one per event. */
+  const pending = useRef<OfficeEvent[]>([]);
+  const flushing = useRef(false);
+
+  useEffect(() => {
+    if (!token) return;
+    const source = new EventSource(`/events?token=${encodeURIComponent(token)}`);
+
+    source.onopen = () => setConnection('live');
+    source.onerror = () => setConnection('error');
+    source.onmessage = (message) => {
+      let event: unknown;
+      try {
+        event = JSON.parse(message.data);
+      } catch {
+        return;
+      }
+      // The bridge validates on the way in; this validates on the way out. The office
+      // must never animate something that is not a well-formed event.
+      if (!isOfficeEvent(event)) return;
+
+      pending.current.push(event);
+      if (flushing.current) return;
+      flushing.current = true;
+      requestAnimationFrame(() => {
+        flushing.current = false;
+        const batch = pending.current;
+        pending.current = [];
+        setEvents((previous) => [...previous, ...batch]);
+      });
+    };
+
+    return () => source.close();
+  }, [token]);
+
+
+  /** No token is not a socket failure, but it is still a disconnected office. */
+  const status: Status = token ? connection : 'error';
+
+  /**
+   * The most recent thing that happened at whatever was clicked.
+   *
+   * Derived rather than stored: the panel must never be able to disagree with the stream
+   * it is describing, and the only reliable way to guarantee that is to compute it from
+   * the stream every time.
+   */
+  const detail = useMemo(() => {
+    if (!selection) return null;
+    const match = [...events]
+      .reverse()
+      .find((event) =>
+        selection.kind === 'station'
+          ? 'station' in event && event.station === selection.id
+          : selection.kind === 'worker'
+            ? 'worker' in event && event.worker === selection.id
+            : 'work' in event && event.work?.id === selection.id,
+      );
+    return match ? `${match.label}${match.detail ? ` — ${match.detail}` : ''}` : 'Nothing yet.';
+  }, [selection, events]);
+
+  const usage = useMemo(() => {
+    let input = 0;
+    let output = 0;
+    let unavailable = false;
+    for (const event of events) {
+      if (event.type !== 'usage.reported') continue;
+      if (event.usage.source === 'unavailable') unavailable = true;
+      input += event.usage.inputTokens ?? 0;
+      output += event.usage.outputTokens ?? 0;
+    }
+    return { input, output, unavailable };
+  }, [events]);
+
+  return (
+    <main className="bridge">
+      <header className="bridge-top">
+        <span className="bridge-brand">
+          <b>O6</b> office
+        </span>
+        <span className={`bridge-status is-${status}`}>
+          {status === 'live' ? 'Connected' : status === 'connecting' ? 'Connecting…' : 'Disconnected'}
+        </span>
+        <span className="bridge-usage">
+          {/* Tokens come from the session transcript, and the panel says so. If the
+              transcript cannot be read we say "unavailable", never a confident zero. */}
+          {usage.unavailable
+            ? 'Tokens unavailable'
+            : `${(usage.input + usage.output).toLocaleString()} tokens · from transcript`}
+        </span>
+      </header>
+
+      {!token ? (
+        <p className="bridge-hint">
+          No token in the URL. Open the link the bridge printed when it started.
+        </p>
+      ) : null}
+
+      <div className="bridge-floor">
+        <OfficeView
+          plan={codingSessionPlan}
+          events={events}
+          modeLabel="Live · your Claude Code session"
+          playing
+          follow
+          selection={selection}
+          onSelect={setSelection}
+        />
+      </div>
+
+      <footer className="bridge-foot">
+        <span>{events.length} events</span>
+        <span className="bridge-detail">{detail ?? 'Click a desk, a person, or a folder.'}</span>
+      </footer>
+    </main>
+  );
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

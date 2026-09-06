@@ -1,6 +1,6 @@
 # T007 — Bridge DX: npx entry, README, coding fixture
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/007-bridge-dx`  
 **Phase:** 2  
 **Depends on:** T005, T006  
@@ -37,3 +37,25 @@ _(blank — fill if scope changed during execution)_
 ## Notes
 
 _(blockers, decisions, paused reasons)_
+
+## Notes (execution)
+
+`npm run bridge` generates a token, starts the server, writes a ready-to-paste hooks file
+and prints its path plus the URL. An earlier version dumped ~90 lines of JSON into the
+terminal, which is not a two-minute setup.
+
+**No token is ever written into the repo.** The committed reference at
+`bridge/hooks/settings-snippet.json` reads `$O6_BRIDGE_TOKEN`; the file the CLI writes
+carries the real one and is gitignored. The hook commands end in `|| true` so a bridge
+that is down can never interfere with the session it is visualising.
+
+`fixtures/recorded-coding-run.json` is a real session mapped through the same code the
+live bridge uses. Its provenance chain is stated in the file rather than implied:
+transcripts → reconstructed hook payloads (redacted) → OfficeEvents. The recorder refuses
+to write a fixture that fails validation, violates an invariant, or contains no subagent.
+
+Capturing exposed two fidelity gaps in `scripts/capture-session.mjs`, both fixed: no
+`prompt_id` (so no units of work appeared on the floor) and no session start/end.
+
+**`bridge/public/` is gitignored** — it is build output. A fresh clone runs
+`npm run build:bridge`, which the README says.

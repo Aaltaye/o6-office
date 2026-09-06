@@ -319,6 +319,21 @@ export type AisleEdge = { from: AisleNodeId; to: AisleNodeId; lanes: number };
  */
 export type CompiledBandKind = 'station-back' | 'aisle' | 'station-seat' | 'station-front';
 
+/**
+ * Who is on the floor, and where they come from.
+ *
+ * `permanent` — the plan describes a standing team, and every non-hot desk is staffed for
+ * the whole run. Right for a modelled workflow like lead reactivation, which really does
+ * have six roles that all exist whether or not they are busy.
+ *
+ * `dynamic` — nobody is assumed. Workers appear when the stream first shows them doing
+ * something and leave when it says they left, and they walk to whichever desk their
+ * current assignment is at. Right for a live session, where the cast is whatever is
+ * actually running: one agent, or one agent and five subagents. Hardcoding a roster there
+ * would put people on the floor who do not exist.
+ */
+export type Staffing = 'permanent' | 'dynamic';
+
 export type FloorPlan = {
   id: string;
   /** Bumped when geometry changes, so a recorded run can say which plan it expects. */
@@ -326,6 +341,8 @@ export type FloorPlan = {
   label: string;
   /** Tile dimensions in screen px. 2:1 dimetric means `w` should be `2 * h`. */
   tile: { w: number; h: number; z: number };
+  /** Defaults to `permanent` so existing plans keep their standing team. */
+  staffing?: Staffing;
   rooms: Room[];
   stations: Station[];
   doors: Door[];

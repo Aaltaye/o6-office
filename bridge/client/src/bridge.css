@@ -1,0 +1,112 @@
+/* The bridge page's own chrome. The office brings its own styles. */
+
+:root {
+  --porcelain: #f7f7f4;
+  --ink: #1f2228;
+  --subtle: #6e7480;
+  --line: #dfe0e5;
+  --signal: #7446ff;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--porcelain);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.bridge {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.bridge-top,
+.bridge-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.bridge-foot {
+  border-bottom: 0;
+  border-top: 1px solid var(--line);
+  color: var(--subtle);
+  font-size: 12px;
+}
+
+.bridge-brand {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.bridge-brand b {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 13px;
+}
+
+.bridge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--subtle);
+}
+
+.bridge-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* Violet means live, here as everywhere else in this product. */
+.bridge-status.is-live {
+  color: var(--signal);
+}
+
+.bridge-status.is-error {
+  color: #b4451f;
+}
+
+.bridge-usage {
+  margin-left: auto;
+  color: var(--subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.bridge-floor {
+  min-height: 0;
+}
+
+.bridge-hint {
+  margin: 0;
+  padding: 10px 18px;
+  background: #fff4ed;
+  color: #8a4520;
+  font-size: 13px;
+}
+
+.bridge-detail {
+  margin-left: auto;
+  max-width: 60ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

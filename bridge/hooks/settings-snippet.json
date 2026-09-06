@@ -1,0 +1,114 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -m 2 -X POST http://127.0.0.1:4141/hook -H \"Content-Type: application/json\" -H \"x-o6-token: $O6_BRIDGE_TOKEN\" --data-binary @- >/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
