@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+import {deduplicate,parseCSV,SAMPLE_CSV,SAMPLE_DATE,DEFAULT_OFFER} from '../lib/lead-engine.ts';
+const engine=new URL('../lib/lead-engine.ts',import.meta.url).href;
+const source=fs.readFileSync(new URL('../app/api/agent/route.ts',import.meta.url),'utf8').replace('@/lib/lead-engine',engine);
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {POST}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const lead=deduplicate(parseCSV(SAMPLE_CSV))[0];
+const payload={task:'context',lead,offer:DEFAULT_OFFER,date:SAMPLE_DATE};
+const request=(body=payload,headers={})=>new Request('http://localhost/api/agent',{method:'POST',headers:{'Content-Type':'application/json','x-o6-api-key':'sk-fake-for-unit-test-only',...headers},body:JSON.stringify(body)});
+test('API rejects absent keys without calling model',async()=>{const res=await POST(request(payload,{'x-o6-api-key':''}));assert.equal(res.status,401);});
+test('API blocks cross-origin calls',async()=>{const res=await POST(request(payload,{origin:'https://other.example'}));assert.equal(res.status,403);});
+test('API prevents excluded lead from entering model workflow',async()=>{const blocked=structuredClone(lead);blocked.sources[0].opted_out='true';assert.equal((await POST(request({...payload,lead:blocked}))).status,400);});
+test('API validates request fields',async()=>{assert.equal((await POST(request({...payload,task:'send_email'}))).status,400);assert.equal((await POST(request({...payload,lead:{}}))).status,400);});
+test('AI response references are validated and usage is reported',async()=>{const original=globalThis.fetch;try{globalThis.fetch=async(url,init)=>{assert.equal(url,'https://api.openai.com/v1/responses');const sent=JSON.parse(init.body);assert.equal(sent.store,false);assert.equal(sent.model,'gpt-4.1-mini');return Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({summary:'Asked to reconnect.',evidence:[{row:lead.sources[0].row,quote:'Wanted to reduce manual inquiry routing.'}]})}]}],usage:{input_tokens:100,output_tokens:50,input_tokens_details:{cached_tokens:0}}});};const res=await POST(request());assert.equal(res.status,200);const body=await res.json();assert.equal(body.usage.input,100);assert.equal(body.usage.output,50);assert.equal(body.output.summary,'Asked to reconnect.');}finally{globalThis.fetch=original;}});
+test('invented evidence fails visibly, with no fallback draft',async()=>{const original=globalThis.fetch;try{globalThis.fetch=async()=>Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({summary:'Invented',evidence:[{row:2,quote:'Raised ten million dollars.'}]})}]}]});const res=await POST(request());assert.equal(res.status,502);assert.match((await res.json()).error,/could not be matched/);}finally{globalThis.fetch=original;}});
