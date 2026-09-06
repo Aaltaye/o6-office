@@ -23,7 +23,19 @@ Checked during planning, not assumed:
 
 - **Claude Code hooks map almost one-to-one onto the office metaphor.** `SubagentStart` fires on spawn and carries `agent_type` + `agent_id` — that is the intern walking in, as a real event. `SubagentStop` closes it. `PreToolUse`/`PostToolUse` carry `agent_id`/`agent_type` when inside a subagent, so activity attributes to the right worker. `PostToolUseFailure` (with `tool_error`) is work coming back. `PermissionRequest` is an approval landing on the manager's desk. `PostToolBatch` carries a `tool_calls` array — several desks lighting up at once.
 - **Token usage is NOT in any hook payload.** But every hook carries `transcript_path`, and the transcript JSONL carries real per-message `usage` (input, `cache_creation`, `cache_read`, output, thinking tokens) plus `model`, and `isSidechain: true` is documented as the subagent marker. So usage is real — read from the transcript, labelled as such. We do not estimate.
-  *Caveat, stated honestly:* I confirmed per-message `usage` and `model` directly in a local transcript. No transcript on this machine contained a sidechain line at planning time, so **per-specialist attribution is designed-for but unproven**. T005 must confirm it against a real subagent run; if attribution turns out to be unavailable, the meter reports session totals and says so rather than guessing.
+  *Correction, resolved during T001.* The caveat here previously said per-specialist attribution was "designed-for but unproven", and guessed it would come from an `isSidechain` flag in the parent transcript. **That guess was wrong — and attribution turns out to be available by a better route.** Subagent activity never reaches the parent transcript at all (zero `isSidechain` lines anywhere on this machine, including immediately after a subagent ran). Each subagent instead gets its own pair of files:
+
+  ```
+  .claude/projects/<project>/<sessionId>/subagents/
+      agent-<agent_id>.jsonl       the specialist's own messages, tool uses, per-message usage
+      agent-<agent_id>.meta.json   { agentType, description, toolUseId, spawnDepth }
+  ```
+
+  `agent_id` is exactly what `SubagentStart` delivers, so the join is direct. Verified against a real run: a `Plan` subagent's file yields its model (`claude-opus-5`), the tools it used (`Bash`, `Read`), and its attributed totals — 993,117 cache-read / 161,214 cache-creation / 997 output / 52 thinking tokens.
+
+  Two things this route gives us that the parent transcript would not have:
+  - `meta.json.description` is the specialist's *actual assignment* ("Design office renderer architecture") — a literal, non-invented desk label, which is exactly what the honesty rule asks for.
+  - `spawnDepth` makes nested subagents representable: an intern who calls in their own intern.
 - **The current palette is off-brand.** The build uses `#3854ef` / `#f7f8fb`. O6's authoritative tokens are Porcelain `#F7F7F4`, Mist `#E8E8F0`, Titanium `#B6BBC5`, Graphite `#1F2228`, O6 Violet `#7446FF` — with violet capped at ≤5% of any application.
 
 ## Goal

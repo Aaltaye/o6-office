@@ -48,9 +48,49 @@ workflow) and **connect your work** (stream a live Claude Code session into the 
   transcript JSONL carries real per-message `usage` (`input_tokens`, `cache_creation_input_tokens`,
   `cache_read_input_tokens`, `output_tokens`, `output_tokens_details.thinking_tokens`) plus `model`.
   Verified directly against a local transcript.
-- **Per-specialist usage attribution is UNPROVEN.** `isSidechain: true` is documented as the subagent
-  marker, but no transcript on this machine contained one at planning time. T005 must confirm it
-  against a real subagent run; if unavailable, report session totals and say so rather than guessing.
+- **Per-specialist usage attribution works — but not via `isSidechain`.** Planning guessed subagent
+  messages would appear in the parent transcript flagged `isSidechain: true`. They do not; there are
+  zero such lines anywhere on this machine, including immediately after a subagent ran. Subagents get
+  their own files instead:
+
+  ```
+  .claude/projects/<project>/<sessionId>/subagents/
+      agent-<agent_id>.jsonl       messages, tool uses, per-message usage
+      agent-<agent_id>.meta.json   { agentType, description, toolUseId, spawnDepth }
+  ```
+
+  `agent_id` matches what `SubagentStart` delivers, so the join is direct. Verified on a real `Plan`
+  subagent: model `claude-opus-5`, tools `Bash`/`Read`, totals 993,117 cache-read / 161,214
+  cache-creation / 997 output / 52 thinking tokens.
+
+  `meta.json.description` is the specialist's literal assignment — use it as the desk label; it
+  satisfies the no-invented-labels rule for free. `spawnDepth` supports nested subagents. The bridge
+  must therefore watch a **directory**, since new `agent-*.jsonl` files appear as specialists spawn.
+
+  Note the background-task `.output` files under `AppData\Local\Temp\claude\...\tasks\` are NOT this
+  data — they are zero bytes once an agent completes. Do not read them for usage.
+
+## Lint: two things you need to know
+
+**1. Type-aware lint cannot run on this machine.** `.oxlintrc.json` sets `options.typeAware: true`,
+which makes oxlint spawn `node_modules/@oxlint-tsgolint/win32-x64/tsgolint.exe`. That binary is
+blocked by **Windows Smart App Control / Application Control** ("An Application Control policy has
+blocked this file") because it is unsigned. It is not a mark-of-the-web issue — there is no
+`Zone.Identifier` stream. This is a machine security policy and was deliberately **not** worked
+around. To run type-aware rules, either allow the binary in the Windows security settings or run lint
+in CI on a machine without that policy. `npx tsc --noEmit` is clean and covers much of the same
+ground meanwhile.
+
+To lint without the type-aware rules, generate a temporary config with
+`options.typeAware`/`typeCheck` set to `false` (and `typescript/no-deprecated` removed, since it is
+type-aware) and pass it with `oxlint -c`. Keep it out of the repo.
+
+**2. Lint has never passed on this project.** As of the baseline commit there are ~28 pre-existing
+errors: 15 in `components/ui/**` (vendored shadcn — mostly `jsx-a11y/prefer-tag-over-role`), 10 in
+`app/page.tsx` (react-compiler ref access during render, `no-img-element`, unescaped entities), and
+one each in `lib/lead-engine.ts`, `hooks/use-mobile.ts`. **None were introduced by this work.** Until
+that debt is cleared, the merge gate is applied to *changed files only*, and each task records that
+it did so. `app/page.tsx` is rewritten in T004, which should clear most of the non-vendored half.
 
 ## Env vars in use
 

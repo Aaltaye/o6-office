@@ -12,7 +12,10 @@ A small local Node server that receives Claude Code hook POSTs, tails the sessio
 
 ## Research
 
-- CONFIRM per-specialist usage attribution against a real subagent run. PLAN.md flags this as designed-for but UNPROVEN: per-message usage and model were verified locally, but no transcript on this machine contained an isSidechain line at planning time. If attribution is unavailable, report session totals and say so — do not guess.
+- **RESOLVED during T001 — per-specialist attribution works, by a different route than planned.** The earlier guess (an `isSidechain` flag in the parent transcript) was wrong: subagent activity never reaches the parent transcript at all. Each subagent has its own files at `.claude/projects/<project>/<sessionId>/subagents/`: `agent-<agent_id>.jsonl` (its messages, tool uses and per-message usage) and `agent-<agent_id>.meta.json` (`agentType`, `description`, `toolUseId`, `spawnDepth`). `agent_id` is exactly what `SubagentStart` delivers, so the join is direct. Verified against a real run.
+- Use `meta.json.description` as the specialist's desk label — it is their literal assignment, so it satisfies the no-invented-labels rule for free.
+- `spawnDepth` lets the office represent nested subagents (an intern who calls in their own intern). Decide whether to render depth or flatten it.
+- Consequence for the design: the bridge must watch a **directory**, not a single file — new `agent-*.jsonl` files appear as specialists spawn.
 - Transcript line shape verified at planning: message.usage carries input_tokens, cache_creation_input_tokens, cache_read_input_tokens, output_tokens and output_tokens_details.thinking_tokens; the top level carries sessionId, isSidechain, timestamp and cwd.
 
 ## Acceptance criteria
