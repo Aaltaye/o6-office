@@ -151,4 +151,5 @@ exists to avoid.
   contains little parallelism, so it demonstrates pacing rather than burst handling.
 - The renderer is designed to be extractable as a standalone package, but is not published
   as one.
-- No open-source licence has been chosen. Choose one before publishing this repository.
+- Licensed MIT (see `LICENSE`). The renderer, the event contract and the bridge are all
+  yours to use; the O6 wordmark and brand colours are not part of that grant.

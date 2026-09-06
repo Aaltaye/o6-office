@@ -1,7 +1,6 @@
 {
   "name": "sites-project",
   "version": "0.1.0",
-  "private": true,
   "engines": {
     "node": ">=22.13.0"
   },
@@ -56,5 +55,7 @@
     "vite": "8.2.2",
     "wrangler": "4.92.0"
   },
-  "type": "module"
+  "type": "module",
+  "license": "MIT",
+  "private": true
 }
