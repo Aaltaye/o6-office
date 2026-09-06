@@ -70,6 +70,20 @@ workflow) and **connect your work** (stream a live Claude Code session into the 
   Note the background-task `.output` files under `AppData\Local\Temp\claude\...\tasks\` are NOT this
   data — they are zero bytes once an agent completes. Do not read them for usage.
 
+## vinext traps
+
+- **Do not import `next/link`.** It pulls a second copy of React and the page dies with
+  "Invalid hook call" / "Cannot read properties of null (reading 'useState')". The brand
+  mark stays a plain `<a>`, and the `next/no-html-link-for-pages` lint error stays with
+  it. Tried and reverted 2026-09-06.
+- **After any dependency-graph change, clear `node_modules/.vite`.** Vite re-optimises
+  deps and can leave the page holding a stale React instance; the symptom is the same
+  null-useState crash even after the offending import is removed. `rm -rf
+  node_modules/.vite` then restart.
+- **The console buffer in browser automation survives reloads.** Errors keep showing with
+  their original module timestamp (`?t=…`) long after they are fixed. Check the timestamp
+  before believing an error is current, and prefer a functional probe over the log.
+
 ## Lint: two things you need to know
 
 **1. Type-aware lint cannot run on this machine.** `.oxlintrc.json` sets `options.typeAware: true`,
