@@ -109,6 +109,38 @@ async function callAgentViaProxy(
   return { output: body.output, usage: { ...body.usage, model: 'gpt-4.1-mini' } };
 }
 
+/**
+ * Project an event stream into display rows.
+ *
+ * Pure and exported so the same projection can be applied to a *recorded* run — the
+ * inspection panels must describe whatever the floor is currently showing, not a
+ * different stream. A panel saying "no assignments yet" while the office visibly works
+ * would be the product contradicting itself.
+ */
+export function toActivity(events: readonly OfficeEvent[]): ActivityItem[] {
+  return events.map((event) => {
+    const tone: ActivityItem['tone'] =
+      event.type === 'assignment.failed' || event.type === 'blocked'
+        ? 'warning'
+        : event.type === 'assignment.started'
+          ? 'started'
+          : 'completed';
+    return {
+      id: event.id,
+      at: event.occurredAt,
+      station: 'station' in event ? (event.station as StationId) : undefined,
+      leadId: 'work' in event ? event.work?.id : undefined,
+      title: event.label,
+      detail: event.detail,
+      tone,
+      tokens:
+        event.type === 'usage.reported'
+          ? (event.usage.inputTokens ?? 0) + (event.usage.outputTokens ?? 0)
+          : undefined,
+    };
+  });
+}
+
 export function useOffice() {
   const [rows, setRows] = useState(() => parseCSV(SAMPLE_CSV));
   const [leads, setLeads] = useState<Lead[]>(() => deduplicate(parseCSV(SAMPLE_CSV)));
@@ -197,31 +229,7 @@ export function useOffice() {
   }, [events]);
 
   /** The activity trail, derived from the canonical stream. */
-  const activity = useMemo<ActivityItem[]>(
-    () =>
-      events.map((event) => {
-        const tone: ActivityItem['tone'] =
-          event.type === 'assignment.failed' || event.type === 'blocked'
-            ? 'warning'
-            : event.type === 'assignment.started'
-              ? 'started'
-              : 'completed';
-        return {
-          id: event.id,
-          at: event.occurredAt,
-          station: 'station' in event ? (event.station as StationId) : undefined,
-          leadId: 'work' in event ? event.work?.id : undefined,
-          title: event.label,
-          detail: event.detail,
-          tone,
-          tokens:
-            event.type === 'usage.reported'
-              ? (event.usage.inputTokens ?? 0) + (event.usage.outputTokens ?? 0)
-              : undefined,
-        };
-      }),
-    [events],
-  );
+  const activity = useMemo(() => toActivity(events), [events]);
 
   /**
    * Record the human's decision on a draft.

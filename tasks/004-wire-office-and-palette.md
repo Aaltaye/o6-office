@@ -1,6 +1,6 @@
 # T004 — Mount the office, adopt O6 tokens, record the demo
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/004-wire-office-and-palette`  
 **Phase:** 1  
 **Depends on:** T003  
@@ -51,3 +51,40 @@ See PLAN.md correction C1 and section A7.
 - [ ] Floor plans are static JSON imported in a server component and passed as a prop; only `OfficeView` is `use client` (vinext is RSC-based) (A7).
 - [ ] The existing shadcn `Sheet` in `app/page.tsx` already handles both `selectedLead` and `desk` — extend it rather than building a second panel.
 - [ ] Demo runs ship as static assets (no DB, no R2 configured); that is the whole persistence story and it is sufficient.
+
+## Notes (execution)
+
+`public/office.png` deleted (1.6 MB), the static-image and desk-label CSS with it. The
+office is now rendered live from the event stream.
+
+**The demo is a real recording, not a hand-authored one.** `scripts/record-demo-run.mjs`
+runs the actual workflow over the actual fictional sample data and writes whatever it
+emits: 130 events, 9 leads, ~33s replay, two genuine carried-back handoffs, zero
+specialists and zero usage (correct for local-rules mode). The script refuses to write a
+fixture that fails contract validation, violates a scheduling invariant, or contains no
+carried-back handoff — a demo that does not show the beat is not worth shipping.
+
+**Palette rebuilt on the authoritative O6 tokens.** Primary actions are Graphite, not
+violet: violet is reserved for live activity, which keeps it inside the brand's 5% cap by
+construction. Verified by grep that the only violet users are the live pill, the live
+status dot, and the office's own active states.
+
+**Two bugs found by looking at it:**
+
+1. **Infinite render loop.** `onTime`/`onSelect` are inline arrows in the host, so
+   `applyTime`'s identity changed every render, which re-fired the mount-paint effect,
+   which set state, which rendered again. Both callbacks are now held in refs.
+2. **The panel contradicted the floor.** Clicking a desk during the recorded run said
+   "No assignments yet" because the panels read the *live* stream while the floor read
+   the *recording*. `toActivity` is now a pure exported projection applied to whatever
+   the floor is showing. A product whose inspection panel disagrees with its own
+   visualisation is worse than one with no panel.
+
+**A change I made and reverted:** importing `next/link` to satisfy
+`next/no-html-link-for-pages` pulled a second React copy under vinext and crashed the
+page with "Invalid hook call". The brand mark stays an `<a>`, and that lint error stays.
+Clearing `node_modules/.vite` was needed afterwards — Vite had cached the broken graph.
+
+Repo-wide lint debt is down from 28 errors to 21; `app/page.tsx` from 10 to 4. The
+remainder are 15 vendored shadcn components plus four inherited react-compiler patterns
+in the lead-editing effect, which were left alone rather than restructured blind.

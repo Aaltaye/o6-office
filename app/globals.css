@@ -53,13 +53,13 @@ body {
 }
 
 :root {
-  --background: #f7f8fb;
-  --foreground: #192333;
+  --background: #f7f7f4;
+  --foreground: #1f2228;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #3854ef;
+  --primary: #1f2228;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
