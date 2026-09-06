@@ -43,3 +43,7 @@ next-env.d.ts
 
 # Built by `npm run build:bridge`; the bridge serves it at runtime.
 /bridge/public/
+
+# Scratch diagnostics written by investigation agents; never part of the product.
+_crit*.mjs
+tmp-*.mjs
