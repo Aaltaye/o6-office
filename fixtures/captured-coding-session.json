@@ -1,0 +1,5325 @@
+{
+  "v": 1,
+  "derivation": "reconstructed from session transcripts on disk; NOT a live hook capture",
+  "redacted": true,
+  "capturedAt": "2026-09-06T20:25:44.416Z",
+  "sessionId": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+  "durationMs": 2057362,
+  "subagents": [
+    {
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "description": "Design office renderer architecture",
+      "spawn_depth": 1
+    }
+  ],
+  "events": [
+    {
+      "hook_event_name": "UserPromptSubmit",
+      "occurred_at": 0,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "prompt": "<redacted 29189 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 4181,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 42217,
+      "cache_creation_input_tokens": 47276,
+      "output_tokens": 391,
+      "thinking_tokens": 182
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 4895,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 42217,
+      "cache_creation_input_tokens": 47276,
+      "output_tokens": 391,
+      "thinking_tokens": 182
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 6340,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017hPZMftgP9q7aiTVBsDpFr",
+      "tool_input": {
+        "command": "cd",
+        "description": "List project files"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 6340,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 42217,
+      "cache_creation_input_tokens": 47276,
+      "output_tokens": 391,
+      "thinking_tokens": 182
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 9414,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017hPZMftgP9q7aiTVBsDpFr",
+      "tool_response": "<redacted 3730 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 11045,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 89493,
+      "cache_creation_input_tokens": 2581,
+      "output_tokens": 263,
+      "thinking_tokens": 38
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 13607,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0154j3fQXNT5JtZ9ySzAFPyB",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read README, package.json, git state"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 13607,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 89493,
+      "cache_creation_input_tokens": 2581,
+      "output_tokens": 263,
+      "thinking_tokens": 38
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 14269,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0154j3fQXNT5JtZ9ySzAFPyB",
+      "tool_response": "<redacted 7350 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 17095,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 92074,
+      "cache_creation_input_tokens": 3241,
+      "output_tokens": 284,
+      "thinking_tokens": 66
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 19556,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01JAr5aUtzft5zZCMLtdSQbe",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check file sizes"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 19556,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 92074,
+      "cache_creation_input_tokens": 3241,
+      "output_tokens": 284,
+      "thinking_tokens": 66
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 19942,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01JAr5aUtzft5zZCMLtdSQbe",
+      "tool_response": "<redacted 775 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 23260,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 95315,
+      "cache_creation_input_tokens": 794,
+      "output_tokens": 301,
+      "thinking_tokens": 107
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 24515,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_019vyD4FaHSJSzo472myRggR",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect app source"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 24515,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 95315,
+      "cache_creation_input_tokens": 794,
+      "output_tokens": 301,
+      "thinking_tokens": 107
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 24891,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_019vyD4FaHSJSzo472myRggR",
+      "tool_response": "<redacted 3700 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 41881,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 96109,
+      "cache_creation_input_tokens": 2112,
+      "output_tokens": 1293,
+      "thinking_tokens": 995
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 44131,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0165hXZhUdTb1UimKx2fr7Q7",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check for launch config and deps"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 44131,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 96109,
+      "cache_creation_input_tokens": 2112,
+      "output_tokens": 1293,
+      "thinking_tokens": 995
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 46632,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0165hXZhUdTb1UimKx2fr7Q7",
+      "tool_response": "<redacted 1756 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 51856,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 98221,
+      "cache_creation_input_tokens": 2161,
+      "output_tokens": 648,
+      "thinking_tokens": 259
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 55145,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01XV4P6BzvzZ4gfAm17RBiKU",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add o6-office launch config"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 55145,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 98221,
+      "cache_creation_input_tokens": 2161,
+      "output_tokens": 648,
+      "thinking_tokens": 259
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 56822,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01XV4P6BzvzZ4gfAm17RBiKU",
+      "tool_response": "<redacted 5 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 58052,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__preview_start",
+      "tool_use_id": "toolu_01NYA1uFpN2YBzY7aa53jL77",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 58052,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 100382,
+      "cache_creation_input_tokens": 678,
+      "output_tokens": 63,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 61687,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__preview_start",
+      "tool_use_id": "toolu_01NYA1uFpN2YBzY7aa53jL77",
+      "tool_error": "<redacted 521 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 63508,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 101060,
+      "cache_creation_input_tokens": 300,
+      "output_tokens": 93,
+      "thinking_tokens": 25
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 64011,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__preview_start",
+      "tool_use_id": "toolu_01LEK9HMq8wDEoB3SXVud3fZ",
+      "tool_input": {
+        "url": "<redacted>"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 64011,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 101060,
+      "cache_creation_input_tokens": 300,
+      "output_tokens": 93,
+      "thinking_tokens": 25
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 65447,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__preview_start",
+      "tool_use_id": "toolu_01LEK9HMq8wDEoB3SXVud3fZ",
+      "tool_response": "<redacted 271 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 66763,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__computer",
+      "tool_use_id": "toolu_018axwup8XTRGKDc8BLeZu9N",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 66763,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 101360,
+      "cache_creation_input_tokens": 264,
+      "output_tokens": 61,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 66876,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__computer",
+      "tool_use_id": "toolu_018axwup8XTRGKDc8BLeZu9N",
+      "tool_response": "<redacted 164 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 69135,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 101624,
+      "cache_creation_input_tokens": 684,
+      "output_tokens": 209,
+      "thinking_tokens": 42
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 69907,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_01YHhyNtLoB3gMcaWKxwAWTV",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 69907,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 101624,
+      "cache_creation_input_tokens": 684,
+      "output_tokens": 209,
+      "thinking_tokens": 42
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 70101,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_01YHhyNtLoB3gMcaWKxwAWTV",
+      "tool_response": "<redacted 560 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 73356,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 102308,
+      "cache_creation_input_tokens": 1021,
+      "output_tokens": 346,
+      "thinking_tokens": 123
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 74828,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_0163QJMnCKWLZ8YmUDBDqrqw",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 74828,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 102308,
+      "cache_creation_input_tokens": 1021,
+      "output_tokens": 346,
+      "thinking_tokens": 123
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 75118,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_0163QJMnCKWLZ8YmUDBDqrqw",
+      "tool_response": "<redacted 746 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 78262,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 103329,
+      "cache_creation_input_tokens": 1744,
+      "output_tokens": 262,
+      "thinking_tokens": 112
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 79279,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_01YBeo2ALD5V5WZYTHR8vfMZ",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 79279,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 103329,
+      "cache_creation_input_tokens": 1744,
+      "output_tokens": 262,
+      "thinking_tokens": 112
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 81004,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__Claude_Browser__browser_batch",
+      "tool_use_id": "toolu_01YBeo2ALD5V5WZYTHR8vfMZ",
+      "tool_response": "<redacted 697 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 99386,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 105073,
+      "cache_creation_input_tokens": 1604,
+      "output_tokens": 1338,
+      "thinking_tokens": 1187
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 101242,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01EF4MnUQNpYWkg44AvMKH9d",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read the office orchestration hook"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 101242,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 105073,
+      "cache_creation_input_tokens": 1604,
+      "output_tokens": 1338,
+      "thinking_tokens": 1187
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 101483,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01EF4MnUQNpYWkg44AvMKH9d",
+      "tool_response": "<redacted 9589 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 105824,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 106677,
+      "cache_creation_input_tokens": 5532,
+      "output_tokens": 480,
+      "thinking_tokens": 205
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 109494,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CTZ3ijgJgSS6c3jtn8grox",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find office layout code"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 109494,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 106677,
+      "cache_creation_input_tokens": 5532,
+      "output_tokens": 480,
+      "thinking_tokens": 205
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 111306,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CTZ3ijgJgSS6c3jtn8grox",
+      "tool_response": "<redacted 1196 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 115147,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_015pkMtzFsDtrzo5ZBXsQj1q",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate desk coordinate map"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 115147,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 112209,
+      "cache_creation_input_tokens": 1071,
+      "output_tokens": 287,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 117085,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_015pkMtzFsDtrzo5ZBXsQj1q",
+      "tool_response": "<redacted 902 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 120843,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Am82iv6aYKFwmmUhTFVjRr",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find office render block"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 120843,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 113280,
+      "cache_creation_input_tokens": 678,
+      "output_tokens": 242,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 123355,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Am82iv6aYKFwmmUhTFVjRr",
+      "tool_response": "<redacted 947 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 146577,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 113958,
+      "cache_creation_input_tokens": 686,
+      "output_tokens": 1541,
+      "thinking_tokens": 1391
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 147302,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 113958,
+      "cache_creation_input_tokens": 686,
+      "output_tokens": 1541,
+      "thinking_tokens": 1391
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 148179,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__ccd_session__mark_chapter",
+      "tool_use_id": "toolu_01GU4abRFCc3PngUwSKxuGhX",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 148179,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 113958,
+      "cache_creation_input_tokens": 686,
+      "output_tokens": 1541,
+      "thinking_tokens": 1391
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 148186,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__ccd_session__mark_chapter",
+      "tool_use_id": "toolu_01GU4abRFCc3PngUwSKxuGhX",
+      "tool_response": "<redacted 67 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 150073,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 114644,
+      "cache_creation_input_tokens": 1594,
+      "output_tokens": 1894,
+      "thinking_tokens": 10
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 168855,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 114644,
+      "cache_creation_input_tokens": 1594,
+      "output_tokens": 1894,
+      "thinking_tokens": 10
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 175772,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "AskUserQuestion",
+      "tool_use_id": "toolu_0189Pq67tEt4ynLoMvx864nG",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 175772,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 114644,
+      "cache_creation_input_tokens": 1594,
+      "output_tokens": 1894,
+      "thinking_tokens": 10
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 196846,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "AskUserQuestion",
+      "tool_use_id": "toolu_0189Pq67tEt4ynLoMvx864nG",
+      "tool_response": "<redacted 200 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 208270,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 116238,
+      "cache_creation_input_tokens": 1984,
+      "output_tokens": 862,
+      "thinking_tokens": 700
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 208976,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 116238,
+      "cache_creation_input_tokens": 1984,
+      "output_tokens": 862,
+      "thinking_tokens": 700
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 209568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01NGZSm3wbV5LWKY4dFzP3HC",
+      "tool_input": {
+        "command": "ls",
+        "description": "Survey Projects folder and git identity"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 209568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 116238,
+      "cache_creation_input_tokens": 1984,
+      "output_tokens": 862,
+      "thinking_tokens": 700
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 211280,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01NGZSm3wbV5LWKY4dFzP3HC",
+      "tool_response": "<redacted 311 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 220015,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 118222,
+      "cache_creation_input_tokens": 1041,
+      "output_tokens": 824,
+      "thinking_tokens": 543
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 222103,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01PHWrfSiLDkGfVDEUvbGYBo",
+      "tool_input": {
+        "command": "if",
+        "description": "Stop dev server and relocate project"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 222103,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 118222,
+      "cache_creation_input_tokens": 1041,
+      "output_tokens": 824,
+      "thinking_tokens": 543
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 226648,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01PHWrfSiLDkGfVDEUvbGYBo",
+      "tool_response": "<redacted 305 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 231989,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 119263,
+      "cache_creation_input_tokens": 993,
+      "output_tokens": 419,
+      "thinking_tokens": 217
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 233145,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01MVbcDr19jfLLDPd6CvEPwe",
+      "tool_input": {
+        "command": "cd",
+        "description": "Relocate project after leaving directory"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 233145,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 119263,
+      "cache_creation_input_tokens": 993,
+      "output_tokens": 419,
+      "thinking_tokens": 217
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 235448,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01MVbcDr19jfLLDPd6CvEPwe",
+      "tool_response": "<redacted 329 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 237796,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 120256,
+      "cache_creation_input_tokens": 603,
+      "output_tokens": 276,
+      "thinking_tokens": 39
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 239127,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01CSLHdrRhvrubCi3hPMB74G",
+      "tool_input": {
+        "command": "Get-CimInstance",
+        "description": "List node/wrangler processes"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 239127,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 120256,
+      "cache_creation_input_tokens": 603,
+      "output_tokens": 276,
+      "thinking_tokens": 39
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 241873,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01CSLHdrRhvrubCi3hPMB74G",
+      "tool_response": "<redacted 9727 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 247239,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 120859,
+      "cache_creation_input_tokens": 5415,
+      "output_tokens": 548,
+      "thinking_tokens": 286
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 249425,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01CRYAaqZxCbGG2pFqK6yMKc",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Check for junction/symlink on the Codex work dir"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 249425,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 120859,
+      "cache_creation_input_tokens": 5415,
+      "output_tokens": 548,
+      "thinking_tokens": 286
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 251311,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01CRYAaqZxCbGG2pFqK6yMKc",
+      "tool_response": "<redacted 371 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 254922,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 126274,
+      "cache_creation_input_tokens": 750,
+      "output_tokens": 578,
+      "thinking_tokens": 161
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 255636,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 126274,
+      "cache_creation_input_tokens": 750,
+      "output_tokens": 578,
+      "thinking_tokens": 161
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 258763,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01JTGH69yMESfnY3jsm3R5ar",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Copy project to Projects folder, excluding build artifacts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 258763,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 126274,
+      "cache_creation_input_tokens": 750,
+      "output_tokens": 578,
+      "thinking_tokens": 161
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 260802,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01JTGH69yMESfnY3jsm3R5ar",
+      "tool_error": "<redacted 633 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 263888,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127024,
+      "cache_creation_input_tokens": 844,
+      "output_tokens": 545,
+      "thinking_tokens": 124
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 263891,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127024,
+      "cache_creation_input_tokens": 844,
+      "output_tokens": 545,
+      "thinking_tokens": 124
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 268160,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_014JbQiJtaivNXv5iWDQzYA2",
+      "tool_input": {
+        "command": "cd",
+        "description": "Init git and commit baseline"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 268160,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127024,
+      "cache_creation_input_tokens": 844,
+      "output_tokens": 545,
+      "thinking_tokens": 124
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 270704,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_014JbQiJtaivNXv5iWDQzYA2",
+      "tool_response": "<redacted 9878 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 276536,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127868,
+      "cache_creation_input_tokens": 4392,
+      "output_tokens": 551,
+      "thinking_tokens": 338
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 277241,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127868,
+      "cache_creation_input_tokens": 4392,
+      "output_tokens": 551,
+      "thinking_tokens": 338
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 278249,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01HAFSG6fSzP95zKuajNNfzW",
+      "tool_input": {
+        "command": "cd",
+        "description": "Install dependencies in new location"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 278249,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 127868,
+      "cache_creation_input_tokens": 4392,
+      "output_tokens": 551,
+      "thinking_tokens": 338
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 280026,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01HAFSG6fSzP95zKuajNNfzW",
+      "tool_response": "<redacted 497 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 286627,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 132260,
+      "cache_creation_input_tokens": 782,
+      "output_tokens": 503,
+      "thinking_tokens": 346
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 287703,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Skill",
+      "tool_use_id": "toolu_01UW2Wkc3x4LywXzDv6Hzfc2",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 287703,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 132260,
+      "cache_creation_input_tokens": 782,
+      "output_tokens": 503,
+      "thinking_tokens": 346
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 287735,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Skill",
+      "tool_use_id": "toolu_01UW2Wkc3x4LywXzDv6Hzfc2",
+      "tool_response": "<redacted 33 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 294860,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 133042,
+      "cache_creation_input_tokens": 9997,
+      "output_tokens": 484,
+      "thinking_tokens": 380
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 295182,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ToolSearch",
+      "tool_use_id": "toolu_01RWWeFmLbi73hax4cpsCFst",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 295182,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 133042,
+      "cache_creation_input_tokens": 9997,
+      "output_tokens": 484,
+      "thinking_tokens": 380
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 295193,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ToolSearch",
+      "tool_use_id": "toolu_01RWWeFmLbi73hax4cpsCFst",
+      "tool_response": "<redacted 0 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 296499,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "EnterPlanMode",
+      "tool_use_id": "toolu_018uVzD3jcCEaYas5WwMyq2c",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 296499,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 143039,
+      "cache_creation_input_tokens": 3696,
+      "output_tokens": 31,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 296514,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "EnterPlanMode",
+      "tool_use_id": "toolu_018uVzD3jcCEaYas5WwMyq2c",
+      "tool_response": "<redacted 581 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 304428,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 146735,
+      "cache_creation_input_tokens": 2017,
+      "output_tokens": 753,
+      "thinking_tokens": 437
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 305132,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 146735,
+      "cache_creation_input_tokens": 2017,
+      "output_tokens": 753,
+      "thinking_tokens": 437
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 307695,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "WebFetch",
+      "tool_use_id": "toolu_015nfrpXD43sepTyMQbKpX8m",
+      "tool_input": {
+        "url": "<redacted>"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 307695,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 146735,
+      "cache_creation_input_tokens": 2017,
+      "output_tokens": 753,
+      "thinking_tokens": 437
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 307969,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "WebFetch",
+      "tool_use_id": "toolu_015nfrpXD43sepTyMQbKpX8m",
+      "tool_response": "<redacted 963 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 309550,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 148752,
+      "cache_creation_input_tokens": 1513,
+      "output_tokens": 289,
+      "thinking_tokens": 25
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 311062,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "WebFetch",
+      "tool_use_id": "toolu_014Zx6DrAdxcutwzioZtEAMe",
+      "tool_input": {
+        "url": "<redacted>"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 311062,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 148752,
+      "cache_creation_input_tokens": 1513,
+      "output_tokens": 289,
+      "thinking_tokens": 25
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 341480,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "WebFetch",
+      "tool_use_id": "toolu_014Zx6DrAdxcutwzioZtEAMe",
+      "tool_response": "<redacted 9640 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 379500,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 150265,
+      "cache_creation_input_tokens": 4555,
+      "output_tokens": 4521,
+      "thinking_tokens": 2631
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 383041,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 150265,
+      "cache_creation_input_tokens": 4555,
+      "output_tokens": 4521,
+      "thinking_tokens": 2631
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 407291,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Agent",
+      "tool_use_id": "toolu_019DG4TgvnnS7FzakDiRSWxb",
+      "tool_input": {
+        "description": "Design office renderer architecture",
+        "subagent_type": "Plan"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 407291,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 150265,
+      "cache_creation_input_tokens": 4555,
+      "output_tokens": 4521,
+      "thinking_tokens": 2631
+    },
+    {
+      "hook_event_name": "SubagentStart",
+      "occurred_at": 407291,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "description": "Design office renderer architecture",
+      "spawn_depth": 1
+    },
+    {
+      "hook_event_name": "UserPromptSubmit",
+      "occurred_at": 407299,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "prompt": "<redacted 4395 chars>"
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 407318,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Agent",
+      "tool_use_id": "toolu_019DG4TgvnnS7FzakDiRSWxb",
+      "tool_response": "<redacted 1107 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 409804,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 46338,
+      "output_tokens": 5,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 410476,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 154820,
+      "cache_creation_input_tokens": 4945,
+      "output_tokens": 437,
+      "thinking_tokens": 99
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 410478,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 154820,
+      "cache_creation_input_tokens": 4945,
+      "output_tokens": 437,
+      "thinking_tokens": 99
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 411530,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017YVFoqSjQLxdzxheoR8bNu",
+      "tool_input": {
+        "command": "ls",
+        "description": "List candidate project directories"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 411530,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 46338,
+      "output_tokens": 5,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 411881,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017YVFoqSjQLxdzxheoR8bNu",
+      "tool_response": "<redacted 2775 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 412981,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Bkpjqx1PQc6onad13UGZ98",
+      "tool_input": {
+        "command": "-t",
+        "description": "Verify transcript carries token usage"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 412981,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 154820,
+      "cache_creation_input_tokens": 4945,
+      "output_tokens": 437,
+      "thinking_tokens": 99
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 413449,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Bkpjqx1PQc6onad13UGZ98",
+      "tool_response": "<redacted 1037 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 413551,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 46338,
+      "cache_creation_input_tokens": 6899,
+      "output_tokens": 1,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 414943,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0117g14y9nsgSTWWhbakxVs5",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read package.json and file tree"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 414943,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 46338,
+      "cache_creation_input_tokens": 6899,
+      "output_tokens": 1,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 415296,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0117g14y9nsgSTWWhbakxVs5",
+      "tool_response": "<redacted 3360 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 416925,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01A2FzZMSn5H4aWj4K6y4tiB",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 416925,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 53237,
+      "cache_creation_input_tokens": 1928,
+      "output_tokens": 17,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 416938,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01A2FzZMSn5H4aWj4K6y4tiB",
+      "tool_response": "<redacted 9763 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 418407,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01BFjChyE5Rjkv1ScfvT2dJJ",
+      "tool_input": {
+        "file": "lead-engine.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 418407,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 55165,
+      "cache_creation_input_tokens": 4395,
+      "output_tokens": 14,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 418419,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01BFjChyE5Rjkv1ScfvT2dJJ",
+      "tool_response": "<redacted 9509 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 419790,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 59560,
+      "cache_creation_input_tokens": 4368,
+      "output_tokens": 4,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 420928,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01331zoMpvZ7Q83EsV2pVMcP",
+      "tool_input": {
+        "command": "cd",
+        "description": "Count lines of key files"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 420928,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 59560,
+      "cache_creation_input_tokens": 4368,
+      "output_tokens": 172,
+      "thinking_tokens": 21
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 421165,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01331zoMpvZ7Q83EsV2pVMcP",
+      "tool_response": "<redacted 165 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 422692,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01GyMUTAsbpJ2A9cS4hEhpHL",
+      "tool_input": {
+        "file": "page.tsx"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 422692,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 63928,
+      "cache_creation_input_tokens": 283,
+      "output_tokens": 73,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 422838,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01GyMUTAsbpJ2A9cS4hEhpHL",
+      "tool_response": "<redacted 27465 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 424414,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 64211,
+      "cache_creation_input_tokens": 11510,
+      "output_tokens": 4,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 425530,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Sg55aLeMez92RZ8TUTafn8",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read office.css and globals.css"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 425530,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 64211,
+      "cache_creation_input_tokens": 11510,
+      "output_tokens": 4,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 425889,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Sg55aLeMez92RZ8TUTafn8",
+      "tool_response": "<redacted 6180 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 429494,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CjQn1ChNGCRei5WMogGLj5",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract desk-label and office-map CSS rules"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 429494,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 75721,
+      "cache_creation_input_tokens": 3042,
+      "output_tokens": 224,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 429931,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CjQn1ChNGCRei5WMogGLj5",
+      "tool_response": "<redacted 1388 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 431996,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 78763,
+      "cache_creation_input_tokens": 911,
+      "output_tokens": 8,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 433123,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01C83FtndeCZLfJ5o3MtWW5o",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read build config, layout, api route"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 433123,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 78763,
+      "cache_creation_input_tokens": 911,
+      "output_tokens": 251,
+      "thinking_tokens": 31
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 433608,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01C83FtndeCZLfJ5o3MtWW5o",
+      "tool_response": "<redacted 9293 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 434064,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 159765,
+      "cache_creation_input_tokens": 961,
+      "output_tokens": 1698,
+      "thinking_tokens": 1337
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 436181,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 159765,
+      "cache_creation_input_tokens": 961,
+      "output_tokens": 1698,
+      "thinking_tokens": 1337
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 436396,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0141UY7Nvc1Xg26QSuMQXk3V",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read README, openai config, tests, git log"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 436396,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 79674,
+      "cache_creation_input_tokens": 4150,
+      "output_tokens": 208,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 436960,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0141UY7Nvc1Xg26QSuMQXk3V",
+      "tool_response": "<redacted 8835 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 437395,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01ChjLYZi88gGb1oGLaBkvRT",
+      "tool_input": {
+        "command": "echo",
+        "description": "Read O6 brand palette and design playbook memories"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 437395,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 159765,
+      "cache_creation_input_tokens": 961,
+      "output_tokens": 1698,
+      "thinking_tokens": 1337
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 437769,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01ChjLYZi88gGb1oGLaBkvRT",
+      "tool_response": "<redacted 4740 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 453700,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 160726,
+      "cache_creation_input_tokens": 3696,
+      "output_tokens": 6352,
+      "thinking_tokens": 1020
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 456596,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 160726,
+      "cache_creation_input_tokens": 3696,
+      "output_tokens": 6352,
+      "thinking_tokens": 1020
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 523150,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01NFnvuAywC2cnV3KLoPExPC",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 523150,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 160726,
+      "cache_creation_input_tokens": 3696,
+      "output_tokens": 6352,
+      "thinking_tokens": 1020
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 523176,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01NFnvuAywC2cnV3KLoPExPC",
+      "tool_response": "<redacted 153 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 525740,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 164422,
+      "cache_creation_input_tokens": 6433,
+      "output_tokens": 720,
+      "thinking_tokens": 88
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 533471,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "AskUserQuestion",
+      "tool_use_id": "toolu_012oFoAnQiFGx21ERUMvsgR8",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 533471,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 164422,
+      "cache_creation_input_tokens": 6433,
+      "output_tokens": 720,
+      "thinking_tokens": 88
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 583681,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "AskUserQuestion",
+      "tool_use_id": "toolu_012oFoAnQiFGx21ERUMvsgR8",
+      "tool_response": "<redacted 340 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 587852,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 170855,
+      "cache_creation_input_tokens": 887,
+      "output_tokens": 627,
+      "thinking_tokens": 196
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 588570,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 170855,
+      "cache_creation_input_tokens": 887,
+      "output_tokens": 627,
+      "thinking_tokens": 196
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 592538,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01XpcF39e1zuuiojnyktDgzj",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 592538,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 170855,
+      "cache_creation_input_tokens": 887,
+      "output_tokens": 627,
+      "thinking_tokens": 196
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 592557,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01XpcF39e1zuuiojnyktDgzj",
+      "tool_response": "<redacted 163 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 596802,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01RqbMN62V4e6EEk3e1UR29R",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 596802,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 171742,
+      "cache_creation_input_tokens": 735,
+      "output_tokens": 326,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 596818,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01RqbMN62V4e6EEk3e1UR29R",
+      "tool_response": "<redacted 163 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 605638,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 172477,
+      "cache_creation_input_tokens": 410,
+      "output_tokens": 906,
+      "thinking_tokens": 478
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 609338,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01QSXJpMoREacvPpGPrW2Sjj",
+      "tool_input": {
+        "command": "-t",
+        "description": "Inspect subagent transcript line structure"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 609338,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 172477,
+      "cache_creation_input_tokens": 410,
+      "output_tokens": 906,
+      "thinking_tokens": 478
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 610290,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01QSXJpMoREacvPpGPrW2Sjj",
+      "tool_response": "<redacted 239 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 614144,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 172887,
+      "cache_creation_input_tokens": 1046,
+      "output_tokens": 545,
+      "thinking_tokens": 175
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 616654,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01KcyEzoouGpikgaxwcbTrCS",
+      "tool_input": {
+        "command": "-l",
+        "description": "Find and inspect a subagent transcript line"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 616654,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 172887,
+      "cache_creation_input_tokens": 1046,
+      "output_tokens": 545,
+      "thinking_tokens": 175
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 618326,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01KcyEzoouGpikgaxwcbTrCS",
+      "tool_error": "<redacted 28 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 624768,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 173933,
+      "cache_creation_input_tokens": 591,
+      "output_tokens": 734,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 625892,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 173933,
+      "cache_creation_input_tokens": 591,
+      "output_tokens": 734,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 629812,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017YyYB1uCBk1Jy5HQb7cX86",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 629812,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 173933,
+      "cache_creation_input_tokens": 591,
+      "output_tokens": 734,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 629833,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017YyYB1uCBk1Jy5HQb7cX86",
+      "tool_response": "<redacted 163 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 631686,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 174524,
+      "cache_creation_input_tokens": 818,
+      "output_tokens": 51,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 631737,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ListAgents",
+      "tool_use_id": "toolu_01QBVPPvaVAuC7wmydBNJKkv",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 631737,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 174524,
+      "cache_creation_input_tokens": 818,
+      "output_tokens": 51,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 631895,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ListAgents",
+      "tool_use_id": "toolu_01QBVPPvaVAuC7wmydBNJKkv",
+      "tool_response": "<redacted 2387 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 637921,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 175342,
+      "cache_creation_input_tokens": 1225,
+      "output_tokens": 889,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 645133,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 175342,
+      "cache_creation_input_tokens": 1225,
+      "output_tokens": 889,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 645154,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ExitPlanMode",
+      "tool_use_id": "toolu_01DE2aQP7WYQAc3g3QboMd9a",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 645154,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 175342,
+      "cache_creation_input_tokens": 1225,
+      "output_tokens": 889,
+      "thinking_tokens": 295
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 649410,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "ExitPlanMode",
+      "tool_use_id": "toolu_01DE2aQP7WYQAc3g3QboMd9a",
+      "tool_response": "<redacted 14789 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 655515,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 176567,
+      "cache_creation_input_tokens": 6728,
+      "output_tokens": 501,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 656227,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 176567,
+      "cache_creation_input_tokens": 6728,
+      "output_tokens": 501,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 656392,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__ccd_session__mark_chapter",
+      "tool_use_id": "toolu_0153tGAavyhyEBrwjxG1ph3f",
+      "tool_input": {}
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 656392,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 176567,
+      "cache_creation_input_tokens": 6728,
+      "output_tokens": 501,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 656400,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "mcp__ccd_session__mark_chapter",
+      "tool_use_id": "toolu_0153tGAavyhyEBrwjxG1ph3f",
+      "tool_response": "<redacted 74 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 659368,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01HQXLZEqFgoWWR7iXvXLEya",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check gh auth and baseline test suite"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 659368,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 183295,
+      "cache_creation_input_tokens": 554,
+      "output_tokens": 206,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 660843,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 83824,
+      "cache_creation_input_tokens": 3682,
+      "output_tokens": 3,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 663491,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01HQXLZEqFgoWWR7iXvXLEya",
+      "tool_response": "<redacted 735 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 683309,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 183849,
+      "cache_creation_input_tokens": 586,
+      "output_tokens": 1639,
+      "thinking_tokens": 1244
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 685131,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 183849,
+      "cache_creation_input_tokens": 586,
+      "output_tokens": 1639,
+      "thinking_tokens": 1244
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 687419,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01VvZw5PAkL6u3tatxc5ZXee",
+      "tool_input": {
+        "command": "cd",
+        "description": "Copy approved plan into repo as PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 687419,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 183849,
+      "cache_creation_input_tokens": 586,
+      "output_tokens": 1639,
+      "thinking_tokens": 1244
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 689291,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01VvZw5PAkL6u3tatxc5ZXee",
+      "tool_response": "<redacted 316 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 694179,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 184435,
+      "cache_creation_input_tokens": 1818,
+      "output_tokens": 6747,
+      "thinking_tokens": 313
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 771812,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01M4euY1xsqjby7EyLUh2gvE",
+      "tool_input": {
+        "command": "cd",
+        "description": "Generate task files and master index"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 771812,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 184435,
+      "cache_creation_input_tokens": 1818,
+      "output_tokens": 6747,
+      "thinking_tokens": 313
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 773688,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01M4euY1xsqjby7EyLUh2gvE",
+      "tool_error": "<redacted 85 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 778785,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 83824,
+      "cache_creation_input_tokens": 3682,
+      "output_tokens": 3,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "SubagentStop",
+      "occurred_at": 778785,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "agent_id": "a29876359c43e3bb5",
+      "agent_type": "Plan"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 780402,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 186253,
+      "cache_creation_input_tokens": 6821,
+      "output_tokens": 7106,
+      "thinking_tokens": 412
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 781099,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 186253,
+      "cache_creation_input_tokens": 6821,
+      "output_tokens": 7106,
+      "thinking_tokens": 412
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 839561,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_0129aFEAonDFhH3t9X4nzvus",
+      "tool_input": {
+        "file": "gen-tasks.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 839561,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 186253,
+      "cache_creation_input_tokens": 6821,
+      "output_tokens": 7106,
+      "thinking_tokens": 412
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 839594,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_0129aFEAonDFhH3t9X4nzvus",
+      "tool_response": "<redacted 256 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 874319,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 193074,
+      "cache_creation_input_tokens": 17681,
+      "output_tokens": 2560,
+      "thinking_tokens": 2257
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 876403,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 193074,
+      "cache_creation_input_tokens": 17681,
+      "output_tokens": 2560,
+      "thinking_tokens": 2257
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 878189,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0163RhzHYoD31fLvwG5EL4mi",
+      "tool_input": {
+        "command": "cd",
+        "description": "Generate task files and index"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 878189,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 193074,
+      "cache_creation_input_tokens": 17681,
+      "output_tokens": 2560,
+      "thinking_tokens": 2257
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 880828,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_0163RhzHYoD31fLvwG5EL4mi",
+      "tool_response": "<redacted 319 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 886806,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 210755,
+      "cache_creation_input_tokens": 2737,
+      "output_tokens": 3849,
+      "thinking_tokens": 312
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 887164,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 210755,
+      "cache_creation_input_tokens": 2737,
+      "output_tokens": 3849,
+      "thinking_tokens": 312
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 929640,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01RoBbDjBtU29MS1DrDbTf3Q",
+      "tool_input": {
+        "file": "plan-amendment.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 929640,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 210755,
+      "cache_creation_input_tokens": 2737,
+      "output_tokens": 3849,
+      "thinking_tokens": 312
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 929668,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01RoBbDjBtU29MS1DrDbTf3Q",
+      "tool_response": "<redacted 260 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 933107,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_011MgZYBQqREzDWrPJRuQL5n",
+      "tool_input": {
+        "command": "cd",
+        "description": "Append architecture amendments to PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 933107,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 213492,
+      "cache_creation_input_tokens": 3995,
+      "output_tokens": 257,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 935740,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_011MgZYBQqREzDWrPJRuQL5n",
+      "tool_response": "<redacted 498 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 939468,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 217487,
+      "cache_creation_input_tokens": 479,
+      "output_tokens": 3496,
+      "thinking_tokens": 145
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 976326,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01QXd2ojwFvwRBZm8JCiuUL1",
+      "tool_input": {
+        "file": "patch-tasks.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 976326,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 217487,
+      "cache_creation_input_tokens": 479,
+      "output_tokens": 3496,
+      "thinking_tokens": 145
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 976347,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01QXd2ojwFvwRBZm8JCiuUL1",
+      "tool_response": "<redacted 258 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 979407,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CW6mtFAG557mHjyDFG1G8n",
+      "tool_input": {
+        "command": "cd",
+        "description": "Patch task files with review amendments"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 979407,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 217966,
+      "cache_creation_input_tokens": 3644,
+      "output_tokens": 195,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 981412,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01CW6mtFAG557mHjyDFG1G8n",
+      "tool_response": "<redacted 276 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 983303,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 221610,
+      "cache_creation_input_tokens": 349,
+      "output_tokens": 2095,
+      "thinking_tokens": 42
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1008568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01TBe7LivyBVb7wfAhSvvF5B",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1008568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 221610,
+      "cache_creation_input_tokens": 349,
+      "output_tokens": 2095,
+      "thinking_tokens": 42
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1009814,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01TBe7LivyBVb7wfAhSvvF5B",
+      "tool_response": "<redacted 143 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1015877,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017n6fMQxrxYPJRPe3WSVPou",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit plan, tasks, and log"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1015877,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 221959,
+      "cache_creation_input_tokens": 2173,
+      "output_tokens": 442,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1017946,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017n6fMQxrxYPJRPe3WSVPou",
+      "tool_response": "<redacted 499 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1023957,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224132,
+      "cache_creation_input_tokens": 712,
+      "output_tokens": 1087,
+      "thinking_tokens": 307
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1030355,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224132,
+      "cache_creation_input_tokens": 712,
+      "output_tokens": 1087,
+      "thinking_tokens": 307
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1032217,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01TJHigNGJqPDe6Tc1S1vHw1",
+      "tool_input": {
+        "command": "cd",
+        "description": "Branch for T001 and read existing types"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1032217,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224132,
+      "cache_creation_input_tokens": 712,
+      "output_tokens": 1087,
+      "thinking_tokens": 307
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1034303,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01TJHigNGJqPDe6Tc1S1vHw1",
+      "tool_response": "<redacted 1944 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1073509,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224844,
+      "cache_creation_input_tokens": 1921,
+      "output_tokens": 3342,
+      "thinking_tokens": 3150
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1074275,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224844,
+      "cache_creation_input_tokens": 1921,
+      "output_tokens": 3342,
+      "thinking_tokens": 3150
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1075121,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_019ev8fX23jNjC2CxDLEAyn6",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check test import style and tsconfig"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1075121,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 224844,
+      "cache_creation_input_tokens": 1921,
+      "output_tokens": 3342,
+      "thinking_tokens": 3150
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1077015,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_019ev8fX23jNjC2CxDLEAyn6",
+      "tool_response": "<redacted 2044 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1083510,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 226765,
+      "cache_creation_input_tokens": 4386,
+      "output_tokens": 4927,
+      "thinking_tokens": 370
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1084216,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 226765,
+      "cache_creation_input_tokens": 4386,
+      "output_tokens": 4927,
+      "thinking_tokens": 370
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1134382,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01FbVxdTxDjs81L8UZh9DjMD",
+      "tool_input": {
+        "file": "types.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1134382,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 226765,
+      "cache_creation_input_tokens": 4386,
+      "output_tokens": 4927,
+      "thinking_tokens": 370
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1136068,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01FbVxdTxDjs81L8UZh9DjMD",
+      "tool_response": "<redacted 159 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1137910,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 231151,
+      "cache_creation_input_tokens": 5084,
+      "output_tokens": 4454,
+      "thinking_tokens": 55
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1182726,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01WbL2zHrKjuZAxLZrGE5J4L",
+      "tool_input": {
+        "file": "events.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1182726,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 231151,
+      "cache_creation_input_tokens": 5084,
+      "output_tokens": 4454,
+      "thinking_tokens": 55
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1184421,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01WbL2zHrKjuZAxLZrGE5J4L",
+      "tool_response": "<redacted 160 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1200830,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 236235,
+      "cache_creation_input_tokens": 4539,
+      "output_tokens": 6517,
+      "thinking_tokens": 1084
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1254415,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01R6XvDsTheUnxRSkqmhxPTn",
+      "tool_input": {
+        "file": "plan.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1254415,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 236235,
+      "cache_creation_input_tokens": 4539,
+      "output_tokens": 6517,
+      "thinking_tokens": 1084
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1256308,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01R6XvDsTheUnxRSkqmhxPTn",
+      "tool_response": "<redacted 158 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1258749,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 240774,
+      "cache_creation_input_tokens": 6600,
+      "output_tokens": 445,
+      "thinking_tokens": 81
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1261497,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01TzkrZdPBoGwkN6Kavija7o",
+      "tool_input": {
+        "command": "cd",
+        "description": "Trim unused type imports"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1261497,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 240774,
+      "cache_creation_input_tokens": 6600,
+      "output_tokens": 445,
+      "thinking_tokens": 81
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 1383029,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01TzkrZdPBoGwkN6Kavija7o",
+      "tool_error": "<redacted 43 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1385529,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 247374,
+      "cache_creation_input_tokens": 499,
+      "output_tokens": 242,
+      "thinking_tokens": 98
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1386164,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 247374,
+      "cache_creation_input_tokens": 499,
+      "output_tokens": 242,
+      "thinking_tokens": 98
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1386555,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01P255st1tQVE4qwNT1vmbjr",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check events.ts import block state"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1386555,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 247374,
+      "cache_creation_input_tokens": 499,
+      "output_tokens": 242,
+      "thinking_tokens": 98
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1388213,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01P255st1tQVE4qwNT1vmbjr",
+      "tool_response": "<redacted 183 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1391132,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01Vr4yau9ZjSsUBJgqWbmsNy",
+      "tool_input": {
+        "file": "events.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1391132,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 247873,
+      "cache_creation_input_tokens": 359,
+      "output_tokens": 230,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1392764,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01Vr4yau9ZjSsUBJgqWbmsNy",
+      "tool_response": "<redacted 170 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1396559,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01S4HJGkzsU93pA148nZRUb8",
+      "tool_input": {
+        "file": "types.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1396559,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 248232,
+      "cache_creation_input_tokens": 318,
+      "output_tokens": 299,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1398104,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01S4HJGkzsU93pA148nZRUb8",
+      "tool_response": "<redacted 169 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1430352,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 248550,
+      "cache_creation_input_tokens": 387,
+      "output_tokens": 2856,
+      "thinking_tokens": 2332
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1431048,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 248550,
+      "cache_creation_input_tokens": 387,
+      "output_tokens": 2856,
+      "thinking_tokens": 2332
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1434855,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017fG1em64RRDzM5mDwnu7pi",
+      "tool_input": {
+        "file": "plan.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1434855,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 248550,
+      "cache_creation_input_tokens": 387,
+      "output_tokens": 2856,
+      "thinking_tokens": 2332
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1436483,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017fG1em64RRDzM5mDwnu7pi",
+      "tool_response": "<redacted 168 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1476111,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01Xmy2v4Piw2E1zB6DQhDRuN",
+      "tool_input": {
+        "file": "lead-reactivation.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1476111,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 248937,
+      "cache_creation_input_tokens": 2945,
+      "output_tokens": 3982,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1477709,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01Xmy2v4Piw2E1zB6DQhDRuN",
+      "tool_response": "<redacted 165 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1495696,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 251882,
+      "cache_creation_input_tokens": 4072,
+      "output_tokens": 1634,
+      "thinking_tokens": 1298
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1497102,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 251882,
+      "cache_creation_input_tokens": 4072,
+      "output_tokens": 1634,
+      "thinking_tokens": 1298
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1498906,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01DhPKFxmUYsmxhrhsFtJT1a",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1498906,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 251882,
+      "cache_creation_input_tokens": 4072,
+      "output_tokens": 1634,
+      "thinking_tokens": 1298
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 1498911,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01DhPKFxmUYsmxhrhsFtJT1a",
+      "tool_error": "<redacted 96 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1500591,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01LssmMpt8uwPyZ4BN3HJbcx",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1500591,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 255954,
+      "cache_creation_input_tokens": 1701,
+      "output_tokens": 73,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1500606,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01LssmMpt8uwPyZ4BN3HJbcx",
+      "tool_response": "<redacted 755 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1503268,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01Frcsr4CCHzFPFA79R9Ln3i",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1503268,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 257655,
+      "cache_creation_input_tokens": 500,
+      "output_tokens": 187,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1505392,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01Frcsr4CCHzFPFA79R9Ln3i",
+      "tool_response": "<redacted 153 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1565789,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01WY8Pyd4zD4uGL7SHT9UGmC",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1565789,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 258155,
+      "cache_creation_input_tokens": 269,
+      "output_tokens": 6385,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1568154,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01WY8Pyd4zD4uGL7SHT9UGmC",
+      "tool_response": "<redacted 160 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1570276,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_015a26UXcmR2jNRVSexnvK3U",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run the new contract tests"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1570276,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 258424,
+      "cache_creation_input_tokens": 6470,
+      "output_tokens": 131,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1572495,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_015a26UXcmR2jNRVSexnvK3U",
+      "tool_response": "<redacted 1734 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1576328,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 264894,
+      "cache_creation_input_tokens": 964,
+      "output_tokens": 1263,
+      "thinking_tokens": 172
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1577444,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 264894,
+      "cache_creation_input_tokens": 964,
+      "output_tokens": 1263,
+      "thinking_tokens": 172
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1586734,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01F2pbqQxRiZ8sUZNBZkvUW5",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1586734,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 264894,
+      "cache_creation_input_tokens": 964,
+      "output_tokens": 1263,
+      "thinking_tokens": 172
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1588315,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01F2pbqQxRiZ8sUZNBZkvUW5",
+      "tool_response": "<redacted 170 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1590884,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 265858,
+      "cache_creation_input_tokens": 1351,
+      "output_tokens": 231,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1592217,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AVRZbSuWbKpnfSRXoEZmpg",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run tests, typecheck and lint"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1592217,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 265858,
+      "cache_creation_input_tokens": 1351,
+      "output_tokens": 231,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1604885,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AVRZbSuWbKpnfSRXoEZmpg",
+      "tool_response": "<redacted 2188 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1609393,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 267209,
+      "cache_creation_input_tokens": 1333,
+      "output_tokens": 1003,
+      "thinking_tokens": 304
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1610097,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 267209,
+      "cache_creation_input_tokens": 1333,
+      "output_tokens": 1003,
+      "thinking_tokens": 304
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1615085,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_011YQdmwfvTKmkkwaHh5ejTY",
+      "tool_input": {
+        "file": "lead-reactivation.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1615085,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 267209,
+      "cache_creation_input_tokens": 1333,
+      "output_tokens": 1003,
+      "thinking_tokens": 304
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1616548,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_011YQdmwfvTKmkkwaHh5ejTY",
+      "tool_response": "<redacted 175 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1620756,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01WmGdCe8V6DjDyvAhBY5obx",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify typecheck and test whether lint failure predates my changes"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1620756,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 268542,
+      "cache_creation_input_tokens": 1096,
+      "output_tokens": 306,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1629515,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01WmGdCe8V6DjDyvAhBY5obx",
+      "tool_response": "<redacted 867 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1634970,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 269638,
+      "cache_creation_input_tokens": 812,
+      "output_tokens": 604,
+      "thinking_tokens": 305
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1636384,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 269638,
+      "cache_creation_input_tokens": 812,
+      "output_tokens": 604,
+      "thinking_tokens": 305
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1637489,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01D6vPEPtj33kFjJ7rvpEkSP",
+      "tool_input": {
+        "command": "cd",
+        "description": "Diagnose the tsgolint binary failure"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1637489,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 269638,
+      "cache_creation_input_tokens": 812,
+      "output_tokens": 604,
+      "thinking_tokens": 305
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1639978,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01D6vPEPtj33kFjJ7rvpEkSP",
+      "tool_response": "<redacted 1925 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1645260,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 270450,
+      "cache_creation_input_tokens": 1550,
+      "output_tokens": 568,
+      "thinking_tokens": 273
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1647884,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01VNYhd9sdYuDAUcshL43KM1",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Test tsgolint execution and check mark-of-the-web"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1647884,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 270450,
+      "cache_creation_input_tokens": 1550,
+      "output_tokens": 568,
+      "thinking_tokens": 273
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1651210,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "PowerShell",
+      "tool_use_id": "toolu_01VNYhd9sdYuDAUcshL43KM1",
+      "tool_response": "<redacted 294 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1660187,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 272000,
+      "cache_creation_input_tokens": 738,
+      "output_tokens": 711,
+      "thinking_tokens": 498
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1660889,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 272000,
+      "cache_creation_input_tokens": 738,
+      "output_tokens": 711,
+      "thinking_tokens": 498
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1661901,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AekDFt9dkhpLAsBixkUzru",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find oxlint flag to disable type-aware linting"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1661901,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 272000,
+      "cache_creation_input_tokens": 738,
+      "output_tokens": 711,
+      "thinking_tokens": 498
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1664902,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AekDFt9dkhpLAsBixkUzru",
+      "tool_response": "<redacted 247 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1670063,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 272738,
+      "cache_creation_input_tokens": 821,
+      "output_tokens": 584,
+      "thinking_tokens": 271
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1672775,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Ku3hTUFsp9CvRN6GzkbWKD",
+      "tool_input": {
+        "command": "cd",
+        "description": "Try running oxlint without type-aware rules"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1672775,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 272738,
+      "cache_creation_input_tokens": 821,
+      "output_tokens": 584,
+      "thinking_tokens": 271
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1677023,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Ku3hTUFsp9CvRN6GzkbWKD",
+      "tool_response": "<redacted 435 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1684658,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 273559,
+      "cache_creation_input_tokens": 789,
+      "output_tokens": 698,
+      "thinking_tokens": 388
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1686707,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017NaXwuLYHDjo8UKzGjCHPG",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run oxlint without type-aware rules"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1686707,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 273559,
+      "cache_creation_input_tokens": 789,
+      "output_tokens": 698,
+      "thinking_tokens": 388
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1690095,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_017NaXwuLYHDjo8UKzGjCHPG",
+      "tool_response": "<redacted 7749 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1698223,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 274348,
+      "cache_creation_input_tokens": 3560,
+      "output_tokens": 947,
+      "thinking_tokens": 430
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1698986,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 274348,
+      "cache_creation_input_tokens": 3560,
+      "output_tokens": 947,
+      "thinking_tokens": 430
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1702614,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01RetRFkBDMwDH3iFjrKZ3t9",
+      "tool_input": {
+        "command": "cd",
+        "description": "Confirm new files lint clean and quantify pre-existing debt"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1702614,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 274348,
+      "cache_creation_input_tokens": 3560,
+      "output_tokens": 947,
+      "thinking_tokens": 430
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1706842,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01RetRFkBDMwDH3iFjrKZ3t9",
+      "tool_response": "<redacted 1218 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1709960,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 277908,
+      "cache_creation_input_tokens": 1433,
+      "output_tokens": 477,
+      "thinking_tokens": 126
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1709963,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 277908,
+      "cache_creation_input_tokens": 1433,
+      "output_tokens": 477,
+      "thinking_tokens": 126
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1712631,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017mPz8vfjUDpd8Z29dNYwyh",
+      "tool_input": {
+        "file": "plan.ts"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1712631,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 277908,
+      "cache_creation_input_tokens": 1433,
+      "output_tokens": 477,
+      "thinking_tokens": 126
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1714454,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_017mPz8vfjUDpd8Z29dNYwyh",
+      "tool_response": "<redacted 168 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1717078,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_011x5UbG8KKsdiiiBdAxQXXE",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1717078,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 279341,
+      "cache_creation_input_tokens": 566,
+      "output_tokens": 201,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1719486,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_011x5UbG8KKsdiiiBdAxQXXE",
+      "tool_response": "<redacted 170 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1724724,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01SriekMfF9M4PAXQSRTjQNZ",
+      "tool_input": {
+        "command": "cd",
+        "description": "Full verification gate for T001"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1724724,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 279907,
+      "cache_creation_input_tokens": 289,
+      "output_tokens": 476,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1739805,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01SriekMfF9M4PAXQSRTjQNZ",
+      "tool_response": "<redacted 486 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1743417,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 280196,
+      "cache_creation_input_tokens": 710,
+      "output_tokens": 918,
+      "thinking_tokens": 109
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1744128,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 280196,
+      "cache_creation_input_tokens": 710,
+      "output_tokens": 918,
+      "thinking_tokens": 109
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1752929,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01BBREEZM318iN2qnLgqaRmP",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1752929,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 280196,
+      "cache_creation_input_tokens": 710,
+      "output_tokens": 918,
+      "thinking_tokens": 109
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1754731,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01BBREEZM318iN2qnLgqaRmP",
+      "tool_response": "<redacted 153 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1765568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01LF2bc3TfqcmjsHfNms5QeZ",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit T001"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1765568,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 280906,
+      "cache_creation_input_tokens": 999,
+      "output_tokens": 799,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1767618,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01LF2bc3TfqcmjsHfNms5QeZ",
+      "tool_response": "<redacted 271 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1776240,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 281905,
+      "cache_creation_input_tokens": 941,
+      "output_tokens": 1101,
+      "thinking_tokens": 450
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1777652,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 281905,
+      "cache_creation_input_tokens": 941,
+      "output_tokens": 1101,
+      "thinking_tokens": 450
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1782825,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_018NQcQJAY8yhoCSCgnBHq4w",
+      "tool_input": {
+        "command": "echo",
+        "description": "Check whether subagent lines now exist in this transcript"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1782825,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 281905,
+      "cache_creation_input_tokens": 941,
+      "output_tokens": 1101,
+      "thinking_tokens": 450
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1784877,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_018NQcQJAY8yhoCSCgnBHq4w",
+      "tool_response": "<redacted 77 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1792083,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 282846,
+      "cache_creation_input_tokens": 1164,
+      "output_tokens": 1157,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1793498,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 282846,
+      "cache_creation_input_tokens": 1164,
+      "output_tokens": 1157,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1799254,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01N97rDfX9KH8wtDxN6G6bjJ",
+      "tool_input": {
+        "command": "ls",
+        "description": "Inspect subagent transcript structure and token totals"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1799254,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 282846,
+      "cache_creation_input_tokens": 1164,
+      "output_tokens": 1157,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 1801569,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01N97rDfX9KH8wtDxN6G6bjJ",
+      "tool_error": "<redacted 1323 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1809945,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 284010,
+      "cache_creation_input_tokens": 1897,
+      "output_tokens": 752,
+      "thinking_tokens": 405
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1812924,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_014VVTLhqkbfnkEHtNmJr6PJ",
+      "tool_input": {
+        "command": "echo",
+        "description": "Search for subagent transcript data anywhere on disk"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1812924,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 284010,
+      "cache_creation_input_tokens": 1897,
+      "output_tokens": 752,
+      "thinking_tokens": 405
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1828747,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_014VVTLhqkbfnkEHtNmJr6PJ",
+      "tool_response": "<redacted 2330 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1835192,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 285907,
+      "cache_creation_input_tokens": 2138,
+      "output_tokens": 719,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1836208,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 285907,
+      "cache_creation_input_tokens": 2138,
+      "output_tokens": 719,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1839323,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_013zRAw2giB6jyXKyZUxur69",
+      "tool_input": {
+        "command": "echo",
+        "description": "Locate this session's subagent transcript"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1839323,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 285907,
+      "cache_creation_input_tokens": 2138,
+      "output_tokens": 719,
+      "thinking_tokens": 357
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1841421,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_013zRAw2giB6jyXKyZUxur69",
+      "tool_response": "<redacted 587 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1845480,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 288045,
+      "cache_creation_input_tokens": 1073,
+      "output_tokens": 930,
+      "thinking_tokens": 169
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1851266,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01EMbw3D2B4BMQvMLc82onp3",
+      "tool_input": {
+        "command": "echo",
+        "description": "Verify per-subagent usage attribution"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1851266,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 288045,
+      "cache_creation_input_tokens": 1073,
+      "output_tokens": 930,
+      "thinking_tokens": 169
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1853295,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01EMbw3D2B4BMQvMLc82onp3",
+      "tool_response": "<redacted 456 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1867102,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 289118,
+      "cache_creation_input_tokens": 1169,
+      "output_tokens": 1692,
+      "thinking_tokens": 875
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1867456,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 289118,
+      "cache_creation_input_tokens": 1169,
+      "output_tokens": 1692,
+      "thinking_tokens": 875
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1877320,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JhkehtYTbh85Z6FFkBoWh3",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1877320,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 289118,
+      "cache_creation_input_tokens": 1169,
+      "output_tokens": 1692,
+      "thinking_tokens": 875
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 1877327,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JhkehtYTbh85Z6FFkBoWh3",
+      "tool_error": "<redacted 96 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1879459,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_013bF5cTUyyCAEpz5wZ5Eiij",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1879459,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 290287,
+      "cache_creation_input_tokens": 1759,
+      "output_tokens": 116,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1879475,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_013bF5cTUyyCAEpz5wZ5Eiij",
+      "tool_response": "<redacted 535 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1881479,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01YPTiGjscmLyWsbE8PKPok8",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1881479,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 292046,
+      "cache_creation_input_tokens": 328,
+      "output_tokens": 116,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1881492,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_01YPTiGjscmLyWsbE8PKPok8",
+      "tool_response": "<redacted 1636 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1890023,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01PGEnGTAokPjmTeXt6uyN7h",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1890023,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 292374,
+      "cache_creation_input_tokens": 780,
+      "output_tokens": 780,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1891503,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01PGEnGTAokPjmTeXt6uyN7h",
+      "tool_response": "<redacted 147 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1894201,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 293154,
+      "cache_creation_input_tokens": 861,
+      "output_tokens": 680,
+      "thinking_tokens": 58
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1900067,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01AQJrVjbXvY8XkBK7WAhh6J",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1900067,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 293154,
+      "cache_creation_input_tokens": 861,
+      "output_tokens": 680,
+      "thinking_tokens": 58
+    },
+    {
+      "hook_event_name": "PostToolUseFailure",
+      "occurred_at": 1900074,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01AQJrVjbXvY8XkBK7WAhh6J",
+      "tool_error": "<redacted 96 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1902257,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_016NRr5FER6rWNydACsaieDZ",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1902257,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 294015,
+      "cache_creation_input_tokens": 747,
+      "output_tokens": 123,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1902270,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Read",
+      "tool_use_id": "toolu_016NRr5FER6rWNydACsaieDZ",
+      "tool_response": "<redacted 631 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1908588,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JZF8Abj7wAtRKwC9pt8f3d",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1908588,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 294762,
+      "cache_creation_input_tokens": 378,
+      "output_tokens": 635,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1910350,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JZF8Abj7wAtRKwC9pt8f3d",
+      "tool_response": "<redacted 165 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1919132,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JX721pncR3KryU1ptnhVrD",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1919132,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 295140,
+      "cache_creation_input_tokens": 723,
+      "output_tokens": 736,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1920537,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01JX721pncR3KryU1ptnhVrD",
+      "tool_response": "<redacted 153 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1938800,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 295863,
+      "cache_creation_input_tokens": 817,
+      "output_tokens": 6649,
+      "thinking_tokens": 1025
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1939483,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 295863,
+      "cache_creation_input_tokens": 817,
+      "output_tokens": 6649,
+      "thinking_tokens": 1025
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1993615,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01NLM9c5YdRY5MUqXYy9nMxU",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1993615,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 295863,
+      "cache_creation_input_tokens": 817,
+      "output_tokens": 6649,
+      "thinking_tokens": 1025
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1995111,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Write",
+      "tool_use_id": "toolu_01NLM9c5YdRY5MUqXYy9nMxU",
+      "tool_response": "<redacted 157 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 1997586,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_011Fez1HRriQPZfdKGm8KKa6",
+      "tool_input": {
+        "command": "cd",
+        "description": "Capture a real session to a fixture"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 1997586,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 296680,
+      "cache_creation_input_tokens": 6733,
+      "output_tokens": 137,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 1999435,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_011Fez1HRriQPZfdKGm8KKa6",
+      "tool_response": "<redacted 443 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2012787,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 303413,
+      "cache_creation_input_tokens": 381,
+      "output_tokens": 1471,
+      "thinking_tokens": 711
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 2019924,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Ky5zoDwGRo1eUCnXyXJmYF",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify redaction and look for real parallel batches"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2019924,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 303413,
+      "cache_creation_input_tokens": 381,
+      "output_tokens": 1471,
+      "thinking_tokens": 711
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 2024994,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Ky5zoDwGRo1eUCnXyXJmYF",
+      "tool_response": "<redacted 950 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2027475,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 303794,
+      "cache_creation_input_tokens": 1976,
+      "output_tokens": 259,
+      "thinking_tokens": 89
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2028186,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 303794,
+      "cache_creation_input_tokens": 1976,
+      "output_tokens": 259,
+      "thinking_tokens": 89
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 2029004,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AXwN9fH7j8pdArpbAtHkKp",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate leaked paths in fixture"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2029004,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 303794,
+      "cache_creation_input_tokens": 1976,
+      "output_tokens": 259,
+      "thinking_tokens": 89
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 2032200,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01AXwN9fH7j8pdArpbAtHkKp",
+      "tool_response": "<redacted 914 chars>"
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2038287,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 305770,
+      "cache_creation_input_tokens": 759,
+      "output_tokens": 618,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2038940,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 305770,
+      "cache_creation_input_tokens": 759,
+      "output_tokens": 618,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 2040603,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01HCWeJx615YU8dzm9Gt8XSc",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2040603,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 305770,
+      "cache_creation_input_tokens": 759,
+      "output_tokens": 618,
+      "thinking_tokens": 365
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 2042310,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01HCWeJx615YU8dzm9Gt8XSc",
+      "tool_response": "<redacted 167 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 2049750,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01H9x2x17GUZco5rDZiYP1TK",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2049750,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 306529,
+      "cache_creation_input_tokens": 705,
+      "output_tokens": 593,
+      "thinking_tokens": 0
+    },
+    {
+      "hook_event_name": "PostToolUse",
+      "occurred_at": 2051609,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Edit",
+      "tool_use_id": "toolu_01H9x2x17GUZco5rDZiYP1TK",
+      "tool_response": "<redacted 167 chars>"
+    },
+    {
+      "hook_event_name": "PreToolUse",
+      "occurred_at": 2057362,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Xia1Y8LvsiGWnUBMGaoG3u",
+      "tool_input": {
+        "command": "cd",
+        "description": "Regenerate fixture and recheck for leaks"
+      }
+    },
+    {
+      "hook_event_name": null,
+      "record": "usage",
+      "source": "transcript",
+      "occurred_at": 2057362,
+      "session_id": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
+      "model": "claude-opus-5",
+      "input_tokens": 2,
+      "cache_read_input_tokens": 307234,
+      "cache_creation_input_tokens": 680,
+      "output_tokens": 438,
+      "thinking_tokens": 0
+    }
+  ]
+}

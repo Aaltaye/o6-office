@@ -1,6 +1,6 @@
 # T001 — Event contract & floor-plan schema
 
-**Status:** in_progress  
+**Status:** done  
 **Branch:** `task/001-event-contract`  
 **Phase:** 1  
 **Depends on:** none  
@@ -61,3 +61,21 @@ See PLAN.md sections A1–A8 and C1–C4. Additional requirements for this task:
 - [ ] Ordering comparator sorts by `occurredAt` then `seq`, and simultaneous events remain simultaneous rather than being serialised.
 - [ ] `compileFloorPlan` rejects a plan with a non-depth-monotonic aisle edge.
 - [ ] The captured coding fixture validates against the contract.
+
+## Notes (execution)
+
+**Fixture captured, with one limitation worth knowing.** `scripts/capture-session.mjs`
+reconstructs the hook stream from transcripts already on disk. `fixtures/captured-coding-session.json`
+holds 474 events over ~34 minutes of a real session: 116 tool calls, 9 genuine failures, and one
+`Plan` subagent arriving and leaving. Content is redacted by default (prompts, tool inputs, results
+and paths) since fixtures get committed; verified zero paths and zero unredacted text in the output.
+
+**It is light on parallelism.** The captured session issued almost no parallel tool calls, so the
+largest simultaneous group is 3 and no `PostToolBatch` fired. That means this fixture proves realistic
+*pacing* but does **not** exercise the burst path. T002 must add a clearly-labelled **synthetic**
+burst fixture for that, and must not claim the real capture covers it. (A session with a genuine
+5-wide batch does exist on this machine, in an unrelated project; it was not used, to avoid pulling
+another project's session data into this repo.)
+
+**Attribution question resolved early** — see PLAN.md and claudecode.md. Subagents write their own
+`subagents/agent-<id>.jsonl` + `.meta.json`; the parent transcript has no `isSidechain` lines at all.
