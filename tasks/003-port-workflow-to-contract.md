@@ -1,6 +1,6 @@
 # T003 — Port the lead workflow to emit OfficeEvent
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/003-port-workflow-to-contract`  
 **Phase:** 1  
 **Depends on:** T002  
@@ -57,3 +57,32 @@ See PLAN.md corrections C1–C3. **C1 is blocking for the demo and must be resol
 
 - [ ] The rework edge fires on a genuinely failed review and the retry genuinely re-runs; the emitted stream contains a `handoff` with `direction: "backward"`.
 - [ ] Workflow pacing is unaffected by the playback speed control.
+
+## Notes (execution)
+
+**C1 resolved honestly.** The flagship beat now fires in the default local-rules path,
+without staging it. The `draftTemplate` output is genuinely generic — it references
+nothing the contact said — so a reviewer catching that is doing real work, and
+`groundedDraft` genuinely fixes it by rewriting the message around a verbatim quote from
+a source note, citing the row. Tests assert the second draft passes the same check that
+rejected the first, so the loop cannot become theatre.
+
+**Scope grew, deliberately.** The workflow was extracted from the hook into
+`lib/lead-workflow.ts` with no React in it. The acceptance criteria require testing the
+emitted stream, and that is not possible from inside a hook. It also means a server can
+run the same workflow later (the bridge, a hosted runner) without change. The hook is now
+just a React binding.
+
+`WorkflowEvent` is typed against the real contract (`ProducerEvent`), so a producer that
+forgets `direction` on a handoff fails the build rather than animating something untrue.
+
+**Bug found by the tests:** the rework loop emitted an `outreach -> outreach` handoff —
+a folder travelling to where it already was. Handoffs where nothing moved are now
+suppressed (invariant I2).
+
+Also derived from the stream rather than tracked alongside it, removing two
+sources of truth: `active` (who is where) and `usage` (tokens and cost).
+
+**Drift:** `app/page.tsx` was updated to consume the derived `activity` view model. That
+is nominally T004's file, but leaving it broken was not an option — the build has to stay
+green. The office is still not mounted there; that remains T004.
