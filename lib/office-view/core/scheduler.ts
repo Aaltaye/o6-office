@@ -548,9 +548,19 @@ export function schedule(
             // No desk is claimed. They walk in, wait near the door, and go wherever
             // their first assignment is. Capacity is never the reason someone is missing
             // from a live office — if six subagents are running, six are on the floor.
-            const waiting = entrance
-              ? standingSpot('door', { x: entrance.at.x, y: entrance.at.y + 1 }, occupancy.get('door') ?? 0)
-              : plan.plan.inbox.at;
+            /*
+             * Where they stand while they have no assignment. A plan may declare a room
+             * for this; otherwise they wait just inside the door. Either way the spot is
+             * a ring that grows, so there is still no capacity — twenty subagents all
+             * stand somewhere rather than nineteen standing and one being dropped.
+             */
+            const lounge = plan.plan.rooms.find((room) => room.kind === 'waiting');
+            const base = lounge
+              ? { x: lounge.origin.x + lounge.size.w / 2, y: lounge.origin.y + lounge.size.h / 2 }
+              : entrance
+                ? { x: entrance.at.x, y: entrance.at.y + 1 }
+                : plan.plan.inbox.at;
+            const waiting = standingSpot('door', base, occupancy.get('door') ?? 0);
             occupancy.set('door', (occupancy.get('door') ?? 0) + 1);
             state.station = undefined;
             moveEntity(key, state.motion, waiting, arriveMs);
@@ -602,10 +612,32 @@ export function schedule(
           break;
         }
 
+        case 'run.finished': {
+          /*
+           * The run is over, so nothing is in progress any more.
+           *
+           * This exists because a desk lit by `assignment.started` with no matching
+           * `assignment.finished` — an interrupted tool call, a crash, a session closed
+           * mid-work — otherwise stays lit for the rest of the run, with the office
+           * claiming work is still happening at it.
+           *
+           * Note carefully what this does NOT say. It pushes `null`, which means "not
+           * happening now" — it does not mark the assignment finished, successful, or
+           * failed, because the run ending tells us none of those things. The event trail
+           * still shows the assignment starting and never finishing, which is the truth.
+           */
+          for (const station of stationBusy.keys()) {
+            if (busyChannel(station).sampleAt(simTime) === null) continue;
+            busyChannel(station).push(simTime, null);
+            setDeskStatus(station, simTime, null);
+          }
+          break;
+        }
+
         default:
-          // run.started, run.finished, review.resolved, usage.reported and note have no
-          // floor consequence. They still reach the activity trail and the panel — the
-          // floor is the lossy view, the log is not.
+          // run.started, review.resolved, usage.reported and note have no floor
+          // consequence. They still reach the activity trail and the panel — the floor is
+          // the lossy view, the log is not.
           break;
       }
     }

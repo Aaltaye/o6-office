@@ -710,3 +710,96 @@ test('asking for a department that is not one returns nothing, rather than an em
   assert.equal(departmentAt(compiled, timeline, 'room-front', 0), null, 'circulation');
   assert.equal(departmentAt(compiled, timeline, 'no-such-room', 0), null, 'unknown id');
 });
+
+test('a tool call that never finishes does not leave the desk claiming to be live', () => {
+  // Common in a real session: an interrupted tool call, a crash, a session closed
+  // mid-work. Without this the desk stays lit violet for the rest of the run, asserting
+  // that work is still in progress when it is not.
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const emit = createEmitter({ runId: 'stuck', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({
+      type: 'assignment.started',
+      label: 'Run the build',
+      station: 'operations',
+      occurredAt: 1000,
+    }),
+    // No assignment.finished — then the session simply ends.
+    emit({ type: 'run.finished', label: 'Session ends', occurredAt: 5000 }),
+  ];
+  const timeline = schedule(events, compiled);
+  const busy = timeline.stationBusy.get('operations');
+
+  assert.equal(busy.sampleAt(2000), 'Run the build', 'it is lit while the work is open');
+  assert.equal(
+    busy.sampleAt(timeline.duration),
+    null,
+    'and quiet once the run is over, rather than lit for ever',
+  );
+});
+
+test('ending a run reports "not happening now", never "finished"', () => {
+  // The distinction the fix must preserve: run.finished means the session ended. It does
+  // not mean the assignment succeeded, and the trail must still show it never finished.
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const emit = createEmitter({ runId: 'stuck2', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({ type: 'assignment.started', label: 'Run the build', station: 'operations', occurredAt: 1000 }),
+    emit({ type: 'run.finished', label: 'Session ends', occurredAt: 5000 }),
+  ];
+  const timeline = schedule(events, compiled);
+
+  assert.deepEqual(timeline.violations, [], 'clearing the floor is not an invariant breach');
+  const finished = events.filter((event) => event.type === 'assignment.finished');
+  assert.equal(finished.length, 0, 'no completion was invented in the stream');
+});
+
+test('a dynamically staffed plan declares no desk that nobody can ever sit at', () => {
+  // The coding office used to declare three "Subagents" hot desks. Dynamic staffing never
+  // seats anyone — deliberately, because capacity must never be the reason someone is
+  // missing from a live office — so the room was named after people who could not enter it.
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    if (plan.staffing !== 'dynamic') continue;
+    const unusable = plan.stations.filter((station) => station.hotDesk);
+    assert.deepEqual(
+      unusable.map((station) => station.id),
+      [],
+      `${plan.id} declares hot desks that dynamic staffing can never assign`,
+    );
+  }
+});
+
+test('subagents with no assignment wait in the room named for them', () => {
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const lounge = codingSessionPlan.rooms.find((room) => room.kind === 'waiting');
+  assert.ok(lounge, 'the coding office declares a waiting room');
+
+  const emit = createEmitter({ runId: 'wait', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({
+      type: 'specialist.joined',
+      label: 'A subagent joins',
+      worker: 'agent:one',
+      occurredAt: 1000,
+    }),
+  ];
+  const timeline = schedule(events, compiled);
+  assert.deepEqual(timeline.violations, []);
+
+  const worker = timeline.workers.get('agent:one');
+  assert.ok(worker, 'the subagent is on the floor');
+  assert.equal(worker.station, undefined, 'and holds no desk, because it was given none');
+
+  // It should come to rest inside the room, not at some arbitrary point by the door.
+  const at = worker.motion.sampleAt(timeline.duration);
+  assert.ok(
+    at.x >= lounge.origin.x - 1.5 &&
+      at.x <= lounge.origin.x + lounge.size.w + 1.5 &&
+      at.y >= lounge.origin.y - 1.5 &&
+      at.y <= lounge.origin.y + lounge.size.h + 1.5,
+    `the subagent waits at (${at.x.toFixed(1)}, ${at.y.toFixed(1)}), outside the room meant for it`,
+  );
+});

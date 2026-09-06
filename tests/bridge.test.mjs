@@ -444,3 +444,88 @@ test('session totals count messages, not the lines they were written across', ()
     assert.equal(totals.main.outputTokens, 40);
   });
 });
+
+test('a tool call with no tool_use_id still reaches the office', async () => {
+  // The mapping sets `id` from tool_use_id, so a hook without one left the key present and
+  // undefined. Spreading it last clobbered the envelope's generated id, the event failed
+  // validation, and the client dropped it silently — work that happened, never shown.
+  await withBridge(async ({ bridge, url }) => {
+    await fetch(url('/hook'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-o6-token': TOKEN },
+      body: JSON.stringify({
+        hook_event_name: 'PreToolUse',
+        tool_name: 'Read',
+        tool_input: { file_path: '/a/b.ts' },
+      }),
+    });
+
+    const event = bridge.events.at(-1);
+    assert.ok(event, 'the hook produced no event at all');
+    assert.equal(typeof event.id, 'string');
+    assert.ok(event.id.length > 0, 'the envelope id was clobbered by an absent tool_use_id');
+    assert.ok(isOfficeEvent(event), 'the event does not satisfy the contract');
+    assert.ok(
+      isOfficeEvent(JSON.parse(JSON.stringify(event))),
+      'it must also survive the JSON round trip the SSE wire performs',
+    );
+  });
+});
+
+test('the bridge counts its own malformed events rather than hiding them', async () => {
+  await withBridge(async ({ url }) => {
+    const health = await (await fetch(url('/health'), { headers: { 'x-o6-token': TOKEN } })).json();
+    assert.equal(health.malformed, 0, 'a clean run reports zero, and reports it explicitly');
+  });
+});
+
+test('any agent can post the contract directly, not just Claude Code', async () => {
+  // /hook translates one product's hook shape. The contract is the actual seam, so an
+  // agent runtime with no hook system needs a way to speak it, or "connect your work" is
+  // a claim about Claude Code rather than about agents.
+  await withBridge(async ({ bridge, url }) => {
+    const res = await fetch(url('/event'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-o6-token': TOKEN },
+      body: JSON.stringify([
+        { type: 'run.started', label: 'My agent starts work' },
+        { type: 'assignment.started', label: 'Reading the spec', station: 'reading' },
+      ]),
+    });
+    const body = await res.json();
+    assert.equal(res.status, 200);
+    assert.equal(body.events, 2);
+    assert.deepEqual(body.rejected, []);
+
+    for (const event of bridge.events) {
+      assert.ok(isOfficeEvent(event), `the bridge produced an event the office cannot read`);
+    }
+    assert.equal(bridge.events[1].station, 'reading');
+  });
+});
+
+test('a direct event that says nothing is refused, with the reason', async () => {
+  await withBridge(async ({ bridge, url }) => {
+    const res = await fetch(url('/event'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-o6-token': TOKEN },
+      body: JSON.stringify({ type: 'assignment.started', station: 'reading' }),
+    });
+    const body = await res.json();
+    assert.equal(res.status, 400);
+    assert.equal(body.events, 0);
+    assert.match(body.rejected[0].why, /label/, 'it must say why, not just fail');
+    assert.equal(bridge.events.length, 0, 'and nothing unlabelled reaches the floor');
+  });
+});
+
+test('the direct endpoint refuses an unauthenticated caller like every other one', async () => {
+  await withBridge(async ({ url }) => {
+    const res = await fetch(url('/event'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ type: 'run.started', label: 'no token' }),
+    });
+    assert.equal(res.status, 401);
+  });
+});

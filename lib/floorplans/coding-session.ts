@@ -87,15 +87,6 @@ const DEPARTMENTS = [
   { id: 'approvals', role: 'Approvals', side: 'east', row: 3, node: 'aisle-upper' },
 ] as const;
 
-/** Subagents take these. Three, because a session can easily have several at once. */
-const HOT_DESKS = [
-  { id: 'visitor-1', column: 4.6 },
-  { id: 'visitor-2', column: 7 },
-  { id: 'visitor-3', column: 9.4 },
-] as const;
-
-const HOT_DESK_ROW = 11.5;
-
 function station(dept: (typeof DEPARTMENTS)[number]) {
   const west = dept.side === 'west';
   const x = west ? WEST_X : EAST_X;
@@ -132,7 +123,19 @@ export const codingSessionPlan: FloorPlan = {
       origin: { x: (dept.side === 'west' ? WEST_X : EAST_X) - 1.5, y: dept.row - 1.5 },
       size: { w: 3, h: 3 },
     })),
-    { id: 'room-visitors', label: 'Subagents', origin: { x: 3.4, y: 10.5 }, size: { w: 7.2, h: 2.5 } },
+    {
+      id: 'room-visitors',
+      label: 'Subagents',
+      origin: { x: 3.4, y: 10.5 },
+      size: { w: 7.2, h: 2.5 },
+      /*
+       * Where subagents wait, not a department with desks. This office is dynamically
+       * staffed, so nobody is ever assigned a seat here — they arrive, stand, and go
+       * wherever their first assignment is. It used to declare three hot desks that no
+       * subagent could ever occupy, which named a room after people who could not enter.
+       */
+      kind: 'waiting',
+    },
     {
       id: 'room-front',
       label: 'Entrance',
@@ -143,20 +146,13 @@ export const codingSessionPlan: FloorPlan = {
     },
   ],
 
-  stations: [
-    ...DEPARTMENTS.map(station),
-    ...HOT_DESKS.map((desk) => ({
-      id: desk.id,
-      room: 'room-visitors',
-      role: 'Subagent',
-      seat: { x: desk.column, y: HOT_DESK_ROW },
-      facing: 'n' as const,
-      inTray: { x: desk.column - 0.55, y: HOT_DESK_ROW - 0.8 },
-      outTray: { x: desk.column + 0.55, y: HOT_DESK_ROW - 0.8 },
-      hotDesk: true,
-      node: 'aisle-foot',
-    })),
-  ],
+  /*
+   * Only the permanent departments have desks. This office is dynamically staffed, so a
+   * subagent is never assigned a seat: it appears when the stream first shows it, waits in
+   * the Subagents room, and goes wherever its assignment is. Three hot desks used to be
+   * declared here that nothing could ever seat anyone at.
+   */
+  stations: DEPARTMENTS.map(station),
 
   doors: [{ id: 'front', at: { x: AISLE_X, y: 0 }, facing: 's', entrance: true }],
 

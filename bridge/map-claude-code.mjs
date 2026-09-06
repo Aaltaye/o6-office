@@ -36,16 +36,37 @@ export const TOOL_DESKS = {
     NotebookRead: 'reading',
     ListAgents: 'reading',
     ToolSearch: 'reading',
+    ListMcpResourcesTool: 'reading',
+    ReadMcpResourceTool: 'reading',
+    ReadMcpResourceDirTool: 'reading',
+    ListSkills: 'reading',
+    SearchSkills: 'reading',
+    ListPlugins: 'reading',
+    SearchPlugins: 'reading',
+    TaskOutput: 'reading',
 
     Edit: 'workshop',
     Write: 'workshop',
     NotebookEdit: 'workshop',
     MultiEdit: 'workshop',
+    Artifact: 'workshop',
+    DesignSync: 'workshop',
 
     Bash: 'operations',
     PowerShell: 'operations',
     BashOutput: 'operations',
     KillShell: 'operations',
+    Monitor: 'operations',
+    CronCreate: 'operations',
+    CronDelete: 'operations',
+    CronList: 'operations',
+    ScheduleWakeup: 'operations',
+    TaskStop: 'operations',
+    EnterWorktree: 'operations',
+    ExitWorktree: 'operations',
+    PushNotification: 'operations',
+    RemoteTrigger: 'operations',
+    SendUserFile: 'operations',
 
     WebFetch: 'research',
     WebSearch: 'research',
@@ -56,8 +77,13 @@ export const TOOL_DESKS = {
     Skill: 'frontdesk',
     EnterPlanMode: 'frontdesk',
     ExitPlanMode: 'frontdesk',
+    SendMessage: 'frontdesk',
+    Workflow: 'frontdesk',
+    SuggestSkills: 'frontdesk',
+    SuggestPluginInstall: 'frontdesk',
 
     AskUserQuestion: 'approvals',
+    ReportFindings: 'approvals',
   },
   /** Matched by prefix, longest first. */
   prefix: {
@@ -105,13 +131,31 @@ const PREFIXES = Object.keys(TOOL_DESKS.prefix).sort((a, b) => b.length - a.leng
  * `toString` or `__proto__` would otherwise resolve against Object.prototype and hand
  * back a function where a desk id is expected.
  */
-export function deskForTool(toolName) {
-  if (typeof toolName !== 'string' || !toolName) return TOOL_DESKS.fallback;
-  if (Object.hasOwn(TOOL_DESKS.exact, toolName)) return TOOL_DESKS.exact[toolName];
-  for (const prefix of PREFIXES) {
-    if (toolName.startsWith(prefix)) return TOOL_DESKS.prefix[prefix];
+/**
+ * Which desk a tool belongs at, AND whether that was a classification or a default.
+ *
+ * The distinction matters for the same reason "unavailable" is not "zero": the front desk
+ * is where unrecognised work lands, so a tool shown there because nobody mapped it looks
+ * exactly like delegation work that genuinely belongs there. Saying which it was lets the
+ * office report "this desk was a default" instead of quietly implying it knew.
+ */
+export function routeForTool(toolName) {
+  if (typeof toolName !== 'string' || !toolName) {
+    return { desk: TOOL_DESKS.fallback, routing: 'fallback' };
   }
-  return TOOL_DESKS.fallback;
+  if (Object.hasOwn(TOOL_DESKS.exact, toolName)) {
+    return { desk: TOOL_DESKS.exact[toolName], routing: 'exact' };
+  }
+  for (const prefix of PREFIXES) {
+    if (toolName.startsWith(prefix)) {
+      return { desk: TOOL_DESKS.prefix[prefix], routing: 'prefix' };
+    }
+  }
+  return { desk: TOOL_DESKS.fallback, routing: 'fallback' };
+}
+
+export function deskForTool(toolName) {
+  return routeForTool(toolName).desk;
 }
 
 /**
@@ -160,7 +204,8 @@ export function mapHook(payload, state = {}) {
   // The unit of work is the turn: one prompt, tracked from the inbox to the outbox.
   const workId = payload.prompt_id ?? state.currentPromptId;
   const work = workId ? { id: workId, label: state.workLabels?.[workId] ?? 'This turn' } : undefined;
-  const desk = deskForTool(payload.tool_name);
+  const route = routeForTool(payload.tool_name);
+  const desk = route.desk;
 
   const at = (extra) => ({ ...extra });
 
@@ -208,7 +253,12 @@ export function mapHook(payload, state = {}) {
             worker: agentId ? `agent:${agentId}` : undefined,
             work,
             id: payload.tool_use_id,
-            payload: { tool: payload.tool_name },
+            // routing is carried only when it was a fallback: there is nothing to say
+            // about a tool that was actually recognised.
+            payload:
+              route.routing === 'fallback'
+                ? { tool: payload.tool_name, routing: 'fallback' }
+                : { tool: payload.tool_name },
           }),
         ],
       };

@@ -280,9 +280,13 @@ export type Room = {
    * currently holds none is a real condition worth failing on, and inference would
    * silently turn that into "circulation".
    *
+   * 'waiting' is where people with no desk of their own stand — subagents in a dynamic
+   * office, who are on the floor from the moment they exist but are not seated anywhere
+   * until their first assignment sends them somewhere.
+   *
    * Defaults to 'department' when absent.
    */
-  kind?: 'department' | 'circulation';
+  kind?: 'department' | 'circulation' | 'waiting';
 };
 
 /**

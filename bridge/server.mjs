@@ -76,20 +76,47 @@ export function createBridge(options = {}) {
   const state = { currentPromptId: null, workLabels: {} };
   /** One transcript watcher per session id we have been told about. */
   const watchers = new Map();
+  /** The only floor this bridge renders, used to complete a producer's run.started. */
+  const BRIDGE_PLAN = 'coding-session';
   const log = options.log ?? ((message) => process.stderr.write(`[o6-bridge] ${message}\n`));
+
+  /**
+   * How many events left here structurally malformed. Surfaced on /health rather than
+   * swallowed: the bridge producing an event the office cannot read is a bug in the
+   * bridge, and a silent count of zero would hide it.
+   */
+  let malformed = 0;
 
   function emit(input) {
     seq += 1;
+    /*
+     * A mapping that sets a key to `undefined` — `id` when a hook arrived without a
+     * tool_use_id, say — still owns that key, so spreading it last CLOBBERS the envelope
+     * value with undefined. The event then fails validation and the client drops it
+     * without a word. Strip absent keys first so the envelope's own defaults survive.
+     */
+    const supplied = {};
+    for (const [key, value] of Object.entries(input)) {
+      if (value !== undefined) supplied[key] = value;
+    }
+
     const event = {
       v: 1,
-      id: input.id ?? `${runId}-${seq}`,
+      id: supplied.id ?? `${runId}-${seq}`,
       seq,
       runId,
       source: 'claude-code',
-      occurredAt: input.occurredAt ?? Date.now(),
+      occurredAt: supplied.occurredAt ?? Date.now(),
       receivedAt: Date.now(),
-      ...input,
+      ...supplied,
     };
+
+    // Cheap structural check. Not the full contract validator — that lives in a .ts the
+    // bridge cannot import — but enough to notice the envelope going wrong again.
+    if (typeof event.id !== 'string' || !event.id || typeof event.type !== 'string') {
+      malformed += 1;
+      log(`malformed event (id=${JSON.stringify(event.id)}, type=${JSON.stringify(event.type)})`);
+    }
     events.push(event);
     // Drop the oldest rather than refusing new ones: a long session should keep working,
     // and the office is a live view, not the system of record.
@@ -241,6 +268,77 @@ export function createBridge(options = {}) {
       return;
     }
 
+    /*
+     * --- direct event ingest ---------------------------------------------------
+     *
+     * The office consumes one contract, and /hook is only a translator from Claude Code's
+     * hook shape into it. Any other agent runtime can skip the translation and post the
+     * contract itself, which is what makes "connect your work" a claim about agents in
+     * general rather than about one product.
+     *
+     * Accepts one event or an array. The envelope fields the bridge owns (v, seq, runId,
+     * source, receivedAt) are filled in here, so a producer supplies only what it knows:
+     * type, label, and whichever of station / worker / work apply.
+     */
+    if (pathname === '/event') {
+      if (request.method !== 'POST') {
+        response.writeHead(405).end('POST only');
+        return;
+      }
+      const provided = request.headers['x-o6-token'] ?? url.searchParams.get('token');
+      if (!tokenMatches(provided, token)) {
+        response.writeHead(401, { 'Content-Type': 'application/json' }).end('{"error":"bad token"}');
+        return;
+      }
+      let payload;
+      try {
+        payload = JSON.parse(await readBody(request));
+      } catch (error) {
+        response
+          .writeHead(400, { 'Content-Type': 'application/json' })
+          .end(JSON.stringify({ error: `unreadable payload: ${error.message}` }));
+        return;
+      }
+
+      const incoming = Array.isArray(payload) ? payload : [payload];
+      const rejected = [];
+      let accepted = 0;
+      for (const [index, candidate] of incoming.entries()) {
+        // Say what was wrong rather than dropping it quietly: a producer being written
+        // against this endpoint needs to know why its event did not appear.
+        if (!candidate || typeof candidate !== 'object') {
+          rejected.push({ index, why: 'not an object' });
+          continue;
+        }
+        if (typeof candidate.type !== 'string' || !candidate.type) {
+          rejected.push({ index, why: 'missing "type"' });
+          continue;
+        }
+        if (typeof candidate.label !== 'string' || !candidate.label) {
+          rejected.push({ index, why: 'missing "label" — every event must say what happened' });
+          continue;
+        }
+        emit({
+          ...candidate,
+          source: candidate.source ?? 'claude-code',
+          /*
+           * `plan` says which floor to render on, and this bridge only ever renders one.
+           * Filling it in is not inventing anything about the work — it is the bridge
+           * supplying a fact it already knows, so a producer does not have to learn the
+           * name of our floor plan just to say "I started".
+           */
+          ...(candidate.type === 'run.started' && !candidate.plan ? { plan: BRIDGE_PLAN } : {}),
+        });
+        accepted += 1;
+      }
+
+      response.writeHead(rejected.length && !accepted ? 400 : 200, {
+        'Content-Type': 'application/json',
+      });
+      response.end(JSON.stringify({ ok: accepted > 0, events: accepted, rejected }));
+      return;
+    }
+
     // --- event stream ----------------------------------------------------------
     if (pathname === '/events') {
       const provided = request.headers['x-o6-token'] ?? url.searchParams.get('token');
@@ -274,6 +372,7 @@ export function createBridge(options = {}) {
           events: events.length,
           clients: clients.size,
           watching: [...watchers.keys()].length,
+          malformed,
         }),
       );
       return;

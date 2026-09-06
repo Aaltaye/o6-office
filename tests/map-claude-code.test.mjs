@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { mapHook, deskForTool, TOOL_DESKS } from '../bridge/map-claude-code.mjs';
+import { mapHook, deskForTool, routeForTool, TOOL_DESKS } from '../bridge/map-claude-code.mjs';
 import { createEmitter, isOfficeEvent } from '../lib/office-view/core/events.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
 import { schedule } from '../lib/office-view/core/scheduler.ts';
@@ -293,4 +293,38 @@ test('a malformed tool name survives the whole mapping, not just the router', ()
       assert.equal(typeof event.label, 'string', 'and still carries a string label');
     }
   }
+});
+
+test('a desk that was a default says so, and a recognised one does not', () => {
+  // The front desk is where unrecognised work lands, so a tool shown there because nobody
+  // mapped it looks exactly like delegation work that genuinely belongs there. Same reason
+  // "unavailable" is not "zero": the office must not imply it knew.
+  const known = mapHook({
+    hook_event_name: 'PreToolUse',
+    tool_name: 'Read',
+    tool_use_id: 'a',
+    tool_input: { file_path: '/x.ts' },
+  }).events[0];
+  assert.equal(known.station, 'reading');
+  assert.equal(known.payload.routing, undefined, 'nothing to say about a recognised tool');
+
+  const unknown = mapHook({
+    hook_event_name: 'PreToolUse',
+    tool_name: 'SomeToolShippedNextYear',
+    tool_use_id: 'b',
+  }).events[0];
+  assert.equal(unknown.station, TOOL_DESKS.fallback);
+  assert.equal(unknown.payload.routing, 'fallback', 'a default must be stated as a default');
+});
+
+test('the tools this session actually uses are mostly recognised, not defaulted', () => {
+  // The table drifts as Claude Code ships tools. This is the canary: if it starts failing,
+  // the office is quietly sending real work to the front desk and calling it delegation.
+  const common = [
+    'Read', 'Write', 'Edit', 'Grep', 'Glob', 'Bash', 'WebSearch', 'WebFetch',
+    'Task', 'TodoWrite', 'AskUserQuestion', 'Monitor', 'Workflow', 'Artifact',
+    'ToolSearch', 'ListAgents', 'SendUserFile', 'ReportFindings', 'Skill',
+  ];
+  const defaulted = common.filter((tool) => routeForTool(tool).routing === 'fallback');
+  assert.deepEqual(defaulted, [], `these fell through to the fallback desk: ${defaulted.join(', ')}`);
 });
