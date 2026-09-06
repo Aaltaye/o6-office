@@ -114,7 +114,19 @@ npm run lint
 node --experimental-strip-types --test tests/*.test.mjs
 ```
 
-Baseline at relocation: **20/20 tests passing**.
+Baseline at relocation: 20/20 tests passing. After T002: **74/74**.
+
+**`/lab` is the renderer's development harness** — mount the office against synthetic
+streams (a full lead run including the carried-back beat, and a 6-wide burst), with
+play/pause/scrub/speed, a compact-plan toggle and click-to-select. It is not the product;
+`app/page.tsx` mounts the office for real in T004.
+
+**`requestAnimationFrame` does not fire in the automated browser pane.** Verified: even a
+hand-scheduled `requestAnimationFrame` never runs there, while `document.visibilityState`
+still reports `visible` — so the usual "is the tab hidden?" check is misleading. Live
+playback therefore cannot be verified from automation. Verify by **scrubbing** instead,
+which drives the same `applyTime` path that the frame loop uses. This is also why
+rendering deliberately does not live inside the rAF callback.
 
 ## Decisions
 
