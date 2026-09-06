@@ -20,9 +20,15 @@ workflow) and **connect your work** (stream a live Claude Code session into the 
 
 ## Conventions
 
-- Local-only git for now: branches, no remote. **The open-source/license decision is unresolved**
-  (README notes no license chosen), so nothing is pushed until Abel decides. `gh` is authenticated as
-  `Aaltaye` and ready when he does.
+- **Remote: https://github.com/Aaltaye/o6-office — PRIVATE.** Created 2026-09-06 with squash
+  merge, delete-branch-on-merge and auto-merge enabled.
+- **It is private because no licence has been chosen.** Public without a licence is the worst of
+  both: readable by anyone, legally reusable by nobody. Flip it with
+  `gh repo edit --visibility public` once Abel picks one — private to public is trivial, the
+  reverse does not un-index or un-fork.
+- Before any push, check the fixtures. They are derived from real sessions and are redacted, but
+  they are the one place personal data could leak. The pre-push audit found only `sk-ant-api03-aaa…`
+  (an obvious dummy in a test) and zero real identifiers.
 - Branch per task: `task/NNN-kebab-title`. Conventional commits. Merge `--no-ff` after the gate.
 - Comments are heavy by house rule — this is read cold by other people.
 
