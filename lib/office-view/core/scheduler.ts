@@ -226,28 +226,81 @@ export function schedule(
 
   const hotDesks = plan.plan.stations.filter((s) => s.hotDesk);
 
-  // Staff the permanent desks. Every non-hot station has somebody at it for the whole
-  // run: an empty office would misrepresent the workflow, which does have a standing
-  // team, and "six desks, six people" is the metaphor the viewer arrives with.
-  // They are seated from the start and never move — only specialists come and go.
-  for (const station of plan.plan.stations) {
-    if (station.hotDesk) continue;
-    const worker: WorkerState = {
-      id: `desk:${station.id}`,
-      role: station.role,
-      kind: 'permanent',
-      motion: new MotionChannel([
-        { startMs: 0, endMs: 0, from: station.seat, to: station.seat, ease: 'stepEnd' },
-      ]),
-      status: new StepChannel<string | null>(),
-      present: new StepChannel<boolean>(),
-      station: station.id,
-    };
-    worker.present.push(0, true);
-    worker.status.push(0, null);
-    workers.set(worker.id, worker);
-    positionOf.set(`worker:${worker.id}`, station.seat);
+  const staffing = plan.plan.staffing ?? 'permanent';
+
+  // A `permanent` plan describes a standing team, so every non-hot desk is staffed for
+  // the whole run: the workflow really does have six roles, and "six desks, six people"
+  // is the metaphor the viewer arrives with. They are seated from the start and never
+  // move — only specialists come and go.
+  //
+  // A `dynamic` plan assumes nobody. Workers appear when the stream first shows them
+  // working and walk to whichever desk their current assignment is at. That is the only
+  // honest option for a live session, where the cast is whatever is actually running.
+  if (staffing === 'permanent') {
+    for (const station of plan.plan.stations) {
+      if (station.hotDesk) continue;
+      const worker: WorkerState = {
+        id: `desk:${station.id}`,
+        role: station.role,
+        kind: 'permanent',
+        motion: new MotionChannel([
+          { startMs: 0, endMs: 0, from: station.seat, to: station.seat, ease: 'stepEnd' },
+        ]),
+        status: new StepChannel<string | null>(),
+        present: new StepChannel<boolean>(),
+        station: station.id,
+      };
+      worker.present.push(0, true);
+      worker.status.push(0, null);
+      workers.set(worker.id, worker);
+      positionOf.set(`worker:${worker.id}`, station.seat);
+    }
   }
+
+  /** How many workers are already at a station, so they do not stand inside each other. */
+  const occupancy = new Map<StationId, number>();
+
+  /**
+   * Where a worker stands at a station, offset if someone is already there.
+   *
+   * In a dynamic office several workers legitimately share a desk — the main agent and a
+   * subagent can both be reading. Rather than capping capacity and dropping people, they
+   * fan out around the seat. Deterministic, so a replay places them identically.
+   */
+  const standingSpot = (station: StationId, seat: World, index: number): World => {
+    if (index === 0) return seat;
+    const ring = Math.ceil(index / 4);
+    const angle = ((index % 4) / 4) * Math.PI * 2;
+    return { x: seat.x + Math.cos(angle) * 0.55 * ring, y: seat.y + Math.sin(angle) * 0.55 * ring };
+  };
+
+  /**
+   * Find or create a worker in a dynamic office.
+   *
+   * The main agent has no `worker` on its events, so it gets one synthetic identity —
+   * there is exactly one of it, and it is genuinely present for the whole session.
+   */
+  const ensureWorker = (id: string | undefined, at: number): WorkerState | null => {
+    if (staffing !== 'dynamic') return id ? (workers.get(id) ?? null) : null;
+    const workerId = id ?? 'main';
+    let worker = workers.get(workerId);
+    if (!worker) {
+      worker = {
+        id: workerId,
+        role: workerId === 'main' ? 'Agent' : 'Subagent',
+        kind: workerId === 'main' ? 'permanent' : 'specialist',
+        motion: new MotionChannel(),
+        status: new StepChannel<string | null>(),
+        present: new StepChannel<boolean>(),
+      };
+      worker.present.push(at, true);
+      worker.status.push(at, null);
+      workers.set(workerId, worker);
+      const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
+      positionOf.set(`worker:${workerId}`, entrance ? entrance.at : plan.plan.inbox.at);
+    }
+    return worker;
+  };
 
   /**
    * Mirror a desk's current activity onto whoever is sitting there.
@@ -412,9 +465,30 @@ export function schedule(
         case 'assignment.started': {
           busyChannel(event.station).push(simTime, event.label);
           setDeskStatus(event.station, simTime, event.label);
-          if (event.worker) {
-            const worker = workers.get(event.worker);
-            if (worker) worker.status.push(simTime, event.label);
+
+          const worker = ensureWorker(event.worker, simTime);
+          if (worker) {
+            worker.status.push(simTime, event.label);
+            // In a dynamic office the worker goes to the work. This is the thing that
+            // makes a live session legible: you watch the agent cross to the reading
+            // room, then to the workshop, rather than watching desks blink.
+            if (staffing === 'dynamic' && worker.station !== event.station) {
+              const seat = plan.plan.stations.find((s) => s.id === event.station)?.seat;
+              if (seat) {
+                if (worker.station) {
+                  occupancy.set(worker.station, Math.max(0, (occupancy.get(worker.station) ?? 1) - 1));
+                }
+                const index = occupancy.get(event.station) ?? 0;
+                occupancy.set(event.station, index + 1);
+                worker.station = event.station;
+                moveEntity(
+                  `worker:${worker.id}`,
+                  worker.motion,
+                  standingSpot(event.station, seat, index),
+                  walkMs,
+                );
+              }
+            }
           }
           break;
         }
@@ -442,26 +516,48 @@ export function schedule(
             ? plan.plan.stations.find((s) => s.id === event.station)
             : undefined;
           const desk = named ?? hotDesks.find((s) => !hotDeskTaken.has(s.id));
+          const key = `worker:${event.worker}`;
+          const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
 
-          const state: WorkerState = {
-            id: event.worker,
-            role: event.role,
-            kind: 'specialist',
-            assignment: event.detail,
-            motion: new MotionChannel(),
-            status: new StepChannel<string | null>(),
-            present: new StepChannel<boolean>(),
-            station: desk?.id,
-          };
+          // Reuse the worker if the stream already showed them working — a subagent can
+          // produce a tool call before its SubagentStart is delivered.
+          const state =
+            (staffing === 'dynamic' ? ensureWorker(event.worker, simTime) : null) ??
+            workers.get(event.worker) ??
+            ({
+              id: event.worker,
+              role: event.role,
+              kind: 'specialist',
+              motion: new MotionChannel(),
+              status: new StepChannel<string | null>(),
+              present: new StepChannel<boolean>(),
+            } as WorkerState);
+
+          state.role = event.role;
+          state.kind = 'specialist';
+          // Their own stated assignment, when the producer supplied one. Never invented.
+          state.assignment = event.detail;
           state.present.push(simTime, true);
           state.status.push(simTime, event.label);
           workers.set(event.worker, state);
+          if (!positionOf.has(key)) {
+            positionOf.set(key, entrance ? entrance.at : plan.plan.inbox.at);
+          }
 
-          const key = `worker:${event.worker}`;
-          const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
-          positionOf.set(key, entrance ? entrance.at : plan.plan.inbox.at);
-
-          if (desk) {
+          if (staffing === 'dynamic') {
+            // No desk is claimed. They walk in, wait near the door, and go wherever
+            // their first assignment is. Capacity is never the reason someone is missing
+            // from a live office — if six subagents are running, six are on the floor.
+            const waiting = entrance
+              ? standingSpot('door', { x: entrance.at.x, y: entrance.at.y + 1 }, occupancy.get('door') ?? 0)
+              : plan.plan.inbox.at;
+            occupancy.set('door', (occupancy.get('door') ?? 0) + 1);
+            state.station = undefined;
+            moveEntity(key, state.motion, waiting, arriveMs);
+          } else if (desk) {
+            // Permanent plans have a modelled pool: take the lowest free hot desk, by
+            // plan order, so a replay seats the same specialist at the same desk.
+            state.station = desk.id;
             hotDeskTaken.set(desk.id, event.worker);
             moveEntity(key, state.motion, desk.seat, arriveMs);
           } else {

@@ -1,82 +1,149 @@
 # O6 Office
 
-Lead Reactivation Office — O6 Applied / Invention Lab / Experiment 001.
+**Make invisible work visible.** Agentic work rendered as a miniature office you watch
+from above — desks, folders, handoffs, and a specialist called in for a bounded job — so
+that what an agent is actually doing is legible to someone who has never read a log.
 
-## Run locally
+O6 Invention Lab, Experiment 001.
 
-Requires Node.js 22.13+ and npm. Open a terminal in this folder:
+Two modes, one renderer:
+
+| Mode | What it is |
+|---|---|
+| **Run your work** | A lead-reactivation workflow. Give it a CSV of old enquiries and watch the office work out which conversations are worth reopening, and why. |
+| **Connect your work** | A local bridge streams your own Claude Code session into the same office. Your session never leaves the machine. |
+
+Both produce the same versioned event contract. The renderer consumes only that, and
+knows nothing about leads or about Claude Code.
+
+---
+
+## Run it
+
+Node 22.13+.
 
 ```sh
 npm ci
-npm run dev
+npm run dev          # the product, at the printed URL
 ```
-
-Use the URL printed by the server (normally http://localhost:3000; another port is chosen when busy). The original build session used http://localhost:3001.
 
 ```sh
 npm run build
 npx tsc --noEmit
-node --experimental-strip-types --test tests/*.test.mjs
+npm run lint
+npm test
 ```
 
-## Where to edit
+Other entry points:
 
-- `app/page.tsx`: office, lead workspace, activity trail, import/settings dialogs, draft review panel.
-- `app/office.css`: visual styling and responsive layout.
-- `app/globals.css`: shared theme tokens.
-- `lib/use-office.ts`: two concurrent lead workers, department events, stop behavior, AI assignments.
-- `lib/lead-engine.ts`: CSV parser, fictional dataset, merge rules, qualification, template drafts, exports.
-- `app/api/agent/route.ts`: server proxy for the three OpenAI assignments, schema and evidence checks.
-- `public/office.png`: generated office illustration. Labels and moving lead-file indicators are live UI overlays.
-- `tests/`: meaningful lead-rule and mocked API contract tests.
-- `.openai/hosting.json`: the existing private Sites project. Reuse its project ID; do not create a duplicate site.
+- **`/lab`** — a development harness for the renderer, with synthetic streams (including a
+  six-wide burst) plus play, pause, scrub, speed and a compact-plan toggle.
+- **`npm run bridge`** — the local bridge, below.
 
-## Try it
+---
 
-1. Click **Run sample**. The 10 fictional records become 9 unique leads: 2 ready, 5 held, 2 excluded.
-2. Click a desk for activity, or a lead-file indicator to follow that lead.
-3. Open **Lead workspace**, inspect a lead, edit its draft, and mark it reviewed or hold it.
-4. Export CSV for a spreadsheet or the full JSON packet for source records, events, and usage.
-5. Import your own CSV (25 rows / 250 KB maximum), describe your offer in Settings, and run again.
+## Connect your Claude Code session
 
-### Two execution modes
+```sh
+npm run build:bridge   # once, to build the office page the bridge serves
+npm run bridge
+```
 
-**Local:** The default uses real deterministic data processing and template drafts. It makes no model calls and reports zero tokens and cost. Built-in sample uses the fixed date 2026-09-06; imported data uses the current UTC date.
+The bridge prints two things: the path to a ready-to-paste hooks file, and a URL. Merge
+the hooks into `.claude/settings.json`, open the URL, and use Claude Code as normal.
 
-**Live AI:** Add an OpenAI API key in Settings. Context, Outreach, and Review run separate, bounded GPT-4.1 mini calls for eligible leads, with structured output and exact source-quote validation. Two leads may process concurrently. The server sends requests only to https://api.openai.com/v1/responses, with `store:false`. The key is held in browser memory, sent over the site's HTTPS connection to its server, then to OpenAI. This app does not persist or log the key or records. Provider-side data handling follows the user's OpenAI account policies. API billing applies.
+It binds to `127.0.0.1` only, requires a token, and refuses to start without one. It
+serves the office page itself, on its own origin, so there is no CORS and no
+mixed-content problem — and no session data crosses the network.
 
-No server environment key is required. Do not hardcode a key in source, a URL, client bundle, or hosting metadata.
+What the office shows:
 
-Usage is based on completed successful responses. Failed or aborted calls may incur unreported cost. Estimates use GPT-4.1 mini input/cached/output prices of $0.40/$0.10/$1.60 per million tokens, verified September 6, 2026; update if pricing changes.
+| In your session | On the floor |
+|---|---|
+| A prompt | Work arrives in the inbox |
+| A tool call | The agent walks to that desk and starts an assignment |
+| An edit or write | A document appears, which you can open |
+| A tool failure | The assignment fails, carrying the tool's own error |
+| A subagent spawns | Someone walks in through the door |
+| A permission prompt | An approval lands on the manager's desk |
+| Tokens | A meter, read from the session transcript |
+
+**The office shows whatever is actually live.** Nobody is on the floor who is not
+running: one agent means one figure, six subagents means six. There is no fixed roster
+and no capacity cap — the cast comes from the stream.
+
+`bridge/hooks/settings-snippet.json` is a reference copy whose token comes from
+`$O6_BRIDGE_TOKEN`. The file the CLI writes contains your real token and is gitignored.
+
+---
+
+## The rules this thing follows
+
+The product's whole claim is that what you see is what happened, so these are enforced in
+code rather than written down and hoped for — they live as runtime assertions in
+`lib/office-view/core/scheduler.ts`.
+
+- **Labels are literal.** "Reviewing draft against source notes", or a tool's own name and
+  file. Never an invented account of what an agent was thinking.
+- **Nothing is animated that did not happen.** If a position changes with no event to
+  justify a journey, it cuts rather than walks. A cut is an honest ellipsis; a walk is a
+  claim.
+- **Simultaneous stays simultaneous.** Parallel tool calls are concurrent, and a queue
+  would show a sequence that never occurred.
+- **Compression is stated.** When time is compressed or items are batched, the office says
+  so on screen. A compromise said out loud is information rather than a lie.
+- **Usage cites its source, and "unavailable" is a real answer.** Local-rules mode reports
+  no tokens because it spent none; a confident zero would read as "this was free".
+- **Sample, live and recorded are always labelled.**
+
+Violet means one thing only: work happening right now. That is also how the office stays
+inside the O6 brand's 5% cap on violet — by construction rather than by vigilance.
+
+---
+
+## Where things are
+
+```
+lib/office-view/        the renderer — extractable, knows nothing about the domain
+  core/                 contract, projection, timeline, scheduler (no React, no DOM)
+  react/                the SVG office and its animation loop
+  art/                  theme and sprites
+lib/floorplans/         one plan per kind of office; plans are data, not code
+lib/lead-engine.ts      CSV parsing, dedup and qualification rules
+lib/lead-workflow.ts    the lead workflow, with no React in it
+lib/lead-review.ts      the local reviewer and the grounded redraft
+bridge/                 the local bridge: server, hook mapping, transcript reader, CLI
+fixtures/               recorded runs, and one captured real session
+scripts/                capture, record and replay tools
+tests/                  the honesty tests
+```
+
+`npm test` runs everything.
+
+---
 
 ## Scope and limitations
 
-- This is a working prototype, not a complete hosted multi-tenant SaaS.
-- State is tab-local, in memory. Export before refresh. Closing the page stops coordination. A fresh run replaces the previous run.
-- Research attaches source notes; no external enrichment or web research is performed.
-- There are no Claude Code, Codex, Replit, CRM, or email integrations yet.
-- No messages are sent. Mark reviewed records a human decision only.
-- The 3 AI specialists are separate model calls coordinated by the client. They are not autonomous background employees or dynamically spawning subagents.
-- The office image is static. Desk status, file position, metrics, events, and outputs reflect workflow events.
-- Readiness rules are conservative prototype heuristics, not a predictive scoring model. Unknown flags, invalid dates, and ambiguous records are held.
-- AI-generated personalization can still be wrong despite quote validation and a second model review; inspect the original notes.
-- Live API behavior requires the user's key. Automated API tests use mocked responses and do not establish a successful paid live run.
-- No broad browser UI QA was requested. Build/type checks and focused automated tests were performed.
-- Optional WebMCP tools (`o6_read_run`, `o6_run_sample`) feature-detect `document.modelContext`. No supported WebMCP validation context was available during construction; runtime registration was not verified.
+Stated plainly, because a demo that overstates itself is the exact failure this project
+exists to avoid.
 
-## CSV format
-
-Required: `name,email,notes`. For qualification, include `company,last_contact,next_followup,opted_out,active_customer,stage`.
-
-Dates must be YYYY-MM-DD. Flags accept true/false, yes/no, or 1/0. Missing or unknown flags hold the lead. Duplicate grouping uses trimmed, case-insensitive email only, preserving all notes and the strongest exclusion. Download the fictional CSV in the Import dialog.
-
-## Next development priorities
-
-1. Add resumable server orchestration with authenticated per-user storage.
-2. Extract the event contract into a reusable visualization package.
-3. Build one actual external adapter (Claude Code hooks or Codex App Server).
-4. Add configurable qualification criteria and real CRM imports.
-5. Add a budget cap and server-side usage records before larger live workloads.
-6. Add browser interaction tests and live-provider integration tests.
-
-No open-source license has been selected; choose one before publishing a repository as open source.
+- A working prototype, not a hosted multi-tenant product. No accounts, no server-side
+  storage. Runs live in memory; export before you refresh.
+- **No messages are ever sent.** Approving a draft marks a record. That is all.
+- The lead workflow does no external enrichment and no web research. "Research" here means
+  tracing claims back to the records you supplied.
+- Readiness rules are conservative heuristics, not a predictive model. Unknown flags,
+  invalid dates and ambiguous records are held rather than guessed at.
+- Live-AI mode uses your own API key, held in browser memory and sent over the site's own
+  HTTPS connection to its own server, then to the provider. It is never persisted or
+  logged here. Usage is counted from completed responses, so failed or aborted calls may
+  cost money that is not reported.
+- Only Claude Code has a bridge adapter. Codex and Replit do not.
+- `fixtures/captured-coding-session.json` is a **reconstruction** from session transcripts
+  already on disk, not a live hook capture. Its timings, tool order, failures and subagent
+  are real; its content is redacted. The file says so in its own `derivation` field.
+- The burst fixture in `/lab` is **synthetic** and labelled so. The real captured session
+  contains little parallelism, so it demonstrates pacing rather than burst handling.
+- The renderer is designed to be extractable as a standalone package, but is not published
+  as one.
+- No open-source licence has been chosen. Choose one before publishing this repository.

@@ -479,6 +479,73 @@ test('a desk goes quiet again when its assignment finishes', () => {
   );
 });
 
+test('a dynamic office shows only the agents that are actually live', () => {
+  // The correction that matters most for the "connect your work" mode: a live session's
+  // cast is whatever is running. Seating a fixed roster would put people on the floor
+  // who do not exist, which is exactly the kind of lie this product cannot afford.
+  const dynamicPlan = compileFloorPlan({ ...leadReactivationPlan, staffing: 'dynamic' });
+
+  const idle = schedule([], dynamicPlan);
+  assert.equal(idle.workers.size, 0, 'an idle dynamic office is empty, not pre-staffed');
+
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Reading', station: 'records' });
+    emit({ type: 'specialist.joined', occurredAt: 100, label: 'Joined', worker: 'a1', role: 'Explore' });
+    emit({ type: 'assignment.started', occurredAt: 200, label: 'Searching', station: 'research', worker: 'a1' });
+  });
+  const result = schedule(events, dynamicPlan);
+  assert.deepEqual(result.violations, []);
+
+  // One main agent (its events carry no worker) plus exactly the subagent that spawned.
+  assert.deepEqual([...result.workers.keys()].sort(), ['a1', 'main']);
+  assert.equal(result.workers.get('main').kind, 'permanent');
+  assert.equal(result.workers.get('a1').kind, 'specialist');
+  assert.equal(result.workers.get('a1').role, 'Explore');
+});
+
+test('in a dynamic office the worker goes to the work', () => {
+  // Watching the agent cross to the reading room and then to the workshop is what makes
+  // a live session legible. Desks blinking on their own are not.
+  const dynamicPlan = compileFloorPlan({ ...leadReactivationPlan, staffing: 'dynamic' });
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'At Records', station: 'records' });
+    emit({ type: 'assignment.started', occurredAt: 3000, label: 'At Review', station: 'review' });
+  });
+  const result = schedule(events, dynamicPlan);
+  const main = result.workers.get('main');
+  assert.ok(main.motion.length >= 2, 'the agent should travel between desks');
+  assert.equal(main.station, 'review', 'and end up where its latest work is');
+});
+
+test('a dynamic office never runs out of room for live agents', () => {
+  // Capacity must never be the reason someone is missing: if six subagents are running,
+  // six are on the floor, even though the plan declares only two hot desks.
+  const dynamicPlan = compileFloorPlan({ ...leadReactivationPlan, staffing: 'dynamic' });
+  const events = stream((emit) => {
+    for (let i = 0; i < 6; i++) {
+      emit({ type: 'specialist.joined', occurredAt: i * 10, label: `S${i}`, worker: `a${i}`, role: 'Explore' });
+    }
+  });
+  const result = schedule(events, dynamicPlan);
+  const specialists = [...result.workers.values()].filter((w) => w.kind === 'specialist');
+  assert.equal(specialists.length, 6);
+  for (const worker of specialists) {
+    assert.equal(worker.present.sampleAt(result.duration), true, `${worker.id} should be on the floor`);
+  }
+
+  // And they do not stand inside each other.
+  const spots = specialists.map((w) => w.motion.sampleAt(result.duration));
+  const unique = new Set(spots.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`));
+  assert.equal(unique.size, spots.length, 'each waiting agent needs its own spot');
+});
+
+test('a permanent office still staffs its modelled team', () => {
+  // The lead workflow genuinely does have six roles whether or not they are busy, so
+  // the default behaviour is unchanged.
+  const result = schedule([], compiled);
+  assert.equal([...result.workers.values()].filter((w) => w.kind === 'permanent').length, 6);
+});
+
 test('a desk worker reports what their desk is doing, verbatim', () => {
   const events = stream((emit) => {
     emit({

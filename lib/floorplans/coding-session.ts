@@ -71,6 +71,12 @@ export const codingSessionPlan: FloorPlan = {
   label: 'Coding session office',
   tile: { w: 64, h: 32, z: 24 },
 
+  // Nobody is assumed. A live session's cast is whatever is actually running — one agent,
+  // or one agent and however many subagents it spawned — and they walk to whichever desk
+  // their current work is at. Seating a fixed six-person team here, the way the lead
+  // office does, would populate the floor with people who do not exist.
+  staffing: 'dynamic',
+
   rooms: [
     ...DEPARTMENTS.map((dept) => ({
       id: `room-${dept.id}`,

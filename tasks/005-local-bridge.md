@@ -1,6 +1,6 @@
 # T005 — Local bridge: hook receiver, SSE, transcript usage
 
-**Status:** not_started  
+**Status:** done  
 **Branch:** `task/005-local-bridge`  
 **Phase:** 2  
 **Depends on:** T001  
@@ -46,3 +46,29 @@ _(blank — fill if scope changed during execution)_
 ## Notes
 
 _(blockers, decisions, paused reasons)_
+
+## Notes (execution)
+
+Built together with T007 on one branch — the CLI, the served page and the server are one
+user-facing thing, and splitting them would have meant shipping a bridge nobody could open.
+
+**Per-subagent usage attribution is now proven, not just designed for.** The join works
+exactly as T001 predicted: `agent-<id>.jsonl` beside the session transcript, `agent_id`
+matching what `SubagentStart` delivers, and `meta.json` supplying the subagent's own
+stated assignment. Tests cover attribution, incremental tailing, and a half-written
+trailing line (transcripts are appended to while being read).
+
+**Cost is deliberately not computed.** Tokens are reported because they are known; a
+dollar figure would need per-model pricing this bridge has no business guessing at.
+
+**Honest gap in the end-to-end replay:** `scripts/replay-hooks.mjs` drives real payloads
+through the real server, but the reconstructed capture omits `transcript_path` (it is a
+filesystem path, and the capture redacts those). So the replay exercises hooks and SSE
+but not the transcript watcher — `/health` reports `watching: 0`. A genuine live session
+carries the path and usage does flow; the watcher itself is covered by unit tests against
+a real on-disk layout.
+
+**Security posture:** loopback only, token required and refused if absent, short, or a
+placeholder; every payload validated; body size capped; static serving contained to
+`bridge/public` with route-shaped fallback only (a probe for `/package.json` gets a 404,
+not the app shell — that was a real looseness the tests caught).

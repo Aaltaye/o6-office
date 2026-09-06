@@ -58,6 +58,14 @@ export type OfficeViewProps = {
   speed?: number;
   /** Controlled playhead in ms, for an external scrubber. */
   seekMs?: number | null;
+  /**
+   * Follow the head of the timeline.
+   *
+   * Live is replay played at its head — so a viewer opening the office ten minutes into
+   * a session sees what is happening *now*, not ten minutes of history replaying from
+   * the start. Off by default: a recorded run is meant to be watched from the beginning.
+   */
+  follow?: boolean;
   onTime?: (ms: number, duration: number) => void;
   onSelect?: (selection: Selection) => void;
   selection?: Selection;
@@ -74,6 +82,7 @@ export function OfficeView({
   playing = true,
   speed = 1,
   seekMs = null,
+  follow = false,
   onTime,
   onSelect,
   selection = null,
@@ -273,6 +282,15 @@ export function OfficeView({
   useEffect(() => {
     applyTime(clock.current.time, true);
   }, [applyTime]);
+
+  // Live mode: keep the playhead at the head of the timeline as it grows, so the office
+  // always shows the present rather than replaying the backlog from the beginning.
+  // eslint-disable-next-line react/react-compiler
+  useEffect(() => {
+    if (!follow) return;
+    clock.current.seek(timeline.duration);
+    applyTime(clock.current.time, true);
+  }, [follow, timeline.duration, applyTime]);
 
   // A scrub moves the clock AND repaints, so dragging the scrubber while paused works.
   // eslint-disable-next-line react/react-compiler

@@ -224,6 +224,12 @@ test('the whole captured session maps to a valid, schedulable stream', async () 
   assert.equal(left.length, 1);
   assert.equal(joined[0].worker, left[0].worker);
 
-  // Real failures stay failures.
-  assert.equal(events.filter((e) => e.type === 'assignment.failed').length, 9);
+  // Real failures stay failures — every one the session actually had, none invented.
+  const captured = fixture.events.filter((e) => e.hook_event_name === 'PostToolUseFailure').length;
+  assert.ok(captured > 0, 'the capture should contain real failures');
+  assert.equal(events.filter((e) => e.type === 'assignment.failed').length, captured);
+
+  // And the turns the session actually had became units of work on the floor.
+  const prompts = fixture.events.filter((e) => e.hook_event_name === 'UserPromptSubmit').length;
+  assert.equal(events.filter((e) => e.type === 'work.received').length, prompts);
 });
