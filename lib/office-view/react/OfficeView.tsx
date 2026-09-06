@@ -32,7 +32,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { FloorPlan, OfficeEvent, Station, StationId, World } from '../core/types.ts';
+import type { FloorPlan, OfficeEvent, RoomId, Station, StationId, World } from '../core/types.ts';
 import { compileFloorPlan, aisleBandFor, type CompiledPlan } from '../core/plan.ts';
 import { planBounds, focusBounds, toViewBox, worldToScreen, type Bounds } from '../core/projection.ts';
 import { SimClock } from '../core/timeline.ts';
@@ -43,6 +43,11 @@ import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from './use
 
 /** What the viewer clicked, handed back so the host app can open its own panel. */
 export type Selection =
+  /**
+   * The department level: the floor answers "what is happening", a department answers
+   * "which part of this company is busy, and what are its desks doing".
+   */
+  | { kind: 'department'; id: RoomId }
   | { kind: 'station'; id: StationId }
   | { kind: 'worker'; id: string }
   | { kind: 'work'; id: string }

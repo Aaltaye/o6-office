@@ -105,9 +105,13 @@ export function OfficeStage({
 
   const onTimeRef = useRef(onTime);
   const onSelectRef = useRef(onSelect);
+  // The click handler is deliberately dependency-free so it never re-binds mid-drag; it
+  // reads the plan through a ref rather than closing over it.
+  const planRef = useRef(plan);
   useEffect(() => {
     onTimeRef.current = onTime;
     onSelectRef.current = onSelect;
+    planRef.current = plan;
   });
 
   /** Everything three.js owns. Kept in a ref: React must never re-render for a frame. */
@@ -339,10 +343,25 @@ export function OfficeStage({
   // --- camera ---------------------------------------------------------------
   /** Where the camera should settle. Derived from the host's selection rather than
    *  stored, so the two can never disagree about which desk is being looked at. */
-  const focus = useMemo<World | null>(() => {
-    if (selection?.kind !== 'station') return null;
-    return plan.stations.find((s) => s.id === selection.id)?.seat ?? null;
-  }, [selection, plan.stations]);
+  const focus = useMemo<{ at: World; distance: number } | null>(() => {
+    if (selection?.kind === 'station') {
+      const seat = plan.stations.find((s) => s.id === selection.id)?.seat;
+      return seat ? { at: seat, distance: 0 } : null;
+    }
+    if (selection?.kind === 'department') {
+      const room = plan.rooms.find((candidate) => candidate.id === selection.id);
+      if (!room) return null;
+      // Frame the room itself rather than the whole floor. Deliberately not routed
+      // through planRadius, whose 8-unit floor would zoom a small department back out to
+      // roughly the size of the building.
+      const extent = Math.max(room.size.w, room.size.h) / 2;
+      return {
+        at: { x: room.origin.x + room.size.w / 2, y: room.origin.y + room.size.h / 2 },
+        distance: Math.max(extent * 3.4, 6),
+      };
+    }
+    return null;
+  }, [selection, plan.stations, plan.rooms]);
   const cameraState = useRef({ angle: -0.9, target: new THREE.Vector3(), distance: 0 });
 
   useAnimationLoop(
@@ -359,9 +378,14 @@ export function OfficeStage({
           cam.target.copy(current.centre);
         }
         const wantTarget = focus
-          ? new THREE.Vector3(focus.x, 0.6, focus.y)
+          ? new THREE.Vector3(focus.at.x, 0.6, focus.at.y)
           : current.centre.clone();
-        const wantDistance = focus ? current.radius * 1.1 : current.radius * 2.15;
+        // A department carries its own framing distance; a desk keeps the close-in one.
+        const wantDistance = focus
+          ? focus.distance > 0
+            ? focus.distance
+            : current.radius * 1.1
+          : current.radius * 2.15;
 
         if (!reducedMotion) cam.angle += deltaMs * 0.000018;
         cam.target.lerp(wantTarget, 0.06);
@@ -414,17 +438,42 @@ export function OfficeStage({
       );
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(pointer, current.camera);
+      // A desk wins over the department it sits in: the finer level is the more specific
+      // answer to "what did I just click".
       const hit = raycaster.intersectObjects(current.pickables, false)[0];
-      if (!hit) {
+      if (hit) {
+        for (const [stationId, meshes] of current.liveMeshes) {
+          if (!meshes.includes(hit.object as THREE.Mesh)) continue;
+          onSelectRef.current?.({ kind: 'station', id: stationId });
+          return;
+        }
+      }
+
+      /*
+       * No desk under the pointer, so fall back to the floor itself: which department did
+       * the click land in? Intersecting the ground plane rather than adding pick geometry
+       * means departments need no meshes of their own and the whole floor of a department
+       * is a target, not just its pad. toScene maps plan (x, y) to three (x, z), so the
+       * inverse reads z back as the plan's y.
+       */
+      const floor = new THREE.Vector3();
+      const onFloor = raycaster.ray.intersectPlane(
+        new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
+        floor,
+      );
+      if (!onFloor) {
         onSelectRef.current?.(null);
         return;
       }
-      // Which desk owns the mesh that was hit.
-      for (const [stationId, meshes] of current.liveMeshes) {
-        if (!meshes.includes(hit.object as THREE.Mesh)) continue;
-        onSelectRef.current?.({ kind: 'station', id: stationId });
-        return;
-      }
+      const room = planRef.current.rooms.find(
+        (candidate) =>
+          (candidate.kind ?? 'department') === 'department' &&
+          floor.x >= candidate.origin.x &&
+          floor.x <= candidate.origin.x + candidate.size.w &&
+          floor.z >= candidate.origin.y &&
+          floor.z <= candidate.origin.y + candidate.size.h,
+      );
+      onSelectRef.current?.(room ? { kind: 'department', id: room.id } : null);
     },
     [],
   );

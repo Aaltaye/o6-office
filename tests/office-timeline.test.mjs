@@ -28,6 +28,8 @@ import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts'
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
 import { createEmitter } from '../lib/office-view/core/events.ts';
 import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
+import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
+import { departmentsAt, departmentAt } from '../lib/office-view/core/departments.ts';
 
 const TILE = { w: 64, h: 32, z: 24 };
 const near = (a, b, epsilon = 1e-9) => assert.ok(Math.abs(a - b) < epsilon, `${a} !== ${b}`);
@@ -623,4 +625,88 @@ test('the real captured session schedules without violating anything', async () 
   assert.equal(fixture.redacted, true, 'committed fixtures must be redacted');
   assert.equal(fixture.subagents.length, 1);
   assert.ok(fixture.subagents[0].description, 'the specialist has a literal assignment label');
+});
+
+/* --- the department level --------------------------------------------------
+ *
+ * A floor of desks answers "what is happening". A department answers "which part of this
+ * company is busy" — the question people actually ask first. The risk in adding a level
+ * is that it invents a collective voice for the room, so these pin that it does not.
+ */
+
+test('every desk belongs to exactly one room, in both shipped plans', () => {
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    const compiled = compileFloorPlan(plan);
+    const roomIds = new Set(plan.rooms.map((room) => room.id));
+    for (const station of plan.stations) {
+      const room = compiled.roomOf.get(station.id);
+      assert.ok(room, `${plan.id}: ${station.id} is in no room`);
+      assert.ok(roomIds.has(room), `${plan.id}: ${station.id} claims room "${room}", which does not exist`);
+      assert.ok(
+        compiled.roomStations.get(room).includes(station.id),
+        `${plan.id}: the room index and the station disagree about ${station.id}`,
+      );
+    }
+  }
+});
+
+test('circulation is not a department, so there is nothing to drill into', () => {
+  for (const plan of [leadReactivationPlan, codingSessionPlan]) {
+    const compiled = compileFloorPlan(plan);
+    const timeline = schedule([], compiled);
+    const departments = departmentsAt(compiled, timeline, 0);
+    const ids = departments.map((department) => department.room.id);
+    assert.ok(!ids.includes('room-front'), `${plan.id}: the entrance is offered as a department`);
+    for (const department of departments) {
+      assert.ok(
+        department.desks.length > 0,
+        `${plan.id}: "${department.room.label}" is a department with no desks`,
+      );
+    }
+  }
+});
+
+test('a department reports its desks’ words, not a mood for the room', () => {
+  const compiled = compileFloorPlan(leadReactivationPlan);
+  const emit = createEmitter({ runId: 'dept', source: 'lead-workflow' });
+  const station = leadReactivationPlan.stations[0];
+  const events = [
+    emit({ type: 'run.started', label: 'Start', occurredAt: 0 }),
+    emit({
+      type: 'assignment.started',
+      label: 'Checking the follow-up window',
+      station: station.id,
+      occurredAt: 100,
+    }),
+  ];
+  const timeline = schedule(events, compiled);
+  const roomId = compiled.roomOf.get(station.id);
+  const view = departmentAt(compiled, timeline, roomId, timeline.duration);
+
+  const desk = view.desks.find((candidate) => candidate.id === station.id);
+  assert.equal(
+    desk.status,
+    'Checking the follow-up window',
+    'the department copies the desk verbatim',
+  );
+  assert.equal(view.status, 'active');
+  assert.equal(view.liveCount, 1);
+});
+
+test('a department with nothing happening says so, and is never given tokens', () => {
+  const compiled = compileFloorPlan(leadReactivationPlan);
+  const timeline = schedule([], compiled);
+  for (const department of departmentsAt(compiled, timeline, 0)) {
+    assert.equal(department.liveCount, 0);
+    assert.ok(['idle', 'never-used'].includes(department.status));
+    // Usage names a worker, never a station, so a per-department figure would be invented.
+    assert.equal(department.usageAttributed, false);
+  }
+});
+
+test('asking for a department that is not one returns nothing, rather than an empty room', () => {
+  const compiled = compileFloorPlan(leadReactivationPlan);
+  const timeline = schedule([], compiled);
+  assert.equal(departmentAt(compiled, timeline, 'room-front', 0), null, 'circulation');
+  assert.equal(departmentAt(compiled, timeline, 'no-such-room', 0), null, 'unknown id');
 });

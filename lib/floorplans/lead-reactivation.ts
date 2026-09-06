@@ -141,7 +141,14 @@ export const leadReactivationPlan: FloorPlan = {
   rooms: [
     ...DEPARTMENTS.map(room),
     { id: 'room-visitors', label: 'Visiting specialists', origin: { x: 4, y: 10.5 }, size: { w: 6, h: 2.5 } },
-    { id: 'room-front', label: 'Front desk', origin: { x: 3.5, y: 0 }, size: { w: 7, h: 2 } },
+    {
+      id: 'room-front',
+      label: 'Front desk',
+      origin: { x: 3.5, y: 0 },
+      size: { w: 7, h: 2 },
+      // Where work arrives, not where it is done.
+      kind: 'circulation',
+    },
   ],
 
   stations: [
@@ -220,7 +227,13 @@ export const leadReactivationCompactPlan: FloorPlan = {
       size: { w: 2, h: 2 },
     })),
     { id: 'room-visitors', label: 'Visiting specialists', origin: { x: 11.6, y: 9.6 }, size: { w: 2.4, h: 2.4 } },
-    { id: 'room-front', label: 'Front desk', origin: { x: 1, y: -2.4 }, size: { w: 2.4, h: 2 } },
+    {
+      id: 'room-front',
+      label: 'Front desk',
+      origin: { x: 1, y: -2.4 },
+      size: { w: 2.4, h: 2 },
+      kind: 'circulation',
+    },
   ],
 
   stations: [

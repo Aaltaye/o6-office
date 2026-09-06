@@ -133,7 +133,14 @@ export const codingSessionPlan: FloorPlan = {
       size: { w: 3, h: 3 },
     })),
     { id: 'room-visitors', label: 'Subagents', origin: { x: 3.4, y: 10.5 }, size: { w: 7.2, h: 2.5 } },
-    { id: 'room-front', label: 'Entrance', origin: { x: 3.5, y: 0 }, size: { w: 7, h: 2 } },
+    {
+      id: 'room-front',
+      label: 'Entrance',
+      origin: { x: 3.5, y: 0 },
+      size: { w: 7, h: 2 },
+      // Where people arrive, not where work happens: nothing to drill into.
+      kind: 'circulation',
+    },
   ],
 
   stations: [

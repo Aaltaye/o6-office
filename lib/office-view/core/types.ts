@@ -271,6 +271,18 @@ export type Room = {
   label: string;
   origin: World;
   size: { w: number; h: number };
+  /**
+   * A department is a place work happens and can be drilled into; circulation is the
+   * entrance and the corridors, which have no desks and no story of their own.
+   *
+   * Stated by the plan rather than inferred from "does it contain desks?", for the same
+   * reason a handoff states its direction: a room that is *meant* to hold desks and
+   * currently holds none is a real condition worth failing on, and inference would
+   * silently turn that into "circulation".
+   *
+   * Defaults to 'department' when absent.
+   */
+  kind?: 'department' | 'circulation';
 };
 
 /**

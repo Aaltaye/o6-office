@@ -80,19 +80,46 @@ function App() {
    * it is describing, and the only reliable way to guarantee that is to compute it from
    * the stream every time.
    */
+  /** The desks each department owns, so a department can be matched to its own events. */
+  const roomStations = useMemo(() => {
+    const byRoom = new Map<string, Set<string>>();
+    for (const station of codingSessionPlan.stations) {
+      if (!station.room) continue;
+      const set = byRoom.get(station.room) ?? new Set<string>();
+      set.add(station.id);
+      byRoom.set(station.room, set);
+    }
+    return byRoom;
+  }, []);
+
   const detail = useMemo(() => {
     if (!selection) return null;
-    const match = [...events]
-      .reverse()
-      .find((event) =>
-        selection.kind === 'station'
-          ? 'station' in event && event.station === selection.id
-          : selection.kind === 'worker'
-            ? 'worker' in event && event.worker === selection.id
-            : 'work' in event && event.work?.id === selection.id,
-      );
+    const matches = (event: OfficeEvent) => {
+      switch (selection.kind) {
+        case 'station':
+          return 'station' in event && event.station === selection.id;
+        case 'worker':
+          return 'worker' in event && event.worker === selection.id;
+        case 'work':
+          return 'work' in event && event.work?.id === selection.id;
+        case 'department': {
+          // A department is the union of its desks. Nothing is aggregated or rephrased —
+          // the panel still shows one desk's own words.
+          const desks = roomStations.get(selection.id);
+          if (!desks) return false;
+          return 'station' in event && typeof event.station === 'string' && desks.has(event.station);
+        }
+        default: {
+          // A new selection kind must be handled here rather than silently falling
+          // through to the wrong filter.
+          const never: never = selection;
+          return Boolean(never);
+        }
+      }
+    };
+    const match = [...events].reverse().find(matches);
     return match ? `${match.label}${match.detail ? ` — ${match.detail}` : ''}` : 'Nothing yet.';
-  }, [selection, events]);
+  }, [selection, events, roomStations]);
 
   const usage = useMemo(() => {
     let input = 0;
