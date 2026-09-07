@@ -209,7 +209,7 @@ function buildBands(plan: FloorPlan): CompiledBand[] {
   // which paints it at the wrong depth.
   const positions: World[] = [
     ...plan.aisle.nodes.map((n) => n.at),
-    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray]),
+    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray].filter((p) => p !== undefined)),
     plan.inbox.at,
     plan.outbox.at,
     ...plan.doors.map((d) => d.at),
@@ -329,8 +329,10 @@ export function compileFloorPlan(plan: FloorPlan): CompiledPlan {
   anchors.set('outbox', plan.outbox.at);
   for (const station of plan.stations) {
     anchors.set(`${station.id}:seat`, station.seat);
-    anchors.set(`${station.id}:in`, station.inTray);
-    anchors.set(`${station.id}:out`, station.outTray);
+    // A satellite has no trays, so it contributes no tray anchors. Work is never routed
+    // to one — only workers are.
+    if (station.inTray) anchors.set(`${station.id}:in`, station.inTray);
+    if (station.outTray) anchors.set(`${station.id}:out`, station.outTray);
   }
   for (const door of plan.doors) anchors.set(`door:${door.id}`, door.at);
 

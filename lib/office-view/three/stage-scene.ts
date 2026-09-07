@@ -20,6 +20,7 @@
 import * as THREE from 'three';
 
 import type { FloorPlan, PropKind, World } from '../core/types.ts';
+import { WORKER_RADIUS } from '../core/figure.ts';
 import { palette, PROP_SHAPES, geometry } from '../art/theme.ts';
 import {
   buildBooks,
@@ -243,11 +244,33 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
       // A monitor, a keyboard and a lamp. These three objects are what make a desk read
       // as a workstation rather than a table, and the reference leans on them heavily.
       root.add(buildDeskKit(desk, size.h, station.facing as 'e' | 'w' | 'n' | 's'));
-      // A rug anchors the desk to the floor and gives the eye somewhere warm to land.
-      root.add(buildRug({ x: (station.seat.x + desk.x) / 2, y: (station.seat.y + desk.y) / 2 }, 2.6, 2.2));
+
+      /*
+       * One rug per DEPARTMENT, sized to its whole desk run — not one per desk.
+       *
+       * A rug is 2.6 across and neighbouring desks are 1.8 apart, so a rug each overlapped
+       * its neighbours by 0.8 and the department read as a smear of red rather than as a
+       * floor. The rug is drawn by the department's first desk and stretched to cover the
+       * rest, which is also what a real office does: a pod of desks sits on one mat.
+       */
+      if (!station.satellite) {
+        const xs = plan.stations.filter((s) => s.room === station.room).map((s) => s.seat.x);
+        const spread = Math.max(...xs) - Math.min(...xs);
+        const midX = (Math.min(...xs) + Math.max(...xs)) / 2;
+        // The rug sits under the desks the same way it always did — half the desk's own
+        // offset in front of the seats — just centred on the whole run instead of one seat.
+        const deskOffsetX = desk.x - station.seat.x;
+        root.add(
+          buildRug(
+            { x: midX + deskOffsetX / 2, y: (station.seat.y + desk.y) / 2 },
+            2.6 + spread,
+            2.2,
+          ),
+        );
+      }
     }
 
-    for (const trayAt of [station.inTray, station.outTray]) {
+    for (const trayAt of [station.inTray, station.outTray].filter((p) => p !== undefined)) {
       root.add(
         mesh(
           roundedBox(0.38, 0.05, 0.3),
@@ -354,10 +377,17 @@ export function buildWorker(color: string): THREE.Group {
   head.castShadow = true;
   group.add(head);
 
-  // Two small ears, straight from the reference silhouette.
+  /*
+   * Two small ears, straight from the reference silhouette — and the widest part of the
+   * whole figure, which is why the offset is derived from WORKER_RADIUS rather than
+   * written as a literal. The scheduler reserves WORKER_DIAMETER of floor for a person;
+   * if the ears were free to drift past it, workers would overlap again and nothing would
+   * notice. (0.40 - 0.10 = 0.30, exactly where they have always been.)
+   */
+  const earRadius = 0.1;
   for (const side of [-1, 1]) {
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), material);
-    ear.position.set(side * 0.3, 1.08, 0);
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(earRadius, 12, 10), material);
+    ear.position.set(side * (WORKER_RADIUS - earRadius), 1.08, 0);
     ear.castShadow = true;
     group.add(ear);
   }

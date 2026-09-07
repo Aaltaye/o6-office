@@ -776,15 +776,37 @@ test('the door and the renderer agree about every event in the fixtures', () => 
   assert.ok(checked > 500, `only ${checked} events checked — the fixtures look wrong`);
 });
 
-test('the door knows the same desks the floor plan actually has', () => {
-  // The station list is hard-coded in server.mjs because the plan is a .ts module. If a
-  // desk is added to the plan, this fails rather than the door quietly rejecting real work.
-  const planStations = codingSessionPlan.stations.map((station) => station.id).sort();
+test('the door knows every desk a producer is allowed to name', () => {
+  /*
+   * The station list is hard-coded in server.mjs because the plan is a .ts module. If a
+   * department is added to the plan, this fails rather than the door quietly rejecting
+   * real work.
+   *
+   * It compares against DEPARTMENTS, not against every station. A department now owns
+   * several desks so that concurrent agents each get their own, but only the department's
+   * own id is addressable: producers name the KIND of work they are doing, and which desk
+   * that becomes is the office's business. A producer that could target `operations-3`
+   * would be choosing seating, which it has no way to reason about.
+   */
+  const addressable = codingSessionPlan.stations
+    .filter((station) => !station.satellite)
+    .map((station) => station.id)
+    .sort();
   assert.deepEqual(
     [...DESKS].sort(),
-    planStations,
-    'the desks emit knows must match the floor the bridge draws',
+    addressable,
+    'the desks emit knows must match the departments a producer may name',
   );
+
+  const satellites = codingSessionPlan.stations.filter((station) => station.satellite);
+  assert.ok(satellites.length > 0, 'departments have room for concurrent agents');
+  for (const satellite of satellites) {
+    assert.equal(
+      [...DESKS].includes(satellite.id),
+      false,
+      `${satellite.id} is seating, not an address a producer may aim at`,
+    );
+  }
 });
 
 test('the contract is published so an agent can correct itself', async () => {

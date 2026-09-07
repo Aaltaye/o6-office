@@ -248,10 +248,16 @@ export function OfficeView({
         presentWorkers.push(id);
         const at = state.motion.sampleAt(t);
         if (!at) continue;
-        const seated = state.station && !state.motion.isMovingAt(t);
-        bands[`worker:${id}`] = seated
-          ? `${state.station}:seat`
-          : aisleBandFor(compiled, at).id;
+        /*
+         * Which desk they are at NOW — not `state.station`, which is the scheduler's
+         * end-of-run bookkeeping and whose own docstring says never to read it to decide
+         * where somebody is at time t. With one desk per department the difference barely
+         * showed; with three it painted every worker into their FINAL desk's layer at
+         * every instant, including before they had walked there.
+         */
+        const deskNow = state.stationAt.sampleAt(t);
+        const seated = deskNow && !state.motion.isMovingAt(t);
+        bands[`worker:${id}`] = seated ? `${deskNow}:seat` : aisleBandFor(compiled, at).id;
       }
       for (const [id, state] of timeline.work) {
         const at = state.motion.sampleAt(t);
@@ -592,8 +598,8 @@ export function OfficeView({
           // station-front: trays sit in front of the desk and occlude whoever is at it.
           return (
             <g key={band.id} data-band={band.id}>
-              <Tray at={station.inTray} tile={plan.tile} />
-              <Tray at={station.outTray} tile={plan.tile} />
+              {station.inTray ? <Tray at={station.inTray} tile={plan.tile} /> : null}
+              {station.outTray ? <Tray at={station.outTray} tile={plan.tile} /> : null}
               {(station.props ?? [])
                 .filter((prop) => prop.layer === 'front')
                 .map((prop, i) => (
@@ -663,6 +669,15 @@ export function OfficeView({
             if (!point.visible) return null;
             const isActive = Boolean(status);
             const isSelected = selection?.kind === 'station' && selection.id === station.id;
+
+            /*
+             * A department is captioned once, not once per desk. A satellite earns its own
+             * caption only when it has something of its own to say — somebody working at
+             * it, or the viewer having picked it. Otherwise "Operations / Standing by"
+             * appears three times over three empty desks and crowds out the labels that
+             * are actually reporting something.
+             */
+            if (station.satellite && !isActive && !isSelected) return null;
 
             // On a narrow screen, six labels overlap into an unreadable pile and destroy
             // the diorama. Only the desk that is actually doing something (or the one the

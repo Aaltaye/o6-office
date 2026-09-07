@@ -360,17 +360,27 @@ test('every department has its own furniture', () => {
   // Six identical desks with six different captions is a labelled diagram. A company is
   // legible because its rooms are not interchangeable, so each department must have a
   // distinct silhouette — and no two may be built from the same set.
+  /*
+   * Asked per ROOM rather than per desk. A department is no longer a single station — it
+   * is a row of desks sharing one room — and its identity is established once, by the
+   * furniture in that room. Satellites deliberately carry none: three racks in Operations
+   * would be three times the machine room, not three times as legible.
+   */
   for (const plan of [leadReactivationPlan, codingSessionPlan]) {
-    const departments = plan.stations.filter((s) => !s.hotDesk);
-    const signatures = new Set();
+    const rooms = new Map();
+    for (const station of plan.stations.filter((s) => !s.hotDesk)) {
+      const props = rooms.get(station.room) ?? [];
+      rooms.set(station.room, [...props, ...(station.props ?? [])]);
+    }
 
-    for (const station of departments) {
-      assert.ok(station.props?.length, `${plan.id}/${station.id} has no furniture`);
-      const signature = station.props.map((p) => p.kind).sort().join('+');
+    const signatures = new Set();
+    for (const [room, props] of rooms) {
+      assert.ok(props.length, `${plan.id}/${room} has no furniture`);
+      const signature = props.map((p) => p.kind).sort().join('+');
       assert.equal(
         signatures.has(signature),
         false,
-        `${plan.id}: ${station.id} looks identical to another department (${signature})`,
+        `${plan.id}: ${room} looks identical to another department (${signature})`,
       );
       signatures.add(signature);
     }

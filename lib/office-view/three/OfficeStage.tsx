@@ -347,11 +347,22 @@ export function OfficeStage({
       }
       for (const station of plan.stations) {
         if (station.hotDesk) continue;
+        /*
+         * A department is captioned once, not once per desk.
+         *
+         * Every desk used to be a department, so labelling all of them was labelling the
+         * departments. Now a department owns several desks and captioning each of them
+         * writes "Operations / Standing by" three times over three empty desks — noise
+         * that says nothing, and it crowds out the labels that do. A satellite earns a
+         * caption only when it has something of its own to report: somebody working at it.
+         */
+        const active = Boolean(stationStatus[station.id]);
+        if (station.satellite && !active) continue;
         labels[station.id] = {
           ...project(labelAnchorFor(station)),
           // Placement needs to know which labels carry a literal action, so those can be
           // placed first and never moved.
-          active: Boolean(stationStatus[station.id]),
+          active,
         };
       }
       // Desks that line up along the camera's view direction project to labels sitting on

@@ -343,8 +343,23 @@ export type Station = {
   role: string;
   seat: World;
   facing: Facing;
-  inTray: World;
-  outTray: World;
+  /**
+   * Where work arrives and leaves. Absent on a satellite desk: a satellite is somewhere to
+   * work, not somewhere work is received, and drawing trays there would describe a handoff
+   * that never happens at it.
+   */
+  inTray?: World;
+  outTray?: World;
+  /**
+   * An additional desk in a department that already has one.
+   *
+   * A department used to BE a single desk, so several agents working at once were all sent
+   * to the same coordinate and drawn inside one another. The first desk of a department is
+   * never a satellite and keeps the department's own id, which is what producers name; the
+   * satellites exist so that concurrent agents have somewhere of their own to sit, and are
+   * deliberately not addressable from outside.
+   */
+  satellite?: true;
   /** Available to specialists whose role the plan does not name. Unknown-role arrivals
    *  take the lowest free hot desk, assigned by `seq` so replay matches live. */
   hotDesk?: boolean;

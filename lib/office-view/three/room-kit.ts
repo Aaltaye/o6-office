@@ -55,7 +55,7 @@ function box(w: number, h: number, d: number, mat: THREE.Material, x: number, y:
 /** Bounds of everything on the plan, so walls can be placed around it. */
 export function planBox(plan: FloorPlan) {
   const points: World[] = [
-    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray]),
+    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray].filter((p) => p !== undefined)),
     ...plan.rooms.flatMap((r) => [
       r.origin,
       { x: r.origin.x + r.size.w, y: r.origin.y + r.size.h },

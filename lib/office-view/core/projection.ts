@@ -71,7 +71,7 @@ export function planBounds(plan: FloorPlan, padding = 1.5): Bounds {
       { x: room.origin.x + room.size.w, y: room.origin.y },
       { x: room.origin.x, y: room.origin.y + room.size.h },
     ]),
-    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray]),
+    ...plan.stations.flatMap((s) => [s.seat, s.inTray, s.outTray].filter((p) => p !== undefined)),
     ...plan.aisle.nodes.map((n) => n.at),
     ...plan.doors.map((d) => d.at),
     plan.inbox.at,

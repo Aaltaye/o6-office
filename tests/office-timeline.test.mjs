@@ -26,6 +26,8 @@ import {
 } from '../lib/office-view/core/timeline.ts';
 import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
+// A worker's drawn footprint, shared with the renderer so seating and drawing cannot drift.
+import { WORKER_DIAMETER } from '../lib/office-view/core/figure.ts';
 import { createEmitter } from '../lib/office-view/core/events.ts';
 import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
 import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
@@ -912,4 +914,68 @@ test('seeking backwards into a finished run still replays it', () => {
   clock.play();
   clock.advance(30);
   assert.equal(clock.time, 30, 'a finished recording can be watched again');
+});
+
+/* --- several agents at once, and the pile they used to make -------------------
+ *
+ * Reported from a real session: run five subagents that all shell out, and every one of
+ * them routes to `operations` — the department's ONE desk — where they stack into a blob
+ * of overlapping figures. Two separate causes, both provable arithmetic rather than taste:
+ *
+ *   1. lib/floorplans/coding-session.ts builds stations with DEPARTMENTS.map(station), so a
+ *      department IS a single desk. There is no second desk to send anyone to.
+ *   2. scheduler.ts standingSpot() fans extra workers around the seat at 0.55 world units
+ *      per ring, while a figure is 0.68 wide (a head sphere of radius 0.34 in
+ *      three/stage-scene.ts). The worker at the seat and the first ring are 0.55 apart and
+ *      need 0.68, so they intersect by 0.13 BY CONSTRUCTION, before any tuning.
+ *
+ * This test asserts the property rather than the mechanism, so it stays honest whichever
+ * seating design replaces it: at any settled instant, no two workers who are on the floor
+ * may be closer together than they are wide.
+ */
+
+test('several agents working at once never stand inside one another', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    // Five subagents, all doing the kind of work that routes to one department.
+    for (let i = 0; i < 5; i += 1) {
+      const worker = `agent:sub${i}`;
+      emit({
+        type: 'specialist.joined', occurredAt: i * 10, label: 'Joined', worker, role: 'Explorer',
+      });
+      emit({
+        type: 'assignment.started', occurredAt: 100 + i * 10, label: 'Bash',
+        station: 'operations', worker,
+      });
+    }
+  });
+
+  const result = schedule(events, codingCompiled);
+  assert.deepEqual(result.violations, [], 'the stream itself is well formed');
+
+  // Sample well after everyone has arrived and settled.
+  const t = result.duration;
+  const standing = [...result.workers.values()]
+    .filter((worker) => worker.present.sampleAt(t) !== false)
+    .map((worker) => ({ id: worker.id, at: worker.motion.sampleAt(t) }))
+    .filter((worker) => worker.at);
+
+  assert.ok(standing.length >= 5, `expected the five agents on the floor, saw ${standing.length}`);
+
+  const overlaps = [];
+  for (let a = 0; a < standing.length; a += 1) {
+    for (let b = a + 1; b < standing.length; b += 1) {
+      const gap = Math.hypot(standing[a].at.x - standing[b].at.x, standing[a].at.y - standing[b].at.y);
+      if (gap < WORKER_DIAMETER) {
+        overlaps.push(`${standing[a].id} and ${standing[b].id} are ${gap.toFixed(2)} apart`);
+      }
+    }
+  }
+
+  assert.deepEqual(
+    overlaps,
+    [],
+    `agents must not be drawn inside each other (a figure is ${WORKER_DIAMETER} wide):\n  ` +
+      overlaps.join('\n  '),
+  );
 });

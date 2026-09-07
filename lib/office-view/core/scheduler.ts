@@ -32,9 +32,12 @@
  * Boundary rule: imports only sibling core modules.
  */
 
-import type { OfficeEvent, StationId, WorkId, WorkerId, World } from './types.ts';
+import type { OfficeEvent, RoomId, StationId, WorkId, WorkerId, World } from './types.ts';
 import { groupSimultaneous, jitterFor } from './events.ts';
 import { type CompiledPlan, routeBetween } from './plan.ts';
+import { claimDesk, deskOf, newClaims, overflowSpot, releaseWorker } from './seating.ts';
+import { SPOT_PITCH } from './figure.ts';
+import { workerOf } from './attribution.ts';
 import { MotionChannel, StepChannel, type MotionTrack } from './timeline.ts';
 
 export type SchedulerOptions = {
@@ -98,6 +101,14 @@ export type WorkerState = {
    * "where did they end up". Sampled like every other fact on the floor.
    */
   stationAt: StepChannel<StationId | null>;
+  /**
+   * Which DEPARTMENT they are in, which is not always the same question as which desk.
+   *
+   * An agent whose department has no free desk stands in it rather than being dropped, so
+   * it has a room but no station. Without this channel the office would report them as
+   * being nowhere while drawing them plainly inside Operations.
+   */
+  roomAt: StepChannel<RoomId | null>;
   /**
    * Final desk. Scheduler bookkeeping only (hot-desk release and occupancy); it is NOT
    * time-aware, so never read it to decide where somebody is at time t.
@@ -270,6 +281,7 @@ export function schedule(
         status: new StepChannel<string | null>(),
         present: new StepChannel<boolean>(),
         stationAt: new StepChannel<StationId | null>(),
+        roomAt: new StepChannel<RoomId | null>(),
         station: station.id,
       };
       worker.present.push(0, true);
@@ -280,21 +292,53 @@ export function schedule(
     }
   }
 
-  /** How many workers are already at a station, so they do not stand inside each other. */
-  const occupancy = new Map<StationId, number>();
+  /**
+   * Who holds which desk.
+   *
+   * Replaces a per-station headcount that only ever went up unless a worker changed
+   * department, and a 0.55-unit fan-out that placed the second person at a desk inside the
+   * first one. Desks are handed out and handed back; see core/seating.ts for the rules.
+   */
+  const claims = newClaims();
 
   /**
-   * Where a worker stands at a station, offset if someone is already there.
+   * Where somebody stands while they have no assignment at all.
    *
-   * In a dynamic office several workers legitimately share a desk — the main agent and a
-   * subagent can both be reading. Rather than capping capacity and dropping people, they
-   * fan out around the seat. Deterministic, so a replay places them identically.
+   * The lounge is not a department and has no desks, so spots are handed out by arrival
+   * order and handed back on departure — the same free-or-not rule, without furniture.
    */
-  const standingSpot = (station: StationId, seat: World, index: number): World => {
-    if (index === 0) return seat;
-    const ring = Math.ceil(index / 4);
-    const angle = ((index % 4) / 4) * Math.PI * 2;
-    return { x: seat.x + Math.cos(angle) * 0.55 * ring, y: seat.y + Math.sin(angle) * 0.55 * ring };
+  const waitingSpots: (WorkerId | null)[] = [];
+  const claimWaitingSpot = (worker: WorkerId): number => {
+    const existing = waitingSpots.indexOf(worker);
+    if (existing !== -1) return existing;
+    const free = waitingSpots.indexOf(null);
+    if (free !== -1) {
+      waitingSpots[free] = worker;
+      return free;
+    }
+    return waitingSpots.push(worker) - 1;
+  };
+  const releaseWaitingSpot = (worker: WorkerId) => {
+    const at = waitingSpots.indexOf(worker);
+    // A hole, never a splice: renumbering would move people who have not moved.
+    if (at !== -1) waitingSpots[at] = null;
+  };
+
+  /**
+   * Fan positions out around a point, far enough apart that two figures never intersect.
+   *
+   * The spacing comes from core/figure.ts rather than a literal. Its predecessor used 0.55
+   * against a figure 0.80 wide, which is why several agents at one spot were drawn inside
+   * one another.
+   */
+  const spread = (base: World, index: number): World => {
+    if (index === 0) return base;
+    const ring = Math.ceil(index / 6);
+    const angle = ((index % 6) / 6) * Math.PI * 2;
+    return {
+      x: base.x + Math.cos(angle) * SPOT_PITCH * ring,
+      y: base.y + Math.sin(angle) * SPOT_PITCH * ring,
+    };
   };
 
   /**
@@ -316,6 +360,7 @@ export function schedule(
         status: new StepChannel<string | null>(),
         present: new StepChannel<boolean>(),
         stationAt: new StepChannel<StationId | null>(),
+        roomAt: new StepChannel<RoomId | null>(),
       };
       worker.present.push(at, true);
       worker.status.push(at, null);
@@ -505,40 +550,69 @@ export function schedule(
         }
 
         case 'assignment.started': {
-          busyChannel(event.station).push(simTime, event.label);
-          setDeskStatus(event.station, simTime, event.label);
-
           const worker = ensureWorker(event.worker, simTime);
-          if (worker) {
-            worker.status.push(simTime, event.label);
-            // In a dynamic office the worker goes to the work. This is the thing that
-            // makes a live session legible: you watch the agent cross to the reading
-            // room, then to the workshop, rather than watching desks blink.
-            if (staffing === 'dynamic' && worker.station !== event.station) {
-              const seat = plan.plan.stations.find((s) => s.id === event.station)?.seat;
-              if (seat) {
-                if (worker.station) {
-                  occupancy.set(worker.station, Math.max(0, (occupancy.get(worker.station) ?? 1) - 1));
-                }
-                const index = occupancy.get(event.station) ?? 0;
-                occupancy.set(event.station, index + 1);
-                worker.station = event.station;
-                worker.stationAt.push(simTime, event.station);
-                moveEntity(
-                  `worker:${worker.id}`,
-                  worker.motion,
-                  standingSpot(event.station, seat, index),
-                  walkMs,
-                );
+
+          /*
+           * The event names a department; the agent takes one of that department's desks.
+           * Which desk lights up is therefore the one they actually sat at, not the one the
+           * producer named — a producer knows what kind of work it is doing and has no
+           * business knowing how many desks we drew.
+           */
+          let lit: StationId = event.station;
+
+          if (staffing === 'dynamic' && worker) {
+            const claim = claimDesk(claims, plan, event.station, worker.id);
+            if (claim) {
+              if (claim.deskId) lit = claim.deskId;
+              const wasAtDesk = worker.stationAt.sampleAt(simTime);
+              const wasInRoom = worker.roomAt.sampleAt(simTime);
+              const spot = claim.deskId
+                ? plan.plan.stations.find((s) => s.id === claim.deskId)?.seat
+                : overflowSpot(plan, claim.room, claim.index);
+
+              worker.roomAt.push(simTime, claim.room);
+              worker.stationAt.push(simTime, claim.deskId);
+              worker.station = claim.deskId ?? undefined;
+
+              /*
+               * Only walk them if this is genuinely a different place — re-deriving a route
+               * for an agent already at its desk would animate a journey that never was.
+               *
+               * The room has to be part of that comparison, not just the desk. An agent
+               * standing in a full department holds NO desk, so comparing desks alone made
+               * "waiting by the door with no desk" look identical to "standing in
+               * Operations with no desk", and the overflow agents never left the lounge
+               * while the office cheerfully reported them as being in Operations.
+               */
+              if (spot && (wasAtDesk !== claim.deskId || wasInRoom !== claim.room)) {
+                moveEntity(`worker:${worker.id}`, worker.motion, spot, walkMs);
               }
             }
           }
+
+          busyChannel(lit).push(simTime, event.label);
+          setDeskStatus(lit, simTime, event.label);
+          if (worker) worker.status.push(simTime, event.label);
           break;
         }
 
         case 'assignment.finished': {
-          busyChannel(event.station).push(simTime + walkMs, null);
-          setDeskStatus(event.station, simTime + walkMs, null);
+          /*
+           * Quieten the desk the agent actually sat at, and the agent with it.
+           *
+           * The worker half is new. status was pushed a label when work started and nothing
+           * ever pushed it back, so an agent read as running its last tool forever — which
+           * only stayed invisible because a departed worker stops being drawn. It is the
+           * same rule the desks already follow: violet means right now, so it has to stop.
+           */
+          const seated = workerOf(event);
+          const lit = seated ? (deskOf(claims, plan, seated) ?? event.station) : event.station;
+          busyChannel(lit).push(simTime + walkMs, null);
+          setDeskStatus(lit, simTime + walkMs, null);
+          if (seated) {
+            workers.get(seated)?.status.push(simTime + walkMs, null);
+            timelineHead = Math.max(timelineHead, simTime + walkMs);
+          }
           break;
         }
 
@@ -575,6 +649,7 @@ export function schedule(
               status: new StepChannel<string | null>(),
               present: new StepChannel<boolean>(),
               stationAt: new StepChannel<StationId | null>(),
+              roomAt: new StepChannel<RoomId | null>(),
             } as WorkerState);
 
           state.role = event.role;
@@ -604,10 +679,17 @@ export function schedule(
               : entrance
                 ? { x: entrance.at.x, y: entrance.at.y + 1 }
                 : plan.plan.inbox.at;
-            const waiting = standingSpot('door', base, occupancy.get('door') ?? 0);
-            occupancy.set('door', (occupancy.get('door') ?? 0) + 1);
+            /*
+             * Queued through the same allocator the departments use, so an arrival takes
+             * the lowest free spot and gives it back on leaving. The old counter was keyed
+             * by the literal string 'door' and never decremented at all, so in a long
+             * session each new subagent waited further from the door than the last.
+             */
+            const waitingIndex = claimWaitingSpot(event.worker);
+            const waiting = spread(base, waitingIndex);
             state.station = undefined;
             state.stationAt.push(simTime, null);
+            state.roomAt.push(simTime, lounge ? lounge.id : null);
             moveEntity(key, state.motion, waiting, arriveMs);
           } else if (desk) {
             // Permanent plans have a modelled pool: take the lowest free hot desk, by
@@ -635,7 +717,24 @@ export function schedule(
           // They hold no desk from the moment they head for the door; the scalar below is
           // only kept so the hot desk can be released.
           state.stationAt.push(simTime, null);
+          state.roomAt.push(simTime, null);
+          /*
+           * And they stop working. status was never cleared here, so a departed agent's
+           * last tool label stayed on its channel for the rest of the run — invisible only
+           * because nothing draws a worker that is not present. Violet means right now, and
+           * an agent walking out of the door is not doing anything right now.
+           */
+          state.status.push(simTime, null);
+          // Give the desk and the waiting spot back, so the next arrival can have them.
+          releaseWorker(claims, event.worker);
+          releaseWaitingSpot(event.worker);
           if (state.station) hotDeskTaken.delete(state.station);
+          /*
+           * `station` is deliberately NOT cleared. It is end-of-run bookkeeping — the desk
+           * this worker was last assigned — and both the hot-desk tests read it as exactly
+           * that record. Where somebody is at time t is `stationAt`, which was just pushed
+           * null above.
+           */
           break;
         }
 

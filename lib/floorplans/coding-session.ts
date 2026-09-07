@@ -87,21 +87,70 @@ const DEPARTMENTS = [
   { id: 'approvals', role: 'Approvals', side: 'east', row: 3, node: 'aisle-upper' },
 ] as const;
 
-function station(dept: (typeof DEPARTMENTS)[number]) {
+/**
+ * How many desks a department has.
+ *
+ * Three, because that is what the space actually holds: at DESK_PITCH the third desk still
+ * sits inside the widened room, still clears the folder lanes, and still leaves planRadius
+ * at its floor of 8 so the camera, fog and shadow frustum need no retuning. It is also
+ * enough for the case that produced the bug report — several subagents shelling out at
+ * once — without furnishing a call centre for the far commoner session that runs one agent.
+ *
+ * A fourth concurrent agent in one department is not dropped and does not pile up; the
+ * seating allocator stands it clear of the desks, in the room, and the office says so.
+ */
+const DESKS_PER_DEPARTMENT = 3;
+
+/**
+ * Distance between neighbouring desks in a department, along the department's row.
+ *
+ * 1.8 world units. A desk is 1.5 wide, so neighbours clear each other by 0.3, and the
+ * people at them by a full 1.8 against a figure 0.8 across — which is the entire point.
+ */
+const DESK_PITCH = 1.8;
+
+/**
+ * One department's desks, ordered from the aisle outward.
+ *
+ * Index 0 IS the old station: same id, same seat, same trays, same props. That is what
+ * keeps the contract — producers name a department, and a department's name still resolves
+ * to the desk it always resolved to. The satellites take derived ids, carry no props (the
+ * department's identity is established once, by its own furniture) and no trays (work is
+ * received at the department, not at a spare desk).
+ */
+function pod(dept: (typeof DEPARTMENTS)[number]) {
   const west = dept.side === 'west';
   const x = west ? WEST_X : EAST_X;
   const trayX = west ? x + TRAY_OFFSET : x - TRAY_OFFSET;
-  return {
-    id: dept.id,
-    room: `room-${dept.id}`,
-    role: dept.role,
-    seat: { x, y: dept.row },
-    facing: (west ? 'e' : 'w') as 'e' | 'w',
-    inTray: { x: trayX, y: dept.row - 0.6 },
-    outTray: { x: trayX, y: dept.row + 0.6 },
-    node: dept.node,
-    props: DEPARTMENT_PROPS[dept.id],
-  };
+  const facing = (west ? 'e' : 'w') as 'e' | 'w';
+
+  return Array.from({ length: DESKS_PER_DEPARTMENT }, (_, index) => {
+    // Satellites extend AWAY from the central aisle, so the corridor stays clear and the
+    // occlusion pass keeps passing: no seat comes within 3 units of the aisle at x = 7.
+    const seatX = west ? x - DESK_PITCH * index : x + DESK_PITCH * index;
+    if (index === 0) {
+      return {
+        id: dept.id,
+        room: `room-${dept.id}`,
+        role: dept.role,
+        seat: { x: seatX, y: dept.row },
+        facing,
+        inTray: { x: trayX, y: dept.row - 0.6 },
+        outTray: { x: trayX, y: dept.row + 0.6 },
+        node: dept.node,
+        props: DEPARTMENT_PROPS[dept.id],
+      };
+    }
+    return {
+      id: `${dept.id}-${index + 1}`,
+      room: `room-${dept.id}`,
+      role: dept.role,
+      seat: { x: seatX, y: dept.row },
+      facing,
+      node: dept.node,
+      satellite: true as const,
+    };
+  });
 }
 
 export const codingSessionPlan: FloorPlan = {
@@ -120,8 +169,20 @@ export const codingSessionPlan: FloorPlan = {
     ...DEPARTMENTS.map((dept) => ({
       id: `room-${dept.id}`,
       label: dept.role as string,
-      origin: { x: (dept.side === 'west' ? WEST_X : EAST_X) - 1.5, y: dept.row - 1.5 },
-      size: { w: 3, h: 3 },
+      /*
+       * The room has to hold the whole desk run, not just the first desk. A department
+       * now reaches DESK_PITCH * (DESKS_PER_DEPARTMENT - 1) away from the aisle, so the
+       * pad grows outward by exactly that much and the office grows with it — planBounds
+       * derives the floor from these rectangles, so nothing else has to be told.
+       */
+      origin: {
+        x:
+          dept.side === 'west'
+            ? WEST_X - 1.5 - DESK_PITCH * (DESKS_PER_DEPARTMENT - 1)
+            : EAST_X - 1.5,
+        y: dept.row - 1.5,
+      },
+      size: { w: 3 + DESK_PITCH * (DESKS_PER_DEPARTMENT - 1), h: 3 },
     })),
     {
       id: 'room-visitors',
@@ -152,7 +213,7 @@ export const codingSessionPlan: FloorPlan = {
    * the Subagents room, and goes wherever its assignment is. Three hot desks used to be
    * declared here that nothing could ever seat anyone at.
    */
-  stations: DEPARTMENTS.map(station),
+  stations: DEPARTMENTS.flatMap(pod),
 
   doors: [{ id: 'front', at: { x: AISLE_X, y: 0 }, facing: 's', entrance: true }],
 
