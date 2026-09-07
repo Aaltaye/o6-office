@@ -112,41 +112,136 @@ export function deskOf(claims: SeatClaims, compiled: CompiledPlan, worker: Worke
 /**
  * Where somebody stands when their department's desks are all taken.
  *
- * A lane inside the department, in front of its desks, stepping outward in the same
- * direction the desks run. Deterministic from the index alone, so a replay stands them in
- * the same place, and far enough from the desk row that a standing figure never intersects
- * a seated one.
+ * A lattice, generated outward from the department and filtered so no spot lands on
+ * furniture, on somebody else's desk, or in the central corridor. Deterministic from the
+ * index alone, so a replay stands everybody in the same place.
  *
- * This is standing room, not a desk, and the office reports it as such — the alternative
- * was to drop the agent, which would be the floor claiming less work is happening than is.
+ * The first version of this was a single lane with a three-position fallback, which was
+ * fine for the fourth agent in a department and catastrophic for the fortieth: fifty
+ * concurrent agents collapsed onto eleven positions, fourteen of them on one spot — the
+ * exact pile this module exists to prevent, reintroduced past the edge of the lane. A
+ * lattice has no edge to fall off.
+ *
+ * Standing room is deliberately unbounded. The alternative is to stop drawing people once
+ * the furniture runs out, and an office that shows thirty of the fifty agents that are
+ * working is lying by a wider margin than one that looks crowded.
  */
+
+/**
+ * Cached per plan: generating the lattices is pure, so it only has to be done once.
+ *
+ * Keyed by the plan's id as well as the room's, because two plans can legitimately use the
+ * same room id and must not inherit each other's floor.
+ */
+const lattices = new Map<string, Map<RoomId, World[]>>();
+
+/**
+ * Standing positions for every department, as disjoint sets.
+ *
+ * Built as ONE grid over the whole floor and then divided up, each cell going to the
+ * department whose centre it is nearest. Computing a lattice per department independently
+ * was the obvious approach and it is wrong: two neighbouring crowds grow outward into the
+ * same cells and start overlapping again once either is big enough — measured at 120
+ * concurrent agents, fourteen overlapping pairs, some 0.17 apart. Dividing the floor up
+ * first makes that impossible by construction rather than by tuning.
+ */
+function latticesFor(compiled: CompiledPlan): Map<RoomId, World[]> {
+  const cached = lattices.get(compiled.plan.id);
+  if (cached) return cached;
+
+  const departments = compiled.plan.rooms.filter(
+    (candidate) => (candidate.kind ?? 'department') === 'department',
+  );
+  const centres = departments.map((candidate) => ({
+    room: candidate.id,
+    at: {
+      x: candidate.origin.x + candidate.size.w / 2,
+      y: candidate.origin.y + candidate.size.h / 2,
+    },
+  }));
+
+  // The corridor everyone walks down. Standing in it would block the one route through.
+  const aisleXs = compiled.plan.aisle.nodes.map((node) => node.at.x);
+  const corridor = aisleXs.length ? aisleXs.reduce((a, b) => a + b, 0) / aisleXs.length : null;
+
+  const standable = (at: World) => {
+    if (corridor !== null && Math.abs(at.x - corridor) < 1.2) return false;
+    // Never on a desk or on whoever is sitting at one — in ANY department.
+    for (const station of compiled.plan.stations) {
+      if (Math.hypot(at.x - station.seat.x, at.y - station.seat.y) < WORKER_CLEARANCE * 1.4) {
+        return false;
+      }
+      // Nor inside that desk's own furniture.
+      for (const prop of station.props ?? []) {
+        const propAt = { x: station.seat.x + prop.at.x, y: station.seat.y + prop.at.y };
+        if (Math.hypot(at.x - propAt.x, at.y - propAt.y) < WORKER_CLEARANCE) return false;
+      }
+    }
+    return true;
+  };
+
+  /*
+   * A grid big enough that it never runs out. It is generated once, and the office is only
+   * ever as large as the people actually standing in it — an empty cell draws nothing.
+   */
+  const bounds = compiled.plan.rooms.reduce(
+    (box, candidate) => ({
+      minX: Math.min(box.minX, candidate.origin.x),
+      minY: Math.min(box.minY, candidate.origin.y),
+      maxX: Math.max(box.maxX, candidate.origin.x + candidate.size.w),
+      maxY: Math.max(box.maxY, candidate.origin.y + candidate.size.h),
+    }),
+    { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity },
+  );
+  // Room to spill well past the walls, because a genuinely crowded office should look it.
+  const margin = SPOT_PITCH * 8;
+
+  const byRoom = new Map<RoomId, World[]>();
+  for (const { room } of centres) byRoom.set(room, []);
+
+  for (let y = bounds.minY - margin; y <= bounds.maxY + margin; y += SPOT_PITCH) {
+    for (let x = bounds.minX - margin; x <= bounds.maxX + margin; x += SPOT_PITCH) {
+      const at = { x: Math.round(x * 1e4) / 1e4, y: Math.round(y * 1e4) / 1e4 };
+      if (!standable(at)) continue;
+      // The cell belongs to the department it is nearest to, and to no other.
+      let owner = centres[0];
+      let best = Infinity;
+      for (const candidate of centres) {
+        const d = Math.hypot(at.x - candidate.at.x, at.y - candidate.at.y);
+        if (d < best) {
+          best = d;
+          owner = candidate;
+        }
+      }
+      byRoom.get(owner.room)?.push(at);
+    }
+  }
+
+  // Nearest first, so a department fills outward from itself and stays legible as a group.
+  for (const [room, spots] of byRoom) {
+    const centre = centres.find((candidate) => candidate.room === room)!.at;
+    spots.sort((a, b) => {
+      const da = Math.hypot(a.x - centre.x, a.y - centre.y);
+      const db = Math.hypot(b.x - centre.x, b.y - centre.y);
+      // Distance, then a stable tiebreak, so the order never depends on iteration order.
+      return da - db || a.y - b.y || a.x - b.x;
+    });
+  }
+
+  lattices.set(compiled.plan.id, byRoom);
+  return byRoom;
+}
+
 export function overflowSpot(
   compiled: CompiledPlan,
   room: RoomId,
   index: number,
 ): World | null {
   const desks = desksOf(compiled, room);
-  const primary = compiled.plan.stations.find((station) => station.id === desks[0]);
-  const rect = compiled.plan.rooms.find((candidate) => candidate.id === room);
-  if (!primary || !rect) return null;
-
-  // Which way the desks run: away from the aisle, the same direction the satellites went.
-  const last = compiled.plan.stations.find((station) => station.id === desks[desks.length - 1]);
-  const direction = last && last.seat.x < primary.seat.x ? -1 : 1;
+  const spots = latticesFor(compiled).get(room) ?? [];
+  if (spots.length === 0) return null;
   const overflow = Math.max(0, index - desks.length);
-
-  /*
-   * A clear lane in front of the desk row. The desks sit on the room's centre line, are
-   * 0.8 deep and a figure is WORKER_CLEARANCE across, so a lane this far forward cannot
-   * intersect a seated worker however the desks are arranged.
-   */
-  const lane = primary.seat.y + 0.8 + WORKER_CLEARANCE / 2;
-  const x = primary.seat.x + direction * SPOT_PITCH * overflow;
-
-  // Stay inside the department's own floor; past the end, stack a second lane rather than
-  // walking out of the room.
-  const withinRoom = x >= rect.origin.x && x <= rect.origin.x + rect.size.w;
-  return withinRoom
-    ? { x, y: lane }
-    : { x: primary.seat.x + direction * SPOT_PITCH * (overflow % 3), y: lane + SPOT_PITCH };
+  // Past the generated lattice, hold at the outermost spot rather than wrapping back into
+  // the room — a crowd at the edge is honest; people teleporting inside each other is not.
+  return spots[Math.min(overflow, spots.length - 1)];
 }

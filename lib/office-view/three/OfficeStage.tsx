@@ -157,6 +157,14 @@ export function OfficeStage({
     pickables: THREE.Object3D[];
     centre: THREE.Vector3;
     radius: number;
+    /**
+     * How far the people reach, as opposed to how far the furniture reaches.
+     *
+     * Measured every frame in applyTime and read by the camera, so a burst of concurrent
+     * agents standing outside their department widens the shot rather than working
+     * off-screen. Only ever widens; the plan's own extent is the floor.
+     */
+    crowdRadius: number;
   } | null>(null);
 
   /** Text the viewer reads. Updated a few times a second, never per frame. */
@@ -215,6 +223,8 @@ export function OfficeStage({
       pickables: [...liveMeshes.values()].flat(),
       centre,
       radius,
+      /** Updated every frame from where people actually are; see applyTime. */
+      crowdRadius: 0,
     };
 
     return () => {
@@ -293,6 +303,8 @@ export function OfficeStage({
       const current = stage.current;
       if (!current) return;
       const { scene, workers, folders, materials } = current;
+      /** The furthest anyone stands from the middle of the office, this frame. */
+      let crowd = 0;
 
       // --- the cast, which changes only when someone joins or leaves ---
       for (const [id, state] of timeline.workers) {
@@ -334,7 +346,19 @@ export function OfficeStage({
         setWorkerDormant(figure, materials, Boolean(record) && !present);
         const at = state.motion.sampleAt(t);
         if (at) figure.position.set(at.x, 0, at.y);
+        /*
+         * How far the people actually reach, which is not the same as how far the FURNITURE
+         * reaches. A department has three desks; a burst of concurrent agents stands in it
+         * beyond them, and past a certain crowd that spills outside the room. The camera
+         * frames the plan, so without this the office would calmly show an empty floor
+         * while a dozen agents worked just outside the shot.
+         */
+        if (at && onFloor) {
+          crowd = Math.max(crowd, Math.hypot(at.x - current.centre.x, at.y - current.centre.z));
+        }
       }
+      // Only widens the shot; it never crops one. The plan's own extent is the floor.
+      current.crowdRadius = crowd;
 
       for (const [id, state] of timeline.work) {
         const at = state.motion.sampleAt(t);
@@ -470,11 +494,21 @@ export function OfficeStage({
           ? new THREE.Vector3(focus.at.x, 0.6, focus.at.y)
           : current.centre.clone();
         // A department carries its own framing distance; a desk keeps the close-in one.
+        /*
+         * The office expands and contracts with the crowd.
+         *
+         * `radius` is the furniture; `crowdRadius` is where people have actually got to.
+         * Twenty agents in one department stand well outside its room, and the shot has to
+         * grow to include them or the office is quietly under-reporting how much is going
+         * on. It shrinks back the same way as they finish and are cleared — through the
+         * same 0.06 lerp below, so it reads as the room breathing rather than a cut.
+         */
+        const occupied = Math.max(current.radius, current.crowdRadius + 1.5);
         const wantDistance = focus
           ? focus.distance > 0
             ? focus.distance
             : current.radius * 1.1
-          : current.radius * 2.15;
+          : occupied * 2.15;
 
         if (!reducedMotion) cam.angle += deltaMs * 0.000018;
         cam.target.lerp(wantTarget, 0.06);

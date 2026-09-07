@@ -1091,3 +1091,76 @@ test('a departed specialist in a MODELLED team still leaves, because its desk is
   assert.equal(worker.present.sampleAt(result.duration), false);
   assert.equal(worker.departed.sampleAt(result.duration), null, 'no record is left in a reused chair');
 });
+
+/* --- a burst of agents, and where they all go --------------------------------
+ *
+ * "What happens with fifty subagents?" is a fair question and the first answer was bad:
+ * three got desks, forty-seven were sent to a lane with a three-position fallback, and
+ * they collapsed onto eleven spots with fourteen people standing in one place — the pile
+ * this module exists to prevent, reintroduced past the edge of the lane.
+ *
+ * Standing room is now a lattice divided between the departments, so it has no edge to
+ * fall off and two neighbouring crowds cannot grow into the same cell. This pins the
+ * property at sizes well past anything Claude Code will actually run concurrently.
+ */
+
+for (const count of [10, 50, 120]) {
+  test(`${count} agents at once all get somewhere of their own to stand`, () => {
+    const codingCompiled = compileFloorPlan(codingSessionPlan);
+    const departments = ['operations', 'workshop', 'research', 'reading', 'frontdesk', 'approvals'];
+
+    for (const shape of ['one department', 'spread out']) {
+      const events = stream((emit) => {
+        for (let i = 0; i < count; i += 1) {
+          const worker = `agent:s${i}`;
+          const station = shape === 'one department' ? 'operations' : departments[i % departments.length];
+          emit({ type: 'specialist.joined', occurredAt: i, label: 'Joined', worker, role: 'Explorer' });
+          emit({ type: 'assignment.started', occurredAt: 500 + i, label: `Bash ${i}`, station, worker });
+        }
+      });
+
+      const result = schedule(events, codingCompiled);
+      const t = result.duration;
+      const placed = [...result.workers.values()]
+        .map((worker) => worker.motion.sampleAt(t))
+        .filter(Boolean);
+
+      assert.equal(placed.length, count, `${shape}: everyone is on the floor, nobody dropped`);
+
+      let closest = Infinity;
+      for (let a = 0; a < placed.length; a += 1) {
+        for (let b = a + 1; b < placed.length; b += 1) {
+          closest = Math.min(closest, Math.hypot(placed[a].x - placed[b].x, placed[a].y - placed[b].y));
+        }
+      }
+      assert.ok(
+        closest >= WORKER_DIAMETER,
+        `${shape}, ${count} agents: closest pair is ${closest.toFixed(2)}, need ${WORKER_DIAMETER}`,
+      );
+    }
+  });
+}
+
+test('the same burst places everybody identically every time', () => {
+  // Standing room is generated, not authored, so it has to be provably deterministic or a
+  // replay would stand people somewhere the live run never did.
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const build = () =>
+    stream((emit) => {
+      for (let i = 0; i < 30; i += 1) {
+        const worker = `agent:s${i}`;
+        emit({ type: 'specialist.joined', occurredAt: i, label: 'Joined', worker, role: 'Explorer' });
+        emit({ type: 'assignment.started', occurredAt: 500 + i, label: 'Bash', station: 'operations', worker });
+      }
+    });
+
+  const once = schedule(build(), codingCompiled);
+  const twice = schedule(build(), codingCompiled);
+  for (const [id, worker] of once.workers) {
+    assert.deepEqual(
+      worker.motion.sampleAt(once.duration),
+      twice.workers.get(id).motion.sampleAt(twice.duration),
+      `${id} stood somewhere different the second time`,
+    );
+  }
+});
