@@ -51,16 +51,26 @@ npm run build && npx tsc --noEmit && npm run lint && npm test
 
 ## Connect your own agent
 
-No clone required:
+No clone required. One command, run in the project you want to watch:
 
 ```sh
-npx github:Aaltaye/o6-office            # start the bridge
-npx github:Aaltaye/o6-office connect    # wire up the project you want to watch
+npx github:Aaltaye/o6-office setup
 ```
 
-`connect` merges the hooks into that project's `.claude/settings.json`, keeping everything
-already there and backing the file up. Not using Claude Code? One command reports an event,
-so anything that can run a shell command can drive the office:
+It shows what it is about to do, merges the hooks into that project's
+`.claude/settings.json` — keeping everything already there, and backing the file up —
+starts the bridge, and then **checks that it worked**, by pushing an event through the same
+path a real hook takes and waiting for it on the stream the office reads.
+
+That last step is the point. Claude Code fires hooks only when it next does something, so
+without it a broken setup and a working one look identical until you have run a session and
+stared at an empty office wondering which you were looking at.
+
+The halves are still there separately: `o6-office connect` wires a project up, and
+`o6-office` on its own runs the bridge.
+
+Not using Claude Code? One command reports an event, so anything that can run a shell
+command can drive the office:
 
 ```sh
 npx github:Aaltaye/o6-office emit assignment.started "Reading the spec" --desk reading

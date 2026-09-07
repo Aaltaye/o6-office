@@ -21,6 +21,7 @@ import { buildEvent, sendEvent } from '../bridge/emit.mjs';
 import { DESKS } from '../bridge/emit.mjs';
 import { describeProblems } from '../bridge/contract.mjs';
 import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
+import { surveyProject, planSteps, verifyRoundTrip } from '../bridge/wizard.mjs';
 import { isOfficeEvent } from '../lib/office-view/core/events.ts';
 
 const TOKEN = 'test-token-that-is-long-enough';
@@ -874,4 +875,109 @@ test('nonsense knobs fall back wherever they came from', () => {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+/* --- the setup wizard ---------------------------------------------------------
+ *
+ * The wizard's value is not the merging — `connect` already did that. It is that it
+ * finishes by PROVING the wiring, because Claude Code fires hooks only when it next does
+ * something, so a botched setup and a correct one look identical until you have run a
+ * session and stared at an empty office wondering which you were looking at.
+ */
+
+test('the survey reports what is there without changing any of it', () => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-survey-'));
+  mkdirSync(join(root, '.claude'), { recursive: true });
+  writeFileSync(
+    join(root, '.claude', 'settings.json'),
+    JSON.stringify({ hooks: { SessionStart: [{ hooks: [{ type: 'command', command: 'echo mine' }] }] } }),
+  );
+
+  const survey = surveyProject({ root, port: 4141 });
+  assert.equal(survey.hasClaudeDir, true);
+  assert.equal(survey.hasSettings, true);
+  assert.equal(survey.settingsUnreadable, false);
+  assert.deepEqual(survey.connectedEvents, [], 'nothing of ours is wired yet');
+  assert.deepEqual(survey.foreignEvents, ['SessionStart'], 'and their hook is seen, not ignored');
+});
+
+test('a settings file we cannot parse stops the wizard rather than being overwritten', () => {
+  /*
+   * The one case where doing nothing is the only safe move. Rewriting a file we cannot
+   * read would destroy configuration that is not ours, to fix a visualisation.
+   */
+  const root = mkdtempSync(join(tmpdir(), 'o6-broken-'));
+  mkdirSync(join(root, '.claude'), { recursive: true });
+  writeFileSync(join(root, '.claude', 'settings.json'), '{ this is not json');
+
+  const survey = surveyProject({ root, port: 4141 });
+  assert.equal(survey.settingsUnreadable, true);
+
+  const steps = planSteps(survey);
+  assert.equal(steps.length, 1, 'it plans one thing: stopping');
+  assert.equal(steps[0].blocked, true);
+  assert.match(steps[0].detail, /not valid JSON/);
+});
+
+test('the plan says what is already done rather than hiding it', () => {
+  // Re-running setup should tell you that you were already set up, not leave you
+  // wondering whether it took.
+  const root = mkdtempSync(join(tmpdir(), 'o6-again-'));
+  mkdirSync(join(root, '.claude'), { recursive: true });
+  writeFileSync(
+    join(root, '.claude', 'settings.json'),
+    JSON.stringify({
+      hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: 'curl .../hook' }] }] },
+    }),
+  );
+
+  const survey = surveyProject({ root, port: 4141 });
+  assert.deepEqual(survey.connectedEvents, ['PreToolUse'], 'ours is recognised by its endpoint');
+
+  const hooks = planSteps(survey).find((step) => step.id === 'hooks');
+  assert.equal(hooks.needed, false);
+  assert.match(hooks.detail, /Already wired/);
+});
+
+test('the check pushes an event down the real path and waits for it on the real stream', async () => {
+  /*
+   * The point of the whole command. It POSTs a Claude-Code-shaped payload to /hook and
+   * waits for it on /events — the exact stream the office subscribes to. A check that
+   * called an internal function instead would pass while the thing people need was broken.
+   */
+  await withBridge(async ({ port }) => {
+    const result = await verifyRoundTrip({ port, token: TOKEN, timeoutMs: 4000 });
+    assert.equal(result.ok, true, `round trip failed: ${result.reason}`);
+  });
+});
+
+test('the check fails honestly when the token is wrong', async () => {
+  await withBridge(async ({ port }) => {
+    const result = await verifyRoundTrip({ port, token: 'not-the-right-token-at-all', timeoutMs: 2000 });
+    assert.equal(result.ok, false);
+    assert.match(result.reason, /refused/, 'and says which end refused it');
+  });
+});
+
+test('a stream opened before anything has happened connects immediately', async () => {
+  /*
+   * The first-run case, and it used to hang. writeHead only stages headers; Node sends
+   * nothing until the first write, and a bridge with no events had nothing to replay — so
+   * the office sat on "Connecting…" until either the agent did something or the 25-second
+   * keep-alive fired. Indistinguishable, for 25 seconds, from a broken setup.
+   */
+  await withBridge(async ({ url }) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3000);
+    try {
+      const stream = await fetch(url(`/events?token=${TOKEN}`), {
+        signal: controller.signal,
+        headers: { accept: 'text/event-stream' },
+      });
+      assert.equal(stream.status, 200, 'the headers arrive without waiting for an event');
+    } finally {
+      clearTimeout(timer);
+      controller.abort();
+    }
+  });
 });

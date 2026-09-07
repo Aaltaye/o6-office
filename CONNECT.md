@@ -15,19 +15,24 @@ token, and the token is written to a gitignored file.
 
 ## The short human version
 
-```bash
-npx github:Aaltaye/o6-office
-```
-
-That starts the bridge and prints a URL. Then, in the project you want to watch:
+In the project you want to watch:
 
 ```bash
-npx github:Aaltaye/o6-office connect
+npx github:Aaltaye/o6-office setup
 ```
 
-`connect` writes the hooks into that project's `.claude/settings.json` for you. It keeps
-every setting and every hook you already had, backs the file up first, and is safe to run
-twice. Add `--dry-run` to see what it would do and write nothing.
+It tells you what it is about to do, wires the hooks into that project's
+`.claude/settings.json`, starts the bridge, and then **verifies the connection** — it
+pushes an event through the same path a real hook takes and waits for it to come back out
+of the stream the office reads. If that fails it says so plainly rather than pretending you
+are set up, because the alternative is you finding out later from an empty office.
+
+It keeps every setting and every hook you already had, backs the file up first, and is safe
+to run twice — a second run tells you that you were already wired rather than doing it
+again. `--yes` skips the prompt; `--port` moves it if 4141 is taken.
+
+The two halves are still available on their own: `o6-office connect` writes the hooks (with
+`--dry-run` to see what it would do and change nothing), and `o6-office` runs the bridge.
 
 Not using Claude Code? One command reports an event, so anything that can run a shell
 command can drive the office:

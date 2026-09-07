@@ -22,6 +22,7 @@ import { createBridge } from './server.mjs';
 import { loadConfig, suggestToken } from './config.mjs';
 import { connectProject } from './connect.mjs';
 import { buildEvent, sendEvent, EMITTABLE, DESKS } from './emit.mjs';
+import { surveyProject, planSteps, verifyRoundTrip, foreignRuntimeLine } from './wizard.mjs';
 
 const argv = process.argv.slice(2);
 /** The first bare word is the subcommand; everything else keeps working as it did. */
@@ -42,6 +43,7 @@ if (flag('help') || flag('h') || command === 'help') {
   process.stdout.write(
     'o6-office — watch your agent work\n\n' +
       'COMMANDS\n' +
+      '  o6-office setup              set it up, then check that it actually worked\n' +
       '  o6-office                    start the bridge and print how to connect\n' +
       '  o6-office connect            wire this project up to Claude Code for you\n' +
       '  o6-office emit <type> <label>  report one event from any other runtime\n\n' +
@@ -50,9 +52,10 @@ if (flag('help') || flag('h') || command === 'help') {
       '  --token <s>      token to use (default O6_BRIDGE_TOKEN, else generated)\n' +
       '  --hooks-only     print the hook block and exit without starting\n' +
       '  --write-snippet  also write bridge/hooks/settings-snippet.json\n\n' +
-      'CONNECT\n' +
+      'SETUP / CONNECT\n' +
       '  --path <dir>     project to wire up (default: the current directory)\n' +
-      '  --dry-run        show what would change, write nothing\n\n' +
+      '  --dry-run        connect: show what would change, write nothing\n' +
+      '  --yes            setup: take every default, ask nothing\n\n' +
       'EMIT\n' +
       `  --desk <name>    one of: ${DESKS.join(', ')}\n` +
       '  --worker <id>    who did it, e.g. agent:planner\n' +
@@ -152,7 +155,121 @@ if (flag('hooks-only')) {
   process.exit(0);
 }
 
-if (command === 'connect') {
+if (command === 'setup') {
+  /*
+   * The wizard. It exists because the two commands it wraps were never the hard part —
+   * knowing they existed, in which order, and then having no way to tell whether it worked
+   * was. Claude Code fires hooks only when it next does something, so a broken setup and a
+   * working one look identical until you have run a session and stared at an empty office
+   * wondering which of the two you were looking at.
+   */
+  const projectRoot = value('path', process.cwd());
+  const assumeYes = flag('yes') || flag('y');
+  const survey = surveyProject({ root: projectRoot, port });
+  const steps = planSteps(survey);
+  const say = (text) => process.stdout.write(text);
+
+  say(`\n  O6 Office — setup\n\n  Project: ${projectRoot}\n\n`);
+
+  const blocked = steps.find((step) => step.blocked);
+  if (blocked) {
+    say(`  Stopped. ${blocked.detail}\n\n`);
+    process.exit(1);
+  }
+
+  say('  What this will do:\n');
+  for (const step of steps) {
+    say(`    ${step.needed ? '·' : '✓'} ${step.title}\n        ${step.detail}\n`);
+  }
+  say('\n');
+
+  if (!survey.hasClaudeDir) {
+    say(
+      '  Note: there is no .claude directory here, so this may not be a Claude Code\n' +
+        '  project. The hooks are still written, and any runtime that can run a shell\n' +
+        '  command can drive the office instead — see the end of this output.\n\n',
+    );
+  }
+
+  if (!assumeYes && process.stdin.isTTY) {
+    const { createInterface } = await import('node:readline/promises');
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    const answer = (await rl.question('  Go ahead? [Y/n] ')).trim().toLowerCase();
+    rl.close();
+    if (answer && !answer.startsWith('y')) {
+      say('\n  Nothing was changed.\n\n');
+      process.exit(0);
+    }
+    say('\n');
+  }
+
+  // 1. The hooks.
+  const hookStep = steps.find((step) => step.id === 'hooks');
+  if (hookStep?.needed) {
+    try {
+      const report = connectProject({ projectRoot, hooks: snippet.hooks, dryRun: false });
+      say(`  Wired ${report.added.length + report.replaced.length} hooks into ${report.path}\n`);
+      if (report.backup) say(`  Backed up your previous settings to ${report.backup}\n`);
+      if (report.kept.length) say(`  Left your own hooks alone: ${report.kept.join(', ')}\n`);
+    } catch (error) {
+      say(`\n  Could not write the hooks: ${error.message}\n\n`);
+      process.exit(1);
+    }
+  } else {
+    say('  Hooks were already wired.\n');
+  }
+
+  // 2. The bridge, started here so the check has something to talk to.
+  const setupBridge = createBridge({ token, port, log: () => {} });
+  try {
+    await setupBridge.listen();
+  } catch (error) {
+    say(
+      `\n  Could not start the bridge on port ${port}: ${error.message}\n` +
+        `  If something else is using that port: o6-office setup --port 4142\n\n`,
+    );
+    process.exit(1);
+  }
+
+  /*
+   * 3. The step that makes this worth running at all.
+   *
+   * It pushes an event through the REAL path — an HTTP POST to /hook shaped like a Claude
+   * Code hook payload — and waits for it on /events, which is the exact stream the office
+   * subscribes to. A check that called an internal function instead would pass while the
+   * thing the user actually needs stayed broken.
+   */
+  say('  Checking the connection... ');
+  const check = await verifyRoundTrip({ port, token });
+  say(check.ok ? 'it works.\n\n' : `no.\n\n  ${check.reason}\n\n`);
+
+  if (!check.ok) {
+    await setupBridge.close();
+    say(
+      '  The hooks are written, but an event did not make it through — so this is NOT\n' +
+        '  set up, and saying otherwise would only cost you the time it takes to find out.\n' +
+        '  Run `o6-office` on its own and watch its output while you use Claude Code; it\n' +
+        '  prints what arrives, which is usually enough to see what is missing.\n\n',
+    );
+    process.exit(1);
+  }
+
+  say(
+    `  Open the office:\n\n    ${url}/#token=${token}\n\n` +
+      '  Then use Claude Code in this project and watch it work. The bridge is running in\n' +
+      '  this terminal — leave it open, and press Ctrl-C when you are done.\n\n' +
+      '  Not using Claude Code? Anything that can run a shell command can report:\n\n    ' +
+      `${foreignRuntimeLine({ port, token })}\n\n` +
+      '  Everything stays here: the bridge binds to 127.0.0.1 and nothing is sent anywhere.\n\n',
+  );
+
+  const stop = async () => {
+    await setupBridge.close();
+    process.exit(0);
+  };
+  process.on('SIGINT', stop);
+  process.on('SIGTERM', stop);
+} else if (command === 'connect') {
   /*
    * Hand-merging ~90 lines of JSON into settings.json is where people give up. This does
    * it, but conservatively: it never drops a key it did not add, it is idempotent, and it
@@ -224,13 +341,23 @@ if (command === 'emit') {
   process.exit(0);
 }
 
-const bridge = createBridge({ token, port });
-await bridge.listen();
-printInstructions({ hooksPath: writeReadyToPaste() });
+/*
+ * The plain `o6-office` case: start the bridge and explain how to connect.
+ *
+ * Guarded, because `setup` deliberately does NOT exit — it leaves its own bridge running
+ * so the office it just told you to open actually has something to talk to. Without this
+ * guard, setup fell through to here and tried to bind the same port a second time, dying
+ * with EADDRINUSE immediately after telling the user everything had worked.
+ */
+if (command === 'bridge') {
+  const bridge = createBridge({ token, port });
+  await bridge.listen();
+  printInstructions({ hooksPath: writeReadyToPaste() });
 
-const shutdown = async () => {
-  await bridge.close();
-  process.exit(0);
-};
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+  const shutdown = async () => {
+    await bridge.close();
+    process.exit(0);
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+}

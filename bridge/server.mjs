@@ -390,6 +390,21 @@ export function createBridge(options = {}) {
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
       });
+      /*
+       * Flush the headers straight away.
+       *
+       * writeHead only stages them — Node puts nothing on the socket until the first
+       * write. On a bridge that has seen no events there is nothing to replay, so the
+       * response stayed unsent and the client hung waiting to connect, until the
+       * 25-second keep-alive below finally pushed the headers out.
+       *
+       * That is exactly the first-run case: start the bridge, open the office, and it
+       * sits on "Connecting…" until either your agent does something or 25 seconds pass —
+       * with no way to tell a working setup from a broken one. A comment line is valid
+       * SSE and every client ignores it.
+       */
+      response.write(': connected\n\n');
+
       // Replay what has happened so far, so a browser opened mid-session is not blank.
       for (const event of events) response.write(`data: ${JSON.stringify(event)}\n\n`);
       clients.add(response);
