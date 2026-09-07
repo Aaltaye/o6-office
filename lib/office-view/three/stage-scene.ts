@@ -27,12 +27,10 @@ import {
   buildCooler,
   type ShellBox,
   buildDeskKit,
-  buildMeetingArea,
   buildPlant,
   buildRoomShell,
   buildRug,
   buildStickies,
-  buildWallDisplay,
   planBox,
   room,
 } from './room-kit.ts';
@@ -122,13 +120,7 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan, over?: ShellBox
    * nothing to do with extent: eight rooms gave 16 against a floor 21.2 across, so the far
    * corners were already outside it before the floor was allowed to grow at all.
    */
-  const extent =
-    Math.max(
-      Math.abs(bounds.maxX - centre.x),
-      Math.abs(centre.x - bounds.minX),
-      Math.abs(bounds.maxY - centre.z),
-      Math.abs(centre.z - bounds.minY),
-    ) + 2;
+  const extent = shadowExtent(centre, bounds);
   Object.assign(key.shadow.camera, {
     left: -extent,
     right: extent,
@@ -150,21 +142,35 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan, over?: ShellBox
 }
 
 /**
- * Re-fit the daylight to a floor that has changed size.
+ * How wide the shadow camera has to be to cover the floor.
  *
- * Same arithmetic as above, applied to a light that already exists — growing the room
- * without this leaves everything past the old extent casting no shadow at all, which reads
- * as figures floating rather than standing.
+ * Floored at 16, which is the value this office shipped with for its whole life. The floor
+ * is not a fudge: without it the formula returns 13.4 for the coding plan at rest, which is
+ * TIGHTER than before — the empty office's shadows would come out measurably crisper than
+ * they have always looked, and "the ordinary office is untouched" was the one thing this
+ * work promised not to break. It only ever widens from there.
+ */
+function shadowExtent(centre: THREE.Vector3, bounds: ShellBox): number {
+  return Math.max(
+    16,
+    Math.abs(bounds.maxX - centre.x),
+    Math.abs(centre.x - bounds.minX),
+    Math.abs(bounds.maxY - centre.z),
+    Math.abs(centre.z - bounds.minY),
+  );
+}
+
+/**
+ * Widen the daylight's shadow frustum to cover a floor that has grown.
+ *
+ * ONLY the frustum. The light itself does not move, and that is the whole point: placing it
+ * relative to the new west wall while its target stayed at the plan's centre swung the sun
+ * across the sky — measured, the elevation fell from 33.9° to 24.5° in the coding office and
+ * from 40.5° to 21.1° in the lead one, lengthening every shadow in the building by 48% and
+ * 121% respectively. Nothing about the daylight happened. The room got bigger.
  */
 export function refitLighting(key: THREE.DirectionalLight, centre: THREE.Vector3, bounds: ShellBox) {
-  key.position.set(bounds.minX - 6, 11, centre.z + 4);
-  const extent =
-    Math.max(
-      Math.abs(bounds.maxX - centre.x),
-      Math.abs(centre.x - bounds.minX),
-      Math.abs(bounds.maxY - centre.z),
-      Math.abs(centre.z - bounds.minY),
-    ) + 2;
+  const extent = shadowExtent(centre, bounds);
   Object.assign(key.shadow.camera, { left: -extent, right: extent, top: extent, bottom: -extent });
   key.shadow.camera.updateProjectionMatrix();
 }
@@ -259,7 +265,6 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials, over?: S
   // The shell: wood floor, two walls, and a window wall the daylight comes through.
   // Only two walls, and only the ones furthest from the camera — a fully enclosed room
   // would be architecturally honest and completely unusable.
-  const centre = planCentre(plan);
   const shell = buildRoomShell(plan, over);
   root.add(shell.group);
   const bounds = shell.bounds;
@@ -371,8 +376,8 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials, over?: S
   // Communal scenery. None of it carries data — it exists so the space reads as a
   // workplace rather than a diagram, which is the whole reason a non-technical viewer
   // understands what they are looking at.
-  root.add(buildWallDisplay(bounds.minX + 0.2, centre.z - 2.2, 2.4));
-  root.add(buildMeetingArea({ x: bounds.maxX - 2.2, y: bounds.maxY - 2.4 }));
+  // The wall display and the meeting corner are built by the shell now — see buildRoomShell.
+  // They are positioned from the walls, so they have to move when the walls do.
   root.add(buildCooler({ x: bounds.minX + 1.1, y: bounds.minY + 1.0 }));
   root.add(buildPlant({ x: bounds.maxX - 1.4, y: bounds.minY + 1.3 }, 1.5));
   root.add(buildPlant({ x: bounds.minX + 1.3, y: bounds.maxY - 1.6 }, 1.3));

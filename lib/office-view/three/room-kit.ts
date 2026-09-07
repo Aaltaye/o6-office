@@ -15,6 +15,7 @@
 import * as THREE from 'three';
 
 import type { FloorPlan, World } from '../core/types.ts';
+import { WORKER_RADIUS } from '../core/figure.ts';
 
 /** The warm, domestic palette the reference gets its friendliness from. */
 export const room = {
@@ -50,6 +51,38 @@ function box(w: number, h: number, d: number, mat: THREE.Material, x: number, y:
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   return mesh;
+}
+
+/**
+ * The shell's materials, made once.
+ *
+ * The building is rebuilt when it grows, and the builder used to allocate seven fresh
+ * MeshStandardMaterials every time while only geometry was disposed — so each growth leaked
+ * seven materials and their GPU programs. They are identical every time, so they are shared:
+ * the leak stops existing rather than being cleaned up after.
+ */
+let sharedShellMaterials: ReturnType<typeof makeShellMaterials> | null = null;
+
+function makeShellMaterials() {
+  return {
+    floorMat: material(room.floor, 0.9),
+    wallMat: material(room.wall, 0.95),
+    shadeMat: material(room.wallShade, 0.95),
+    skirtMat: material(room.skirting, 0.9),
+    frameMat: material(room.frame, 0.8),
+    seamMat: material(room.floorSeam, 0.92),
+    glassMat: material(room.window, 0.25, {
+      emissive: new THREE.Color(room.window),
+      emissiveIntensity: 0.55,
+      transparent: true,
+      opacity: 0.85,
+    }),
+  };
+}
+
+function shellMaterials() {
+  sharedShellMaterials ??= makeShellMaterials();
+  return sharedShellMaterials;
 }
 
 /** The rectangle the building covers. */
@@ -101,17 +134,7 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
   const cx = (bounds.minX + bounds.maxX) / 2;
   const cz = (bounds.minY + bounds.maxY) / 2;
 
-  const floorMat = material(room.floor, 0.9);
-  const wallMat = material(room.wall, 0.95);
-  const shadeMat = material(room.wallShade, 0.95);
-  const skirtMat = material(room.skirting, 0.9);
-  const frameMat = material(room.frame, 0.8);
-  const glassMat = material(room.window, 0.25, {
-    emissive: new THREE.Color(room.window),
-    emissiveIntensity: 0.55,
-    transparent: true,
-    opacity: 0.85,
-  });
+  const { floorMat, wallMat, shadeMat, skirtMat, frameMat, glassMat, seamMat } = shellMaterials();
 
   const floor = box(width, 0.12, depth, floorMat, cx, -0.06, cz);
   floor.castShadow = false;
@@ -119,7 +142,6 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
 
   // Plank seams. Cheap, and the single strongest cue that the floor is wood rather than
   // a grey surface that happens to be brown.
-  const seamMat = material(room.floorSeam, 0.92);
   for (let z = bounds.minY + 1; z < bounds.maxY; z += 1.15) {
     const seam = box(width, 0.01, 0.035, seamMat, cx, 0.005, z);
     seam.castShadow = false;
@@ -159,6 +181,17 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
     group.add(box(0.12, 0.09, windowDepth * 0.72, frameMat, bounds.minX + 0.1, y + h / 2, z));
     group.add(box(0.12, 0.09, windowDepth * 0.72, frameMat, bounds.minX + 0.1, y - h / 2, z));
   }
+
+  /*
+   * Things bolted to the architecture, built WITH it.
+   *
+   * They used to be added to the scene root from the shell's box at build time, so when the
+   * west wall moved out the wall-mounted screen went on hanging in the air where the wall
+   * had been, and the meeting corner sat stranded in the middle of the new floor. Anything
+   * positioned from the walls has to be rebuilt with the walls.
+   */
+  group.add(buildWallDisplay(bounds.minX + 0.2, cz - 2.2, 2.4));
+  group.add(buildMeetingArea({ x: bounds.maxX - 2.2, y: bounds.maxY - 2.4 }));
 
   return { group, bounds };
 }
@@ -420,7 +453,15 @@ export function neededShell(
 ): ShellBox {
   const base = planBox(plan);
   if (!crowd) return base;
-  const air = 2.5;
+  /*
+   * The crowd box holds worker CENTRES, so the margin only has to cover a person's own
+   * half-width plus a little floor to stand on — not a room-sized 2.5.
+   *
+   * Measured with 2.5: the lead office grew with three concurrent agents, while the crowd
+   * was still 1.98 units INSIDE the drawn floor and 1.58 clear of any silhouette. Rebuilding
+   * the building because somebody stood near the middle of it is not "growing to match".
+   */
+  const air = WORKER_RADIUS + 0.5;
   const out = (over: number) => Math.ceil(Math.max(0, over) / GROWTH_STEP) * GROWTH_STEP;
   return {
     minX: base.minX - out(base.minX - (crowd.minX - air)),

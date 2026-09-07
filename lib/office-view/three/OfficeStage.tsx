@@ -414,6 +414,21 @@ export function OfficeStage({
       ) {
         current.shellBox = wanted;
         current.shell = growShell(current.root, current.shell, plan, wanted);
+        /*
+         * Push the haze back with the walls.
+         *
+         * The fog was tuned for a camera that could only ever sit at about eighteen units.
+         * A grown room is seen from much further back — measured at 120 agents, the far
+         * corner sits at ~58.8 against a fog that is fully opaque by 62, so the wall the
+         * office had just built dissolved as it appeared. It keeps its density relative to
+         * the room rather than being a fixed distance from the eye.
+         */
+        const reach = Math.hypot(wanted.maxX - wanted.minX, wanted.maxY - wanted.minY);
+        const fog = scene.fog as THREE.Fog | null;
+        if (fog) {
+          fog.near = Math.max(26, reach * 0.95);
+          fog.far = Math.max(62, reach * 2.3);
+        }
         // The daylight has to cover the new floor or everything past the old edge stops
         // casting a shadow, which reads as figures floating rather than standing.
         refitLighting(current.keyLight, current.centre, wanted);

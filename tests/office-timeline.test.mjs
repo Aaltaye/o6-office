@@ -1456,7 +1456,7 @@ test('the building grows outward, in whole steps, only on the sides that need it
   // A crowd escaping to the east only.
   const grown = neededShell(codingSessionPlan, {
     minX: 10,
-    maxX: base.maxX + 3,
+    maxX: base.maxX + 1,
     minZ: 8,
     maxZ: 10,
   });
@@ -1468,7 +1468,7 @@ test('the building grows outward, in whole steps, only on the sides that need it
   // Steps, so a crowd drifting by centimetres cannot rebuild the room every frame.
   const nudged = neededShell(codingSessionPlan, {
     minX: 10,
-    maxX: base.maxX + 3.2,
+    maxX: base.maxX + 1.4,
     minZ: 8,
     maxZ: 10,
   });
@@ -1512,5 +1512,57 @@ test('the floor really does cover everyone, at every size measured', () => {
           `x ${floor.minX.toFixed(1)}..${floor.maxX.toFixed(1)} y ${floor.minY.toFixed(1)}..${floor.maxY.toFixed(1)}`,
       );
     }
+  }
+});
+
+test('the building only grows when somebody is actually outside it', () => {
+  /*
+   * The first version used a 2.5-unit margin against a crowd box of worker CENTRES, so it
+   * rebuilt the room while everyone was still comfortably indoors — measured, the lead
+   * office grew with three concurrent agents and the crowd 1.98 units INSIDE the floor.
+   * Rebuilding a building because somebody stood near the middle of it is not growing to
+   * match anything.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const base = planBox(codingSessionPlan);
+
+  for (const count of [1, 6, 11, 20, 35, 80]) {
+    const events = stream((emit) => {
+      for (let i = 0; i < count; i += 1) {
+        const worker = `agent:s${i}`;
+        emit({ type: 'specialist.joined', occurredAt: i, label: 'Joined', worker, role: 'Explorer' });
+        emit({ type: 'assignment.started', occurredAt: 500 + i, label: `Bash ${i}`, station: 'operations', worker });
+      }
+    });
+    const result = schedule(events, codingCompiled);
+    const t = result.duration;
+    const placed = [...result.workers.values()].map((w) => w.motion.sampleAt(t)).filter(Boolean);
+    const crowd = placed.reduce(
+      (box, at) => ({
+        minX: Math.min(box.minX, at.x),
+        maxX: Math.max(box.maxX, at.x),
+        minZ: Math.min(box.minZ, at.y),
+        maxZ: Math.max(box.maxZ, at.y),
+      }),
+      { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
+    );
+
+    const grown = neededShell(codingSessionPlan, crowd);
+    const didGrow =
+      grown.minX !== base.minX || grown.maxX !== base.maxX ||
+      grown.minY !== base.minY || grown.maxY !== base.maxY;
+
+    // Does any actual silhouette cross the original floor's edge?
+    const r = WORKER_DIAMETER / 2;
+    const outside =
+      crowd.minX - r < base.minX || crowd.maxX + r > base.maxX ||
+      crowd.minZ - r < base.minY || crowd.maxZ + r > base.maxY;
+
+    assert.equal(
+      didGrow,
+      outside,
+      `${count} agents: grew=${didGrow} but somebody outside=${outside} — the room should ` +
+        `change size when, and only when, a person does not fit on it`,
+    );
   }
 });
