@@ -12,7 +12,7 @@
  * is what keeps the clock deterministic and testable without a browser.
  */
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 
 /**
  * @param onFrame called once per animation frame with elapsed ms since the last frame
@@ -85,18 +85,50 @@ export function useElementSize<T extends HTMLElement>(): [
   { width: number; height: number },
 ] {
   const ref = useRef<T>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  /**
+   * The last size we told React about. Held in a ref so the snapshot keeps a stable
+   * identity between reads — `useSyncExternalStore` compares by reference, and returning a
+   * fresh object every time would loop forever.
+   */
+  const snapshot = useRef({ width: 0, height: 0 });
 
-  useEffect(() => {
+  const subscribe = useCallback((onChange: () => void) => {
     const element = ref.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver((entries) => {
-      const rect = entries[0]?.contentRect;
-      if (rect) setSize({ width: rect.width, height: rect.height });
-    });
+    if (!element) return () => {};
+
+    const read = () => {
+      const rect = element.getBoundingClientRect();
+      if (rect.width === snapshot.current.width && rect.height === snapshot.current.height) {
+        return;
+      }
+      snapshot.current = { width: rect.width, height: rect.height };
+      onChange();
+    };
+
+    /*
+     * Measure once, immediately, rather than waiting to be told.
+     *
+     * ResizeObserver is *supposed* to deliver an initial entry on observe(), and usually
+     * does. Depending on that alone means that anywhere it does not — an element observed
+     * while the viewport is still collapsing, an embedded or emulated browser — the office
+     * renders no labels at all and looks broken rather than empty. Measuring first costs
+     * one layout read and removes a whole class of "why is it blank".
+     */
+    read();
+
+    if (typeof ResizeObserver === 'undefined') {
+      // Older or restricted environments still get resize handling, just coarser.
+      window.addEventListener('resize', read);
+      return () => window.removeEventListener('resize', read);
+    }
+
+    const observer = new ResizeObserver(read);
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+
+  const getSnapshot = useCallback(() => snapshot.current, []);
+  const size = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   return [ref, size];
 }

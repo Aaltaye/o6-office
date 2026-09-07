@@ -6,6 +6,15 @@ that what an agent is actually doing is legible to someone who has never read a 
 
 O6 Invention Lab, Experiment 001.
 
+![The office running a recorded lead-reactivation run: desks light violet as work reaches them, each showing the literal action being taken.](docs/office-demo.gif)
+
+*A real recorded run of the lead workflow, sampled evenly across its 33 seconds and played
+back at about 3x. Violet means "happening right now" and nothing else; every label is the
+literal action that desk reported, never a guess at what an agent was thinking. The
+contacts are invented — the office says so on screen — but the run is not. This particular
+run is local-rules mode, so no model was called: that is why no specialist walks in and no
+tokens are reported in it.*
+
 Two modes, one renderer:
 
 | Mode | What it is |
