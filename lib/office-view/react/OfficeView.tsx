@@ -382,7 +382,43 @@ export function OfficeView({
   }, [dismissed, applyTime]);
 
   // --- Camera ---------------------------------------------------------------
-  const fullBounds = useMemo(() => planBounds(plan), [plan]);
+  /**
+   * The whole office, including anyone standing outside the rooms.
+   *
+   * planBounds measures the FURNITURE. A department has three desks and a burst of
+   * concurrent agents stands beyond them, so framing the plan alone silently cropped
+   * people off the floor — two renderers of the same timeline, at the same instant,
+   * disagreeing about how many agents exist, with no notice of the omission. The 3D stage
+   * grew its shot for exactly this; this is the same rule on the flat floor.
+   *
+   * Recomputed per run rather than per frame: it walks every worker's whole motion track,
+   * which is cheap once and wasteful sixty times a second.
+   */
+  const fullBounds = useMemo(() => {
+    const base = planBounds(plan);
+    let widest = 0;
+    for (const worker of timeline.workers.values()) {
+      for (const point of worker.motion.extent()) {
+        const { sx, sy } = worldToScreen(point, plan.tile);
+        widest = Math.max(
+          widest,
+          base.minX - sx,
+          sx - (base.minX + base.width),
+          base.minY - sy,
+          sy - (base.minY + base.height),
+        );
+      }
+    }
+    if (widest <= 0) return base;
+    // Plus a little air, so the outermost person is inside the frame rather than on it.
+    const pad = widest + plan.tile.w / 2;
+    return {
+      minX: base.minX - pad,
+      minY: base.minY - pad,
+      width: base.width + pad * 2,
+      height: base.height + pad * 2,
+    };
+  }, [plan, timeline.workers]);
   const [camera, setCamera] = useState<Bounds>(fullBounds);
   // Reset the camera when the plan changes (switching to the compact mobile layout, say).
   // Adjusted during render rather than in an effect: React re-runs the render immediately

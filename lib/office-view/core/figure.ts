@@ -45,3 +45,14 @@ export const WORKER_CLEARANCE = WORKER_DIAMETER * 1.15;
  * a queue of individuals rather than a huddle.
  */
 export const SPOT_PITCH = WORKER_CLEARANCE * 1.15;
+
+/**
+ * How far a desk sits in front of its seat, along the station's facing.
+ *
+ * In core rather than in the renderer because two very different things need to agree on
+ * it: the renderer, which draws the desk and everything standing on it, and the seating
+ * rule, which must keep people out of the furniture. The seating rule originally measured
+ * prop offsets from the SEAT while the renderer drew them from the DESK, which put the
+ * exclusion zone most of a tile from the actual rack and stood an agent inside it.
+ */
+export const DESK_OFFSET = 0.62;

@@ -1273,3 +1273,121 @@ test('an agent that leaves mid-tool does not leave its desk claiming to be busy'
     );
   }
 });
+
+/* --- desks belong to assignments, not to departments or to whoever is nearby -----
+ *
+ * Three attempts at this. Resolving a finish from the event alone cannot work (the event
+ * names a department, the office picks the desk); resolving it from where the worker is
+ * NOW is wrong when they hold two calls in different departments; and remembering the desk
+ * id per (worker, department) is wrong twice more, because a desk is released when its
+ * worker moves department — so the id can be re-let to somebody else before the finish
+ * arrives — and two calls in one department share one entry.
+ *
+ * Ownership is the property that actually holds: a finish darkens a desk only if that
+ * assignment still owns its lit state.
+ */
+
+test('a finish never repaints a desk that has been re-let to another agent', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    // Main runs two tools at once, which frees its Operations desk when it claims Reading.
+    emit({ type: 'assignment.started', occurredAt: 1000, label: 'Bash: main', station: 'operations' });
+    emit({ type: 'assignment.started', occurredAt: 1100, label: 'Read: app.ts', station: 'reading' });
+    // A subagent takes the freed desk and starts working at it.
+    emit({ type: 'specialist.joined', occurredAt: 1500, label: 'Joined', worker: 'agent:x', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 1600, label: 'Bash: npm run build', station: 'operations', worker: 'agent:x' });
+    // Main's first tool returns. It must not darken the desk the subagent is using.
+    emit({ type: 'assignment.finished', occurredAt: 3000, label: 'Bash done', station: 'operations' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const t = result.duration;
+  const deskOfX = result.workers.get('agent:x').stationAt.sampleAt(t);
+  assert.equal(
+    result.stationBusy.get(deskOfX).sampleAt(t),
+    'Bash: npm run build',
+    'the subagent’s desk went dark while its tool was still running',
+  );
+});
+
+test('a failure is never captioned onto an agent that did not have it', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Bash: a', station: 'operations', worker: 'agent:a' });
+    // Two parallel calls from b, in the same department as a.
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash: b1', station: 'operations', worker: 'agent:b' });
+    emit({ type: 'assignment.started', occurredAt: 150, label: 'Bash: b2', station: 'operations', worker: 'agent:b' });
+    emit({
+      type: 'assignment.failed', occurredAt: 900, label: 'failed', station: 'operations',
+      worker: 'agent:b', reason: 'exit 1: only b',
+    });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const t = result.duration;
+  for (const [station, channel] of result.stationBusy) {
+    const at = channel.sampleAt(t);
+    if (station === result.workers.get('agent:a').stationAt.sampleAt(t)) {
+      assert.equal(at, 'Bash: a', 'a’s desk still shows a’s own work');
+    }
+  }
+});
+
+test('an agent with two calls open is still working when the first returns', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Bash: one', station: 'operations', worker: 'agent:p' });
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Bash: two', station: 'operations', worker: 'agent:p' });
+    emit({ type: 'assignment.finished', occurredAt: 500, label: 'one done', station: 'operations', worker: 'agent:p' });
+  });
+  const result = schedule(events, codingCompiled);
+  assert.equal(
+    result.workers.get('agent:p').status.sampleAt(result.duration),
+    'Bash: one',
+    'blanking here would blink the agent off mid-job',
+  );
+});
+
+test('closing an assignment never blanks one that has already started', () => {
+  // A null scheduled after a walk can land past the next assignment's start and erase it.
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 1000, label: 'Bash: npm test', station: 'operations' });
+    emit({ type: 'assignment.failed', occurredAt: 3000, label: 'failed', station: 'operations', reason: 'exit status 1' });
+    emit({ type: 'assignment.started', occurredAt: 3400, label: 'Bash: retry', station: 'operations' });
+  });
+  const result = schedule(events, codingCompiled);
+  assert.equal(result.workers.get('main').status.sampleAt(result.duration), 'Bash: retry');
+});
+
+test('a burst into any single department never stacks anyone', () => {
+  /*
+   * Departments in the middle of the office are hemmed in, and a nearest-centre partition
+   * starved them: fifty agents into Reading exhausted its share and the tail collapsed
+   * onto neighbours' cells, five pairs at exactly zero distance. Cells are now shared out
+   * in turns, so every department gets a comparable number.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  for (const department of ['reading', 'operations', 'workshop', 'research', 'frontdesk', 'approvals']) {
+    const events = stream((emit) => {
+      for (let i = 0; i < 60; i += 1) {
+        const worker = `agent:s${i}`;
+        emit({ type: 'specialist.joined', occurredAt: i, label: 'Joined', worker, role: 'Explorer' });
+        emit({ type: 'assignment.started', occurredAt: 500 + i, label: `Bash ${i}`, station: department, worker });
+      }
+    });
+    const result = schedule(events, codingCompiled);
+    const t = result.duration;
+    const placed = [...result.workers.values()].map((w) => w.motion.sampleAt(t)).filter(Boolean);
+    let closest = Infinity;
+    for (let a = 0; a < placed.length; a += 1) {
+      for (let b = a + 1; b < placed.length; b += 1) {
+        closest = Math.min(closest, Math.hypot(placed[a].x - placed[b].x, placed[a].y - placed[b].y));
+      }
+    }
+    assert.ok(
+      closest >= WORKER_DIAMETER,
+      `60 agents into ${department}: closest pair ${closest.toFixed(2)}, need ${WORKER_DIAMETER}`,
+    );
+  }
+});

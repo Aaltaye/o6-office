@@ -26,7 +26,7 @@
 
 import type { CompiledPlan } from './plan.ts';
 import type { RoomId, StationId, WorkerId, World } from './types.ts';
-import { SPOT_PITCH, WORKER_CLEARANCE } from './figure.ts';
+import { DESK_OFFSET, SPOT_PITCH, WORKER_CLEARANCE } from './figure.ts';
 
 /**
  * Who is sitting where.
@@ -171,11 +171,34 @@ function latticesFor(compiled: CompiledPlan): Map<RoomId, World[]> {
       if (Math.hypot(at.x - station.seat.x, at.y - station.seat.y) < WORKER_CLEARANCE * 1.4) {
         return false;
       }
-      // Nor inside that desk's own furniture.
+      /*
+       * Nor inside that desk's own furniture. Prop offsets are relative to the DESK, which
+       * sits DESK_OFFSET in front of the seat along the station's facing — the same basis
+       * the renderer uses. Measuring them from the seat instead put the exclusion zone
+       * most of a tile away from the actual rack, and the fifteenth agent in Operations
+       * stood inside it.
+       */
+      const facing = station.facing === 'w' ? -1 : station.facing === 'e' ? 1 : 0;
+      const desk = { x: station.seat.x + facing * DESK_OFFSET, y: station.seat.y };
       for (const prop of station.props ?? []) {
-        const propAt = { x: station.seat.x + prop.at.x, y: station.seat.y + prop.at.y };
+        const propAt = { x: desk.x + prop.at.x, y: desk.y + prop.at.y };
         if (Math.hypot(at.x - propAt.x, at.y - propAt.y) < WORKER_CLEARANCE) return false;
       }
+    }
+    /*
+     * And clear of the waiting lounge, which fills from its own centre by a separate rule.
+     * Two placement systems that do not know about each other will eventually put two
+     * people in the same place, and this one is the one that can move.
+     */
+    for (const lounge of compiled.plan.rooms) {
+      if (lounge.kind !== 'waiting') continue;
+      const centre = {
+        x: lounge.origin.x + lounge.size.w / 2,
+        y: lounge.origin.y + lounge.size.h / 2,
+      };
+      // Generous: the lounge ring grows, so reserve the room rather than a fixed radius.
+      const reach = Math.max(lounge.size.w, lounge.size.h) / 2 + WORKER_CLEARANCE;
+      if (Math.hypot(at.x - centre.x, at.y - centre.y) < reach) return false;
     }
     return true;
   };
@@ -196,36 +219,68 @@ function latticesFor(compiled: CompiledPlan): Map<RoomId, World[]> {
   // Room to spill well past the walls, because a genuinely crowded office should look it.
   const margin = SPOT_PITCH * 8;
 
-  const byRoom = new Map<RoomId, World[]>();
-  for (const { room } of centres) byRoom.set(room, []);
-
-  for (let y = bounds.minY - margin; y <= bounds.maxY + margin; y += SPOT_PITCH) {
-    for (let x = bounds.minX - margin; x <= bounds.maxX + margin; x += SPOT_PITCH) {
-      const at = { x: Math.round(x * 1e4) / 1e4, y: Math.round(y * 1e4) / 1e4 };
-      if (!standable(at)) continue;
-      // The cell belongs to the department it is nearest to, and to no other.
-      let owner = centres[0];
-      let best = Infinity;
-      for (const candidate of centres) {
-        const d = Math.hypot(at.x - candidate.at.x, at.y - candidate.at.y);
-        if (d < best) {
-          best = d;
-          owner = candidate;
-        }
-      }
-      byRoom.get(owner.room)?.push(at);
+  const cells: World[] = [];
+  // Integer steps, so the grid cannot drift: `x += SPOT_PITCH` in a loop accumulates
+  // floating-point error and would generate a different cell set on a long enough floor.
+  const cols = Math.ceil((bounds.maxX - bounds.minX + margin * 2) / SPOT_PITCH);
+  const rows = Math.ceil((bounds.maxY - bounds.minY + margin * 2) / SPOT_PITCH);
+  for (let row = 0; row <= rows; row += 1) {
+    for (let col = 0; col <= cols; col += 1) {
+      const at = {
+        x: Math.round((bounds.minX - margin + col * SPOT_PITCH) * 1e4) / 1e4,
+        y: Math.round((bounds.minY - margin + row * SPOT_PITCH) * 1e4) / 1e4,
+      };
+      if (standable(at)) cells.push(at);
     }
   }
 
-  // Nearest first, so a department fills outward from itself and stays legible as a group.
-  for (const [room, spots] of byRoom) {
-    const centre = centres.find((candidate) => candidate.room === room)!.at;
-    spots.sort((a, b) => {
-      const da = Math.hypot(a.x - centre.x, a.y - centre.y);
-      const db = Math.hypot(b.x - centre.x, b.y - centre.y);
-      // Distance, then a stable tiebreak, so the order never depends on iteration order.
-      return da - db || a.y - b.y || a.x - b.x;
-    });
+  /*
+   * Share the cells out, rather than giving each department everything nearest to it.
+   *
+   * A nearest-centre partition looks obviously right and starves the middle of the office:
+   * departments on the ends get the whole outside world, the ones hemmed in between get
+   * slivers. Measured — fifty agents into Reading exhausted its share and the tail
+   * collapsed onto neighbours' cells, five overlapping pairs at exactly zero distance.
+   *
+   * So departments take turns, each claiming its own nearest unclaimed cell. Everyone ends
+   * up with a comparable share, still gathered around itself, and no cell is ever handed
+   * out twice — which is the property that actually matters.
+   */
+  const byRoom = new Map<RoomId, World[]>();
+  const ranked = new Map<RoomId, World[]>();
+  for (const { room, at: centre } of centres) {
+    byRoom.set(room, []);
+    ranked.set(
+      room,
+      [...cells].sort((a, b) => {
+        const da = Math.hypot(a.x - centre.x, a.y - centre.y);
+        const db = Math.hypot(b.x - centre.x, b.y - centre.y);
+        // Distance, then a stable tiebreak, so the order never depends on iteration order.
+        return da - db || a.y - b.y || a.x - b.x;
+      }),
+    );
+  }
+
+  const taken = new Set<string>();
+  const cursors = new Map<RoomId, number>(centres.map(({ room }) => [room, 0]));
+  let handedOut = 0;
+  while (handedOut < cells.length) {
+    let progressed = false;
+    for (const { room } of centres) {
+      const order = ranked.get(room)!;
+      let cursor = cursors.get(room)!;
+      while (cursor < order.length && taken.has(`${order[cursor].x},${order[cursor].y}`)) {
+        cursor += 1;
+      }
+      cursors.set(room, cursor);
+      if (cursor >= order.length) continue;
+      const cell = order[cursor];
+      taken.add(`${cell.x},${cell.y}`);
+      byRoom.get(room)!.push(cell);
+      handedOut += 1;
+      progressed = true;
+    }
+    if (!progressed) break;
   }
 
   lattices.set(compiled.plan.id, byRoom);
@@ -241,7 +296,26 @@ export function overflowSpot(
   const spots = latticesFor(compiled).get(room) ?? [];
   if (spots.length === 0) return null;
   const overflow = Math.max(0, index - desks.length);
-  // Past the generated lattice, hold at the outermost spot rather than wrapping back into
-  // the room — a crowd at the edge is honest; people teleporting inside each other is not.
-  return spots[Math.min(overflow, spots.length - 1)];
+  if (overflow < spots.length) return spots[overflow];
+
+  /*
+   * Past the generated lattice, keep going rather than clamping.
+   *
+   * Clamping to the last spot was measured putting SEVENTEEN agents on one point — the
+   * exact pile this module exists to prevent, moved to the end of the list. A crowd
+   * standing beyond the drawn floor looks odd; a crowd drawn inside itself is a lie about
+   * how many are working, and the office would be under-reporting its own load.
+   *
+   * So the tail spirals outward from the last spot on the same pitch. Deterministic from
+   * the index, like everything else here.
+   */
+  const last = spots[spots.length - 1];
+  const beyond = overflow - spots.length;
+  const ring = Math.floor(beyond / 8) + 1;
+  const step = beyond % 8;
+  const angle = (step / 8) * Math.PI * 2;
+  return {
+    x: last.x + Math.cos(angle) * SPOT_PITCH * ring,
+    y: last.y + Math.sin(angle) * SPOT_PITCH * ring,
+  };
 }

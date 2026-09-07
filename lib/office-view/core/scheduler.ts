@@ -328,44 +328,119 @@ export function schedule(
   const claims = newClaims();
 
   /**
-   * Which desk each in-flight assignment actually lit.
+   * In-flight assignments, and which desk each one lit.
    *
-   * An event names a DEPARTMENT; the office chooses the desk. The finish therefore cannot
-   * be resolved from the event alone, and it must not be resolved from where the worker is
-   * NOW either: one agent can hold two tool calls at once in different departments — the
-   * contract explicitly tells producers to emit those with identical timestamps — and by
-   * the time the first finishes, the worker's current claim is the second department's
-   * desk. Quietening that one left the first desk lit violet, claiming a shell command was
-   * still running, for the rest of the session.
+   * Third design, because the first two were both wrong in ways worth recording.
    *
-   * Keyed by worker AND department, because those two together are what a finish names.
+   * An event names a DEPARTMENT and the office picks the desk, so a finish cannot be
+   * resolved from the event alone. Resolving it from where the worker is NOW was wrong: an
+   * agent can hold two calls at once in different departments, so by the time the first
+   * returns the worker's claim is the other desk. Remembering the desk id per
+   * (worker, department) was also wrong, twice over — a desk is RELEASED when its worker
+   * moves department, so the id can be re-let to somebody else before the finish arrives,
+   * and two overlapping calls in one department share one entry, so the second finish
+   * found nothing and fell back to the department's primary desk, which is a third
+   * agent's.
+   *
+   * What is actually needed is ownership. Each assignment gets a token; the desk records
+   * which token lit it; and a finish clears the desk ONLY if that token still owns it.
+   * Anything else — a re-let desk, a finish whose start was evicted from the bridge's ring
+   * buffer — touches nothing, which is the right answer: we never lit it, so it is not
+   * ours to darken.
    */
-  const litFor = new Map<string, StationId>();
-  const litKey = (worker: WorkerId | null, station: StationId) => `${worker ?? 'main'}::${station}`;
+  type OpenAssignment = { token: number; station: StationId; label: string };
+  let nextToken = 0;
+  /** Open assignments per worker, most recent last. A stack, so parallel calls nest. */
+  const openByWorker = new Map<WorkerId, OpenAssignment[]>();
+  /** Which assignment currently owns each desk's lit state. */
+  const deskLitBy = new Map<StationId, number>();
+
+  const openFor = (worker: WorkerId) => openByWorker.get(worker) ?? [];
 
   /**
-   * Let go of every desk this worker still had lit.
+   * The last thing each worker actually did, open or closed.
    *
-   * Somebody can leave — or be interrupted, or crash — with a tool call still open, and
-   * nothing else closes it: a live session never sends `run.finished`, so without this the
-   * desk stayed lit with the departed agent's last command, in violet, for as long as the
-   * office was open. Verified before fixing: an agent that left at 200ms still had
-   * "Bash: long thing" burning at its desk an hour later.
-   *
-   * Pushing null says "not happening now". It deliberately does NOT say the assignment
-   * finished, succeeded or failed — the stream said none of those, and the operations log
-   * still shows a start with no finish, which is the truth of what happened.
+   * Distinct from their status, which is what they are doing NOW and is correctly null
+   * between calls. A departure record wants the former: an agent that finished its work
+   * and then left was idle at the instant it left, so reading the status there produced a
+   * record with nothing in it — for the very agent whose work the record exists to let you
+   * review.
    */
-  const releaseLit = (worker: WorkerId, at: number) => {
-    const prefix = `${worker}::`;
-    // Deleting the entry a Map iterator is currently on is well-defined, so no snapshot.
-    for (const [key, station] of litFor) {
-      if (!key.startsWith(prefix)) continue;
-      litFor.delete(key);
-      if (busyChannel(station).sampleAt(at) === null) continue;
-      busyChannel(station).push(at, null);
-      setDeskStatus(station, at, null);
+  const lastActionByWorker = new Map<WorkerId, string>();
+
+  /**
+   * What a worker is doing once one of their calls has closed.
+   *
+   * Not simply "null". An agent with two parallel tool calls is still working when the
+   * first returns, and blanking them there blinks the person off mid-job; leaving the
+   * finished call's label up claims they are still running something they are not. So the
+   * status becomes the most recent call they DO still have open, or null when there is
+   * none. Pushed at simTime rather than after a walk, because a delayed null can land
+   * after the next assignment has already started and blank it.
+   */
+  const settleWorker = (worker: WorkerId, at: number) => {
+    const state = workers.get(worker);
+    if (!state) return;
+    const open = openFor(worker);
+    const next = open.length > 0 ? open[open.length - 1].label : null;
+    if (state.status.sampleAt(at) === next) return;
+    state.status.push(at, next);
+    timelineHead = Math.max(timelineHead, at);
+  };
+
+  /** Light a desk and record who owns it. */
+  const openAssignment = (worker: WorkerId, station: StationId, label: string) => {
+    const token = (nextToken += 1);
+    const open = openFor(worker);
+    open.push({ token, station, label });
+    openByWorker.set(worker, open);
+    deskLitBy.set(station, token);
+    lastActionByWorker.set(worker, label);
+  };
+
+  /**
+   * Close the most recent open assignment this worker has in this department.
+   *
+   * Matched on department rather than desk, because that is what the event names. Returns
+   * the desk to darken, or null when this finish owns nothing — an orphan finish, or a
+   * desk that has since been re-let to another agent who is still working at it.
+   */
+  const closeAssignment = (worker: WorkerId, department: RoomId | null): StationId | null => {
+    const open = openFor(worker);
+    for (let i = open.length - 1; i >= 0; i -= 1) {
+      const candidate = open[i];
+      if (department && plan.roomOf.get(candidate.station) !== department) continue;
+      open.splice(i, 1);
+      if (open.length === 0) openByWorker.delete(worker);
+      // Only ours to darken if nobody else has lit it since.
+      if (deskLitBy.get(candidate.station) !== candidate.token) return null;
+      deskLitBy.delete(candidate.station);
+      return candidate.station;
     }
+    return null;
+  };
+
+  /**
+   * Everything this worker still has running, given up at once.
+   *
+   * Somebody can leave — or be interrupted, or crash — with calls still open, and nothing
+   * else closes them: a live session never sends `run.finished`, so without this a desk
+   * kept the departed agent's last command, in violet, for as long as the office stayed
+   * open. Measured at an hour before this existed.
+   *
+   * Pushing null says "not happening now". It deliberately does not say the work finished,
+   * succeeded or failed — the stream said none of those, and the operations log still
+   * shows a start with no finish, which is the truth.
+   */
+  const releaseWorkerAssignments = (worker: WorkerId, at: number) => {
+    for (const open of openFor(worker)) {
+      if (deskLitBy.get(open.station) !== open.token) continue;
+      deskLitBy.delete(open.station);
+      if (busyChannel(open.station).sampleAt(at) === null) continue;
+      busyChannel(open.station).push(at, null);
+      setDeskStatus(open.station, at, null);
+    }
+    openByWorker.delete(worker);
   };
 
   /**
@@ -672,7 +747,7 @@ export function schedule(
             }
           }
 
-          litFor.set(litKey(workerOf(event), event.station), lit);
+          openAssignment(workerOf(event) ?? 'main', lit, event.label);
           busyChannel(lit).push(simTime, event.label);
           setDeskStatus(lit, simTime, event.label);
           if (worker) worker.status.push(simTime, event.label);
@@ -688,25 +763,14 @@ export function schedule(
            * only stayed invisible because a departed worker stops being drawn. It is the
            * same rule the desks already follow: violet means right now, so it has to stop.
            */
-          const seated = workerOf(event);
-          const key = litKey(seated, event.station);
-          // The desk this very assignment lit, not wherever its worker has since gone.
-          const lit = litFor.get(key) ?? event.station;
-          litFor.delete(key);
-          busyChannel(lit).push(simTime + walkMs, null);
-          setDeskStatus(lit, simTime + walkMs, null);
-          if (seated) {
-            /*
-             * The worker only goes quiet once they have nothing else running. An agent with
-             * two parallel tool calls is still working when the first returns, and marking
-             * it idle there would blink the person off mid-job.
-             */
-            const stillBusy = [...litFor.keys()].some((other) => other.startsWith(`${seated}::`));
-            if (!stillBusy) {
-              workers.get(seated)?.status.push(simTime + walkMs, null);
-              timelineHead = Math.max(timelineHead, simTime + walkMs);
-            }
+          const seated = workerOf(event) ?? 'main';
+          // The desk this very assignment lit — and only if it is still ours to darken.
+          const lit = closeAssignment(seated, plan.roomOf.get(event.station) ?? null);
+          if (lit) {
+            busyChannel(lit).push(simTime + walkMs, null);
+            setDeskStatus(lit, simTime + walkMs, null);
           }
+          settleWorker(seated, simTime);
           break;
         }
 
@@ -719,19 +783,13 @@ export function schedule(
            * attributing a failure, in its own literal words, to an agent that did not have
            * it. That is worse than a cosmetic mistake.
            */
-          const who = workerOf(event);
-          const key = litKey(who, event.station);
-          const lit = litFor.get(key) ?? event.station;
-          litFor.delete(key);
-          busyChannel(lit).push(simTime, event.reason);
-          setDeskStatus(lit, simTime, event.reason);
-          if (who) {
-            const stillBusy = [...litFor.keys()].some((other) => other.startsWith(`${who}::`));
-            if (!stillBusy) {
-              workers.get(who)?.status.push(simTime + walkMs, null);
-              timelineHead = Math.max(timelineHead, simTime + walkMs);
-            }
+          const who = workerOf(event) ?? 'main';
+          const lit = closeAssignment(who, plan.roomOf.get(event.station) ?? null);
+          if (lit) {
+            busyChannel(lit).push(simTime, event.reason);
+            setDeskStatus(lit, simTime, event.reason);
           }
+          settleWorker(who, simTime);
           break;
         }
 
@@ -847,9 +905,10 @@ export function schedule(
            * live agent being seated on top of a finished one.
            */
           const restingAt = state.stationAt.sampleAt(simTime) ?? null;
-          const lastAction = state.status.sampleAt(simTime) ?? null;
+          // What they last DID, not what they were mid-way through — see above.
+          const lastAction = lastActionByWorker.get(event.worker) ?? null;
           // Whatever they still had running stops being claimed as running.
-          releaseLit(event.worker, simTime);
+          releaseWorkerAssignments(event.worker, simTime);
 
           if (staffing === 'dynamic') {
             /*
@@ -959,7 +1018,8 @@ export function schedule(
             if (worker.status.sampleAt(simTime) === null) continue;
             worker.status.push(simTime, null);
           }
-          litFor.clear();
+          openByWorker.clear();
+          deskLitBy.clear();
           break;
         }
 

@@ -205,17 +205,25 @@ export function Inspector({
       left: boolean;
       /** Assignments started and not yet finished or failed. */
       open: number;
+      /** The last action they were seen to START. */
       last: string | null;
+      /** The last action they started that has not closed — what they are actually doing. */
+      current: string | null;
+      /** Which run they belong to, so one run ending does not silence another. */
+      runId: string | null;
     };
     const people = new Map<string, Person>();
 
     for (const event of events) {
       const id = workerOf(event);
       if (!id) continue;
-      const person = people.get(id) ?? { id, role: null, left: false, open: 0, last: null };
+      const person =
+        people.get(id) ?? { id, role: null, left: false, open: 0, last: null, current: null, runId: null };
+      person.runId = event.runId ?? person.runId;
       if (event.type === 'specialist.joined') person.role = event.role ?? person.role;
       if (event.type === 'assignment.started') {
         person.last = event.label;
+        person.current = event.label;
         person.open += 1;
         // Working again after leaving is not a contradiction — a producer may re-use an
         // agent id — so the flag follows the most recent word.
@@ -231,18 +239,29 @@ export function Inspector({
        */
       if (event.type === 'assignment.finished' || event.type === 'assignment.failed') {
         person.open = Math.max(0, person.open - 1);
+        /*
+         * With nothing left open they are not doing anything, so nothing may be described
+         * in the present tense. `last` survives — it is what they last DID — but `current`
+         * is what the row is allowed to phrase as happening, and it goes with the work.
+         */
+        if (person.open === 0) person.current = null;
       }
-      if (event.type === 'run.finished') person.open = 0;
+      /*
+       * A run ending closes that run's work — and only that run's. Applying it to everyone
+       * unconditionally read every agent as idle for the rest of a live office, because a
+       * bridge can carry several sessions in one stream: session one ends, session two
+       * starts working, and the whole floor reported nobody doing anything.
+       */
+      if (event.type === 'run.finished') {
+        for (const other of people.values()) {
+          if (other.runId === event.runId) other.open = 0;
+        }
+      }
       if (event.type === 'specialist.left') {
         person.left = true;
         person.open = 0;
       }
       people.set(id, person);
-    }
-
-    // `run.finished` names nobody, so it has to be applied to everyone.
-    if (events.some((event) => event.type === 'run.finished')) {
-      for (const person of people.values()) person.open = 0;
     }
 
     const all = [...people.values()];
@@ -363,8 +382,8 @@ export function Inspector({
                   <span className="oi-roster-what">
                     {person.left
                       ? `finished${person.last ? ` · last: ${person.last}` : ''}`
-                      : person.open > 0
-                        ? (person.last ?? 'working')
+                      : person.open > 0 && person.current
+                        ? person.current
                         : person.last
                           ? `last: ${person.last}`
                           : (person.role ?? 'no action reported yet')}

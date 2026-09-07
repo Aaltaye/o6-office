@@ -20,7 +20,7 @@
 import * as THREE from 'three';
 
 import type { FloorPlan, PropKind, World } from '../core/types.ts';
-import { WORKER_RADIUS } from '../core/figure.ts';
+import { DESK_OFFSET, WORKER_RADIUS } from '../core/figure.ts';
 import { palette, PROP_SHAPES, geometry } from '../art/theme.ts';
 import {
   buildBooks,
@@ -195,7 +195,9 @@ export function facingVector(facing: string): { x: number; y: number } {
  * a real room, and easy to get wrong once you have been drawing top-down sprites where
  * the two could overlap harmlessly.
  */
-export const DESK_OFFSET = 0.62;
+// Re-exported for the renderer's own use; the value lives in core so the seating rule and
+// the drawing cannot disagree about where a desk is.
+export { DESK_OFFSET };
 export function deskCentre(seat: { x: number; y: number }, facing: string) {
   const dir = facingVector(facing);
   return { x: seat.x + dir.x * DESK_OFFSET, y: seat.y + dir.y * DESK_OFFSET };

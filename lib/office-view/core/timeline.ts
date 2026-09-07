@@ -133,6 +133,22 @@ export class MotionChannel {
     return this.tracks.length;
   }
 
+  /**
+   * Every point this entity is ever at, for framing.
+   *
+   * A camera has to know how far the people reach, which is not the same as how far the
+   * furniture reaches: a burst of concurrent agents stands well beyond the desks, and a
+   * shot framed on the plan alone crops them off with no notice that it has.
+   *
+   * Exposed as points rather than as the tracks themselves, so the channel keeps control
+   * of its own representation.
+   */
+  extent(): World[] {
+    const points: World[] = [];
+    for (const track of this.tracks) points.push(track.from, track.to);
+    return points;
+  }
+
   /** Append a track. Kept sorted; the scheduler appends in order, so this is usually O(1). */
   push(track: MotionTrack): void {
     const last = this.tracks[this.tracks.length - 1];
