@@ -27,6 +27,7 @@ import {
 import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
 import { frameOffice } from '../lib/office-view/core/framing.ts';
+import { presenceAt } from '../lib/office-view/core/visibility.ts';
 import { planBox, neededShell, buildRoomShell } from '../lib/office-view/three/room-kit.ts';
 // A worker's drawn footprint, shared with the renderer so seating and drawing cannot drift.
 import { WORKER_DIAMETER } from '../lib/office-view/core/figure.ts';
@@ -1605,5 +1606,105 @@ test('growing the room adds floorboards and windows without moving any', () => {
   }
   for (const z of small.glass) {
     assert.ok(large.glass.includes(z), `window at ${z} moved when the room grew`);
+  }
+});
+
+/* --- who is drawn, and how ----------------------------------------------------
+ *
+ * This rule was written out three times — the three.js floor, the SVG floor, and the SVG's
+ * accessibility outline — in three slightly different expressions, and lived only in .tsx
+ * files that the test runner cannot import. It is one function now, and here is its test.
+ */
+
+function personAt(build) {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream(build);
+  const result = schedule(events, codingCompiled);
+  return { result, at: result.duration };
+}
+
+test('a working agent is drawn as a colleague, not as a record', () => {
+  const { result, at } = personAt((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash', station: 'operations', worker: 'agent:a' });
+  });
+  const p = presenceAt(result.workers.get('agent:a'), at);
+  assert.deepEqual(p, { shown: true, dormant: false, working: true });
+});
+
+test('an agent between tool calls is still on the floor, and is not working', () => {
+  // Present and idle is a real state, distinct from both working and finished.
+  const { result, at } = personAt((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'assignment.finished', occurredAt: 500, label: 'done', station: 'operations', worker: 'agent:a' });
+  });
+  const p = presenceAt(result.workers.get('agent:a'), at);
+  assert.deepEqual(p, { shown: true, dormant: false, working: false });
+});
+
+test('a finished agent is drawn, as a record', () => {
+  const { result, at } = personAt((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'specialist.left', occurredAt: 500, label: 'Done', worker: 'agent:a' });
+  });
+  const worker = result.workers.get('agent:a');
+  assert.deepEqual(presenceAt(worker, at), { shown: true, dormant: true, working: false });
+
+  // Cleared by the viewer, it leaves the floor entirely.
+  const cleared = presenceAt(worker, at, { dismissed: new Set(['agent:a']) });
+  assert.deepEqual(cleared, { shown: false, dormant: false, working: false });
+});
+
+test('an agent that works again after leaving is a colleague again, not a record', () => {
+  /*
+   * Order matters here: working beats having been announced as departed, because the most
+   * recent thing the stream said is that they are doing something. Backwards, this drew a
+   * grey shadowless marker at a desk simultaneously lit with that agent's current tool.
+   */
+  const { result, at } = personAt((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 50, label: 'Bash', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'specialist.left', occurredAt: 100, label: 'Done', worker: 'agent:a' });
+    emit({ type: 'assignment.started', occurredAt: 500, label: 'Bash again', station: 'operations', worker: 'agent:a' });
+  });
+  const p = presenceAt(result.workers.get('agent:a'), at);
+  assert.deepEqual(p, { shown: true, dormant: false, working: true });
+});
+
+test('"only active" hides the idle and the finished, and never anything that is running', () => {
+  /*
+   * The property the filter has to hold, whatever else it does. A view control that could
+   * hide live work would be the office under-reporting itself, which is the one thing it
+   * is not allowed to do.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    for (const id of ['busy', 'idle', 'gone']) {
+      emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: `agent:${id}`, role: 'Explorer' });
+      emit({ type: 'assignment.started', occurredAt: 100, label: `Bash ${id}`, station: 'operations', worker: `agent:${id}` });
+    }
+    emit({ type: 'assignment.finished', occurredAt: 500, label: 'done', station: 'operations', worker: 'agent:idle' });
+    emit({ type: 'specialist.left', occurredAt: 600, label: 'Done', worker: 'agent:gone' });
+  });
+  const result = schedule(events, codingCompiled);
+  const at = result.duration;
+
+  const shownWhen = (activeOnly) =>
+    [...result.workers.values()]
+      .filter((worker) => presenceAt(worker, at, { activeOnly }).shown)
+      .map((worker) => worker.id)
+      .sort();
+
+  assert.deepEqual(shownWhen(false), ['agent:busy', 'agent:gone', 'agent:idle'], 'everyone by default');
+  assert.deepEqual(shownWhen(true), ['agent:busy'], 'only the one with something running');
+
+  // And the invariant, stated directly: nobody working is ever hidden by the filter.
+  for (const worker of result.workers.values()) {
+    const p = presenceAt(worker, at, { activeOnly: true });
+    if (presenceAt(worker, at).working) {
+      assert.equal(p.shown, true, `${worker.id} is working and the filter hid them`);
+    }
   }
 });

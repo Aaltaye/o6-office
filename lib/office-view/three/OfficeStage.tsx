@@ -30,6 +30,7 @@ import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { PROP_SHAPES } from '../art/theme.ts';
 import { frameOffice } from '../core/framing.ts';
+import { presenceAt } from '../core/visibility.ts';
 import { growShell, refitLighting, setWorkerDormant } from './stage-scene.ts';
 import { type ShellBox, neededShell, planBox } from './room-kit.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
@@ -337,18 +338,13 @@ export function OfficeStage({
 
       // --- the cast, which changes only when someone joins or leaves ---
       for (const [id, state] of timeline.workers) {
-        const present = state.present.sampleAt(t) ?? false;
         /*
-         * A finished agent stays at the desk it used so its work can still be reviewed,
-         * but it is drawn as a record rather than as a colleague: no identity colour, no
-         * shadow, and — through `stationStatus` — no caption claiming an action. The
-         * shadow matters most. A contact shadow is the claim that something is standing
-         * there; without one the figure reads as a marker on the floor, which is what it is.
+         * A finished agent stays at the desk it used so its work can still be reviewed, but
+         * is drawn as a record rather than as a colleague. The rule is in core/visibility.ts
+         * because the SVG floor and the accessibility outline have to answer it identically,
+         * and the outline is the copy nobody looks at.
          */
-        const record = dismissed.has(id) ? null : (state.departed.sampleAt(t) ?? null);
-        // "Only active" keeps whoever has a literal action running, and nobody else.
-        const working = state.status.sampleAt(t) !== null;
-        const onFloor = activeOnly ? present && working : present || Boolean(record);
+        const { shown: onFloor, dormant } = presenceAt(state, t, { activeOnly, dismissed });
         let figure = workers.get(id);
         if (!figure && onFloor) {
           figure = buildWorker(colorForWorker(id));
@@ -381,7 +377,7 @@ export function OfficeStage({
           if (onFloor) part.layers.enableAll();
           else part.layers.disableAll();
         });
-        setWorkerDormant(figure, materials, Boolean(record) && !present);
+        setWorkerDormant(figure, materials, dormant);
         const at = state.motion.sampleAt(t);
         if (at) figure.position.set(at.x, 0, at.y);
         /*

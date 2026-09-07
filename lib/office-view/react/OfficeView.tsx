@@ -35,6 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FloorPlan, OfficeEvent, RoomId, Station, StationId, World } from '../core/types.ts';
 import { compileFloorPlan, aisleBandFor, type CompiledPlan } from '../core/plan.ts';
 import { planBounds, focusBounds, toViewBox, worldToScreen, type Bounds } from '../core/projection.ts';
+import { presenceAt } from '../core/visibility.ts';
 import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { Desk, Door, Folder, Prop, RoomPad, Tray, Worker } from '../art/sprites.tsx';
@@ -241,21 +242,20 @@ export function OfficeView({
       for (const [id, state] of timeline.workers) {
         const node = nodes.current.get(`worker:${id}`);
         if (!node) continue;
-        const present = state.present.sampleAt(t) ?? false;
         /*
-         * A finished agent stays at the desk it used so its work can still be reviewed —
-         * the same rule the three.js floor follows, and it has to be the same rule, because
-         * the two renderers are two views of one contract and the last time they drifted
-         * the live one quietly lost a whole panel.
+         * The same rule the three.js floor follows — literally the same function — because
+         * the two renderers are two views of one contract and the last time they drifted the
+         * live one quietly lost a whole panel.
          */
-        const record = dismissedRef.current.has(id) ? null : state.departed.sampleAt(t);
-        const working = state.status.sampleAt(t) !== null;
-        const shown = activeOnlyRef.current ? present && working : present || Boolean(record);
+        const { shown, dormant } = presenceAt(state, t, {
+          activeOnly: activeOnlyRef.current,
+          dismissed: dismissedRef.current,
+        });
         // `hidden` rather than removal: React owns the tree, the loop only styles it.
         node.style.display = shown ? '' : 'none';
         // A record is a marker, not a colleague: quiet, and never carrying a live colour.
-        node.style.opacity = !present && record ? '0.45' : '';
-        node.dataset.dormant = !present && record ? 'true' : 'false';
+        node.style.opacity = dormant ? '0.45' : '';
+        node.dataset.dormant = dormant ? 'true' : 'false';
         const at = state.motion.sampleAt(t);
         if (!at) continue;
         const { sx, sy } = worldToScreen(at, plan.tile);
@@ -282,10 +282,11 @@ export function OfficeView({
       // and the click targets cover exactly what is drawn — no more, and no less.'
       const bands: Record<string, string> = {};
       for (const [id, state] of timeline.workers) {
-        const isPresent = state.present.sampleAt(t) ?? false;
-        const shown = activeOnlyRef.current
-          ? isPresent && state.status.sampleAt(t) !== null
-          : isPresent || Boolean(!dismissedRef.current.has(id) && state.departed.sampleAt(t));
+        // Exactly what the floor draws — no more, and no less.
+        const { shown } = presenceAt(state, t, {
+          activeOnly: activeOnlyRef.current,
+          dismissed: dismissedRef.current,
+        });
         if (!shown) continue;
         presentWorkers.push(id);
         const at = state.motion.sampleAt(t);
