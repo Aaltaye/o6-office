@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { loadConfig, requireToken } from './config.mjs';
 import { mapHook } from './map-claude-code.mjs';
 import { TranscriptWatcher } from './transcript.mjs';
+import { describeProblems, contractSummary } from './contract.mjs';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const STATIC_DIR = join(HERE, 'public');
@@ -78,6 +79,12 @@ export function createBridge(options = {}) {
   const watchers = new Map();
   /** The only floor this bridge renders, used to complete a producer's run.started. */
   const BRIDGE_PLAN = 'coding-session';
+  /*
+   * The desks that floor actually has. Hard-coded rather than imported because the plan
+   * is a .ts module this plain-Node server cannot load; a test asserts the two agree, so
+   * a desk added to the plan cannot silently go missing here.
+   */
+  const STATION_IDS = ['frontdesk', 'reading', 'research', 'operations', 'workshop', 'approvals'];
   const log = options.log ?? ((message) => process.stderr.write(`[o6-bridge] ${message}\n`));
 
   /**
@@ -280,6 +287,15 @@ export function createBridge(options = {}) {
       return;
     }
 
+    // --- what this door accepts, in machine-readable form ----------------------
+    if (pathname === '/contract') {
+      // Deliberately unauthenticated: it is a schema, it contains nothing about the
+      // session, and an agent that cannot read it is an agent that guesses.
+      response.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      response.end(JSON.stringify(contractSummary({ stations: STATION_IDS }), null, 2));
+      return;
+    }
+
     /*
      * --- direct event ingest ---------------------------------------------------
      *
@@ -316,38 +332,42 @@ export function createBridge(options = {}) {
       const rejected = [];
       let accepted = 0;
       for (const [index, candidate] of incoming.entries()) {
-        // Say what was wrong rather than dropping it quietly: a producer being written
-        // against this endpoint needs to know why its event did not appear.
         if (!candidate || typeof candidate !== 'object') {
           rejected.push({ index, why: 'not an object' });
           continue;
         }
-        if (typeof candidate.type !== 'string' || !candidate.type) {
-          rejected.push({ index, why: 'missing "type"' });
-          continue;
-        }
-        if (typeof candidate.label !== 'string' || !candidate.label) {
-          rejected.push({ index, why: 'missing "label" — every event must say what happened' });
-          continue;
-        }
-        emit({
+
+        /*
+         * Complete the event with what the BRIDGE knows before judging it — order matters.
+         *
+         * `plan` names the floor to draw on, and this bridge only ever renders one, so a
+         * producer should never have to learn it. Supplying it is not inventing anything
+         * about the work; it is the bridge filling in a fact it already has. Validating
+         * first would reject people for omitting the one field we promised they could.
+         *
+         * `source`: anything that does not say who it is came from some other runtime —
+         * that is what this endpoint is for. Stamping it 'claude-code' would file another
+         * tool's work under Claude Code's name. /hook is the path that may claim that.
+         */
+        const completed = {
           ...candidate,
-          /*
-           * Anything arriving here that does not say who it is came from some other
-           * runtime — that is what this endpoint is for. Stamping it 'claude-code' would
-           * put another tool's work under Claude Code's name, which is a lie about
-           * provenance in a product whose whole subject is not misrepresenting what
-           * happened. /hook is the path that may legitimately claim it.
-           */
           source: candidate.source ?? 'external',
-          /*
-           * `plan` says which floor to render on, and this bridge only ever renders one.
-           * Filling it in is not inventing anything about the work — it is the bridge
-           * supplying a fact it already knows, so a producer does not have to learn the
-           * name of our floor plan just to say "I started".
-           */
           ...(candidate.type === 'run.started' && !candidate.plan ? { plan: BRIDGE_PLAN } : {}),
-        });
+        };
+
+        /*
+         * Then check what the RENDERER will check. This endpoint used to accept anything
+         * with a type and a label, so a producer could get {ok:true} for an event the
+         * office then dropped for a missing required field — a success response and an
+         * empty floor, with nothing to connect the two. Refusing loudly is kinder.
+         */
+        const problems = describeProblems(completed, { stations: STATION_IDS });
+        if (problems.length > 0) {
+          rejected.push({ index, why: problems.join('; ') });
+          continue;
+        }
+
+        emit(completed);
         accepted += 1;
       }
 

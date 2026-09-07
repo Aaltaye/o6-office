@@ -27,22 +27,12 @@ type Mode = 'lead' | 'coding';
 
 /** What each mode is, in the words a visitor needs rather than the words we use. */
 const MODES = {
-  lead: {
-    label: 'Run your work',
-    plan: leadReactivationPlan,
-    events: recordedLeadRun.events as unknown as OfficeEvent[],
-    stamp: 'Recorded run · lead reactivation · fictional sample',
-    speed: 1.6,
-    title: 'Give the office a job',
-    body:
-      'Hand it a CSV of old enquiries. It works out which conversations are worth reopening, ' +
-      'why, and what to say — and you watch it decide, desk by desk.',
-  },
   coding: {
     label: 'Connect your work',
     plan: codingSessionPlan,
     events: recordedCodingRun.events as unknown as OfficeEvent[],
-    stamp: 'Recorded run · a real Claude Code session',
+    stamp: 'Recorded run · real Claude Code session · reconstructed, redacted',
+    provenance: recordedCodingRun.provenance,
     /*
      * A 111-minute session. Two things shorten it, and both are stated on screen rather
      * than hidden here: the scheduler truncates idle gaps to maxGapMs, and the hero then
@@ -51,16 +41,36 @@ const MODES = {
      * relative timing. An earlier version of this comment claimed otherwise.
      */
     speed: 14,
-    title: 'Or point it at your own agents',
+    title: 'Point it at your own agents',
     body:
       'One command runs a local bridge. Your Claude Code session streams into the same ' +
       'office: every tool call, every subagent walking in, every token — and none of it ' +
       'leaves your machine.',
+    action: {
+      label: 'How to connect yours',
+      href: 'https://github.com/Aaltaye/o6-office/blob/main/CONNECT.md',
+      external: true,
+    },
+  },
+  lead: {
+    label: 'Run your work',
+    plan: leadReactivationPlan,
+    events: recordedLeadRun.events as unknown as OfficeEvent[],
+    stamp: 'Recorded run · lead reactivation · fictional sample',
+    provenance: recordedLeadRun.provenance,
+    speed: 1.6,
+    title: 'Or give it a job of its own',
+    body:
+      'Hand it a CSV of old enquiries. It works out which conversations are worth reopening, ' +
+      'why, and what to say — and you watch it decide, desk by desk.',
+    action: { label: 'Run a lead workflow', href: '/office/leads', external: false },
   },
 } as const;
 
 export default function LabHome() {
-  const [mode, setMode] = useState<Mode>('lead');
+  // Opens on the coding session: a subagent walks in about eight seconds in, which is the
+  // most memorable thing this product does and was previously hidden behind a tab.
+  const [mode, setMode] = useState<Mode>('coding');
   // Cleared whenever the mode swaps, because a desk id from one floor plan means nothing
   // on the other.
   const [selection, setSelection] = useState<Selection>(null);
@@ -148,6 +158,19 @@ export default function LabHome() {
         <p>{current.body}</p>
         <p className="lab-note">
           The office above is showing this mode — a real recorded run, not a video.
+        </p>
+        {/* Straight from the recording's own metadata, so the page cannot claim more for
+            a fixture than the fixture claims for itself. */}
+        <p className="lab-provenance">{current.provenance}</p>
+
+        <p className="lab-mode-action">
+          <a
+            className="lab-button"
+            href={current.action.href}
+            {...(current.action.external ? { rel: 'noreferrer', target: '_blank' } : {})}
+          >
+            {current.action.label} <ArrowRight size={15} />
+          </a>
         </p>
       </section>
 

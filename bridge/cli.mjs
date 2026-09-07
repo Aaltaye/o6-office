@@ -199,6 +199,10 @@ if (command === 'emit') {
       worker: value('worker', undefined),
       detail: value('detail', undefined),
       work: value('work', undefined),
+      reason: value('reason', undefined),
+      role: value('role', undefined),
+      outcome: value('outcome', undefined),
+      artifact: value('artifact', undefined),
     });
   } catch (error) {
     process.stderr.write(`\n  ${error.message}\n\n`);

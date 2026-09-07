@@ -13,9 +13,27 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const DESCRIPTION =
+  'Agentic work rendered as a watchable office — desks, handoffs, and a specialist called ' +
+  'in for one job. Stream your own Claude Code session into it.';
+
 export const metadata: Metadata = {
   title: 'O6 Office — Make invisible work visible',
-  description: 'A visual lead reactivation office by O6 Applied.',
+  // The old description called this "a visual lead reactivation office", which is now one
+  // route of it rather than the thing itself.
+  description: DESCRIPTION,
+  openGraph: {
+    title: 'O6 Office — Make invisible work visible',
+    description: DESCRIPTION,
+    type: 'website',
+    images: ['/og.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'O6 Office — Make invisible work visible',
+    description: DESCRIPTION,
+    images: ['/og.png'],
+  },
 };
 
 export default function RootLayout({

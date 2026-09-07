@@ -15,6 +15,8 @@ contacts are invented — the office says so on screen — but the run is not. T
 run is local-rules mode, so no model was called: that is why no specialist walks in and no
 tokens are reported in it.*
 
+**[Watch your own agent →](CONNECT.md)** · **[The event contract →](lib/office-view/core/types.ts)**
+
 Two modes, one contract:
 
 | Mode | What it is |
@@ -33,30 +35,39 @@ Node 22.13+.
 
 ```sh
 npm ci
-npm run dev          # the product, at the printed URL
+npm run dev
 ```
+
+Then open **`/office`** — the office itself, with both recorded runs, a scrub, a renderer
+toggle and an operations log. **`/office/leads`** is the lead-reactivation workflow.
+
+The full gate, if you are changing something:
 
 ```sh
-npm run build
-npx tsc --noEmit
-npm run lint
-npm test
+npm run build && npx tsc --noEmit && npm run lint && npm test
 ```
-
-Other entry points:
-
-- **`/lab`** — a development harness for the renderer, with synthetic streams (including a
-  six-wide burst) plus play, pause, scrub, speed and a compact-plan toggle.
-- **`npm run bridge`** — the local bridge, below.
 
 ---
 
-## Connect your Claude Code session
+## Connect your own agent
+
+No clone required:
 
 ```sh
-npm run build:bridge   # once, to build the office page the bridge serves
-npm run bridge
+npx github:Aaltaye/o6-office            # start the bridge
+npx github:Aaltaye/o6-office connect    # wire up the project you want to watch
 ```
+
+`connect` merges the hooks into that project's `.claude/settings.json`, keeping everything
+already there and backing the file up. Not using Claude Code? One command reports an event,
+so anything that can run a shell command can drive the office:
+
+```sh
+npx github:Aaltaye/o6-office emit assignment.started "Reading the spec" --desk reading
+```
+
+Full instructions, including a prompt you can hand to your agent, are in
+**[CONNECT.md](CONNECT.md)**. Inside a clone, `npm run bridge` does the same thing.
 
 The bridge prints two things: the path to a ready-to-paste hooks file, and a URL. Merge
 the hooks into `.claude/settings.json`, open the URL, and use Claude Code as normal.

@@ -1,148 +1,239 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
-import {Play,Upload,LayoutGrid,ListFilter,Activity,ArrowUpRight,Layers3,CircleHelp,ShieldCheck,Settings2,Download,Square,ArrowRight,Check,Search,FileText,Database,ScanLine,Send,Link2,AlertCircle,RotateCcw,X,Zap,Clock3} from 'lucide-react';
-import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
-import {Sheet,SheetContent,SheetHeader,SheetTitle,SheetDescription} from '@/components/ui/sheet';
-import {Table,TableHeader,TableBody,TableRow,TableHead,TableCell} from '@/components/ui/table';
-import {Progress} from '@/components/ui/progress';
-import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
-import {SAMPLE_CSV,exportCSV,makeReport,type Lead,type Department} from '@/lib/lead-engine';
-import {useOffice,toActivity,type ActivityItem} from '@/lib/use-office';
-import {type Selection} from '@/lib/office-view/react/OfficeView';
-import {OfficeStage} from '@/lib/office-view/three/OfficeStage';
-import {leadReactivationPlan,leadReactivationCompactPlan} from '@/lib/floorplans/lead-reactivation';
-import {useIsMobile} from '@/hooks/use-mobile';
-import recordedRun from '@/fixtures/recorded-lead-run.json';
-import type {OfficeEvent} from '@/lib/office-view/core/types';
-const departments:{name:Department;job:string;icon:typeof Database;type:string}[]=[
- {name:'Records',job:'Normalize records, merge matching emails, and honor exclusions.',icon:Database,type:'Data rules'},
- {name:'Context',job:'Reconstruct the relationship from the original notes.',icon:FileText,type:'AI or local summary'},
- {name:'Research',job:'Trace evidence to the supplied records. External web research is not connected.',icon:Search,type:'Source check'},
- {name:'Opportunity',job:'Check timing, contact preferences, and the basis for a follow-up.',icon:ScanLine,type:'Qualification rules'},
- {name:'Outreach',job:'Prepare a relevant draft using your offer and the documented history.',icon:Send,type:'AI or template'},
- {name:'Review',job:'Check the draft, then hand the decision back to you.',icon:ShieldCheck,type:'AI or local check'}];
-const stationLabel=(id?:string)=>id?id.charAt(0).toUpperCase()+id.slice(1):'Office';
-const stateLabel={queued:'In the inbox',ready:'Ready for review',hold:'On hold',excluded:'Excluded'};
-function download(name:string,content:string,type='text/csv;charset=utf-8'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function status(l:Lead){return l.review==='approved'?'Reviewed':l.review==='held'?'Held by reviewer':stateLabel[l.state];}
-type Tool={name:string;title:string;description:string;inputSchema:object;annotations:object;execute:(input:unknown)=>unknown};
-export default function Home(){
- const o=useOffice();const {rows,leads,sample,sourceName,events,active,phase,error,setError,apiKey,setApiKey,offer,setOffer,runMode,elapsed,speed,usage,running,date}=o;
- const [tab,setTab]=useState('office'),[modal,setModal]=useState<'import'|'settings'|'about'|null>(null),[selected,setSelected]=useState<string|null>(null),[desk,setDesk]=useState<Department|null>(null);
- const [notice,setNotice]=useState(''),[importText,setImportText]=useState(''),[filter,setFilter]=useState('all'),[query,setQuery]=useState(''),[editDraft,setEditDraft]=useState(''),[editSubject,setEditSubject]=useState('');
- /* Replay transport for the office. Separate from the workflow: the run happens once,
-    the recording can be watched as many times, and as slowly, as you like. */
- const [room,setRoom]=useState<string|null>(null);
- const [officeSeek,setOfficeSeek]=useState<number|null>(null),[officePlaying,setOfficePlaying]=useState(true),[officeProgress,setOfficeProgress]=useState({t:0,duration:1});
- const isMobile=useIsMobile();
- const completed=leads.filter(l=>l.processed).length,ready=leads.filter(l=>l.state==='ready'&&l.review!=='held').length,held=leads.filter(l=>l.state==='hold'||l.review==='held').length,excluded=leads.filter(l=>l.state==='excluded').length;
- /* Until a run has produced anything, the office plays a committed recording of a real
-    run over the fictional sample data, so a first-time visitor sees the thing working
-    immediately rather than an empty floor. It is labelled as a recording on screen. */
- const officeEvents=events.length>0?events:(recordedRun.events as unknown as OfficeEvent[]);
- const activity=toActivity(officeEvents);
- const selectedLead=leads.find(l=>l.id===selected),deskInfo=departments.find(d=>d.name===desk),latest=activity[activity.length-1];
- const officePlan=isMobile?leadReactivationCompactPlan:leadReactivationPlan;
- /* The department level: which part of the company this is, and what its desks are doing.
-    Derived from the same stream the floor is drawn from, so the panel cannot disagree
-    with what the viewer can see happening. */
- const roomInfo=room?officePlan.rooms.find(r=>r.id===room&&(r.kind??'department')==='department'):null;
- const roomDesks=roomInfo?officePlan.stations.filter(st=>st.room===roomInfo.id):[];
- const liveStations=new Set(Object.values(active));
- const roomLive=roomDesks.filter(st=>liveStations.has(st.id)).length;
- /* A department's trail is what happened AT its desks plus what arrived at or left them.
-    Filtering on station alone would drop every handoff, which is most of the story. */
- const roomActivity=activity.filter(e=>roomDesks.some(st=>st.id===e.station||st.id===e.from||st.id===e.to));
- const visible=leads.filter(l=>(filter==='all'||(filter==='approved'?l.review==='approved':l.state===filter))&&`${l.name} ${l.company} ${l.email}`.toLowerCase().includes(query.toLowerCase()));
- const liveConfigured=Boolean(apiKey.trim());
- useEffect(()=>{if(!notice)return;const id=setTimeout(()=>setNotice(''),4500);return()=>clearTimeout(id);},[notice]);
- /* Load the selected lead into the editor when the selection changes.
-    Adjusted during render rather than in an effect — React's documented pattern for
-    "reset state when a prop changes". An effect here would paint the previous lead's text
-    first and correct it on the next frame, and could not depend on `selectedLead` itself
-    because that object comes from .find() and has a new identity every render. Comparing a
-    key of the fields sidesteps both problems and needs no dependency array. */
- const leadKey=selectedLead?`${selectedLead.id}|${selectedLead.draft}|${selectedLead.subject}`:null;
- const [loadedLeadKey,setLoadedLeadKey]=useState<string|null>(null);
- if(selectedLead&&leadKey!==loadedLeadKey){setLoadedLeadKey(leadKey);setEditDraft(selectedLead.draft);setEditSubject(selectedLead.subject);}
- const stateRef=useRef<()=>unknown>(()=>({})),sampleRef=useRef<()=>Promise<unknown>>(async()=>({}));
- /* Latest-value refs, refreshed after every commit. The MCP tools below are registered
-    once for the lifetime of the page, so their closures have to read through a ref to see
-    current state. Assigning during render would be a render side effect; the tools are only
-    ever called by a user action, which is always after a commit, so this is equivalent. */
- useEffect(()=>{
-  stateRef.current=()=>({phase,mode:runMode,counts:{records:rows.length,unique:leads.length,completed,ready,held,excluded},leads:leads.map(l=>({id:l.id,name:l.name,state:l.state,review:l.review,reason:l.reason}))});
-  sampleRef.current=()=>{setSelected(null);setDesk(null);setTab('office');return o.run(true);};
- });
- useEffect(()=>{const context=(document as Document&{modelContext?:{registerTool:(t:Tool,options:{signal:AbortSignal})=>unknown}}).modelContext;if(!context?.registerTool)return;const lifecycle=new AbortController();const tools:Tool[]=[{name:'o6_read_run',title:'Read office run',description:'Read the current lead run and decisions without changing them.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute:(input)=>{if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object.');return stateRef.current();}},{name:'o6_run_sample',title:'Run fictional lead sample',description:'Replace the in-memory run with fictional sample records and process locally. No model calls or messages.',inputSchema:{type:'object',properties:{confirmReplace:{type:'boolean',const:true}},required:['confirmReplace'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:(input)=>{if(!input||typeof input!=='object'||(input as {confirmReplace?:boolean}).confirmReplace!==true||Object.keys(input).length!==1)throw new Error('confirmReplace must be true.');return sampleRef.current();}}];tools.forEach(t=>{try{Promise.resolve(context.registerTool(t,{signal:lifecycle.signal})).catch(()=>{});}catch{}});return()=>lifecycle.abort();},[]);
- function importCSV(text:string,name:string){try{o.importCSV(text,name);setSelected(null);setModal('settings');setNotice('Records imported. Describe your offer to begin.');}catch(e){setError(e instanceof Error?e.message:'Could not read this CSV.');}}
- async function readFile(file?:File){if(!file)return;if(file.size>250000){setError('Please use a CSV smaller than 250 KB.');return;}try{const text=await file.text();setImportText(text);importCSV(text,file.name);}catch{setError('The file could not be read.');}}
- /* Until a run has produced anything, the office plays a committed recording of a real
-   run over the fictional sample data, so a first-time visitor sees the thing working
-   immediately rather than an empty floor. It is labelled as a recording on screen. */
- const officeModeLabel=events.length>0?runMode:'Recorded run · fictional sample';
- const officeSelection:Selection=desk?{kind:'station',id:desk.toLowerCase()}:room?{kind:'department',id:room}:selectedLead?{kind:'work',id:selectedLead.id}:null;
- /* A click on the floor opens the same inspection sheet the rest of the page uses. */
- function onOfficeSelect(next:Selection){
-  if(!next){setSelected(null);setDesk(null);setRoom(null);return;}
-  if(next.kind==='station'){setRoom(null);setSelected(null);setDesk((departments.find(d=>d.name.toLowerCase()===next.id)?.name)??null);return;}
-  /* Drilling into a department is a level up from a desk, not a different thing: clear
-     the desk sheet and let the department panel take over. */
-  if(next.kind==='department'){setSelected(null);setDesk(null);setRoom(next.id);return;}
-  if(next.kind==='work'){setRoom(null);setDesk(null);inspect(next.id);}
- }
- function inspect(id:string){setDesk(null);setSelected(id);}
- function saveReview(review:Lead['review']){if(!selectedLead)return;o.updateLead(selectedLead.id,{draft:editDraft,subject:editSubject,review});o.recordDecision(selectedLead,review);setNotice(review==='approved'?'Marked as reviewed. Nothing sent.':'Draft placed on hold.');}
- const activityList=(list:ActivityItem[])=><div className="event-list">{list.map(e=><button key={e.id} className={`event ${e.tone}`} disabled={!e.leadId} onClick={()=>e.leadId&&inspect(e.leadId)}><span className="event-dot"/><div><span className="event-meta">{stationLabel(e.station)} · {new Date(e.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}{e.tokens!==undefined&&` · ${e.tokens} tokens`}</span><strong>{e.title}</strong><p>{e.detail}</p>{e.leadId&&<small>{leads.find(l=>l.id===e.leadId)?.company} <ArrowUpRight size={12}/></small>}</div></button>)}</div>;
- return <main><header className="topbar"><a className="brand" href="/" aria-label="O6 Office home"><b>O6<small>↗</small></b>office<span>.</span></a><span className="top-context">INVENTION LAB <i>/</i> EXPERIMENT 001</span><span className="prototype"><i/>Working prototype</span><button className="icon-button" aria-label="About this experiment" onClick={()=>setModal('about')}><CircleHelp size={19}/></button></header>
- <div className="workspace"><div className="page-heading"><div><span className="eyebrow"><span className="status-dot blue"/>YOUR DIGITAL OPERATIONS FLOOR</span><h1>Good leads deserve a second conversation<span>.</span></h1><p>A little teamwork. A lot of untapped potential.</p></div><div className="heading-actions"><button className="button outline" disabled={running} onClick={()=>{setError('');setModal('import');}}><Upload size={16}/>Import leads</button><button className="icon-button settings" disabled={running} aria-label="Run settings" onClick={()=>{setError('');setModal('settings');}}><Settings2 size={19}/></button></div></div>
- <div className="mission"><span className="mission-icon"><Layers3/></span><div><strong>Lead reactivation</strong><p>Find the right people. Understand the history. Prepare the next move.</p></div><span className="mission-data">{rows.length} {sample?'sample ':''}records</span>{running?<button className="button outline" onClick={o.stop}><Square size={14}/>Stop run</button>:<button className="button primary" onClick={()=>{setSelected(null);void o.run();}}><Play size={15} fill="currentColor"/>{phase==='idle'?(liveConfigured?'Run with AI':sample?'Run sample':'Run local workflow'):'Run again'}</button>}</div>
- {error&&!modal&&<div className="error-message" role="alert"><AlertCircle size={18}/>{error}<button className="text-button" onClick={()=>setModal('settings')}>Settings</button></div>}
- <Tabs value={tab} onValueChange={v=>setTab(String(v))}><div className="viewbar"><TabsList variant="line" className="view-tabs"><TabsTrigger value="office"><LayoutGrid/>Office floor</TabsTrigger><TabsTrigger value="leads"><ListFilter/>Lead workspace {ready>0&&<span className="count-badge">{ready}</span>}</TabsTrigger><TabsTrigger value="activity"><Activity/>Activity</TabsTrigger></TabsList><span className="subtle">{phase==='idle'?(liveConfigured?`AI READY · ${apiKey.trim().startsWith('sk-ant-')?'CLAUDE HAIKU 4.5':'GPT-4.1 MINI'}`:sample?'SAMPLE MODE · NO AI CALLS':'LOCAL RULES · NO AI CALLS'):runMode.toUpperCase()}</span></div>
- <TabsContent value="office"><div className="office-layout"><section className="floor"><div className="floor-heading"><div><span className="eyebrow">THE REACTIVATION TEAM</span><h2>{running?'The right work, in the right hands.':phase==='completed'?'The next conversation is yours.':'Six desks. One shared goal.'}</h2></div><span className={`pill ${running?'live-pill':''}`}><span className="status-dot"/>{running?`${Object.keys(active).length} active assignments`:phase==='completed'?'Run complete':phase==='stopped'?'Run stopped':'Ready when you are'}</span></div><div className={`office-map ${running?'is-running':''}`}>
-        <OfficeStage
-          plan={officePlan}
-          events={officeEvents}
-          modeLabel={officeModeLabel}
-          playing={officePlaying}
-          speed={speed}
-          seekMs={officeSeek}
-          selection={officeSelection}
-          onSelect={onOfficeSelect}
-          onTime={(t,duration)=>{setOfficeProgress({t,duration});if(officeSeek!==null&&Math.abs(t-officeSeek)>60)setOfficeSeek(null);}}
-        />
-      </div><div className="floor-footer">
-        <button className="speed-button" onClick={()=>setOfficePlaying(v=>!v)} aria-label={officePlaying?'Pause the office':'Play the office'}>{officePlaying?<Square size={12}/>:<Play size={12}/>}{officePlaying?'Pause':'Play'}</button>
-        {/* Scrubbing works while paused: a recorded run is the public demo, so it has to
-            be as inspectable as a live one. */}
-        <input className="scrubber" type="range" min={0} max={Math.max(1,officeProgress.duration)} value={officeProgress.t} onChange={e=>setOfficeSeek(Number(e.target.value))} aria-label="Scrub the run"/>
-        <span className="scrub-time">{(officeProgress.t/1000).toFixed(0)}s / {(officeProgress.duration/1000).toFixed(0)}s</span>
-        <button className="speed-button" onClick={o.toggleSpeed} aria-label={`Playback pace ${speed} times. Click to change.`}><Zap size={13}/>{speed}×</button>
-        <span className="floor-source"><span className={`status-dot ${running?'live':''}`}/>{running?'Every action leaves a trail.':sample?'Fictional records · September 6, 2026':`${sourceName} · ${date}`}</span>
-      </div></section>
- <aside className="right-panel"><div className="panel-top"><span className="eyebrow">RUN OVERVIEW</span><Activity size={16}/></div><h2>{phase==='completed'?<>A clearer picture.<br/>A better next move.</>:<>From overlooked<br/>to on your radar.</>}</h2><p>{phase==='idle'?'Start a run to see leads move through the team.':phase==='stopped'?'Stopped. Completed work is still available.':running?'Follow each handoff, then take a closer look.':'Your review packet is ready. You decide what happens next.'}</p><div className="big-metric">{phase==='idle'?rows.length:completed}<span>{phase==='idle'?'records in the inbox':`of ${leads.length} leads processed`}</span></div>{phase!=='idle'&&<Progress value={completed/leads.length*100} aria-label="Leads processed"/>}<div className="mini-metrics"><div><strong className={ready?'positive':''}>{ready}</strong><span>Ready for review</span></div><div><strong>{held}</strong><span>On hold</span></div></div>{phase==='idle'?<div className="activity-empty"><Activity size={23}/><strong>The office is ready.</strong><p>Assignments, handoffs, and finished drafts will appear here.</p></div>:<div className="current-activity" aria-live="polite"><span className="eyebrow">{running?'HAPPENING NOW':'LATEST UPDATE'}</span><strong>{latest?.title}</strong><p>{latest?.detail}</p>{latest?.leadId&&<button className="text-button" onClick={()=>inspect(latest.leadId!)}>Follow this lead <ArrowRight size={14}/></button>}</div>}{phase!=='idle'&&<div className="run-meters"><span><Clock3 size={13}/>{Math.floor(elapsed/60)}m {elapsed%60}s</span><span>{usage.tokens.toLocaleString()} tokens</span><span title="Estimated from reported successful calls; failed calls may add usage.">{usage.cost?`~$${usage.cost.toFixed(4)}`:'$0.00'}</span></div>}{completed>0&&<button className="button outline review-button" onClick={()=>{setFilter('all');setTab('leads');}}>Open review packet <ArrowRight size={15}/></button>}<div className="privacy-note"><ShieldCheck size={18}/><span>You review every draft.<br/>Nothing is sent automatically.</span></div></aside></div><div className="under-floor"><span><Link2 size={14}/>{rows.length-leads.length} duplicate{rows.length-leads.length!==1?'s':''} merged</span><span>{excluded} excluded from outreach</span><button className="text-button" onClick={()=>setModal('about')}>How the office works <ArrowUpRight size={13}/></button></div></TabsContent>
- <TabsContent value="leads"><section className="floor lead-surface"><div className="list-heading"><div><span className="eyebrow">THE REVIEW PACKET</span><h2>Every lead has a story.</h2><p>{sourceName} · {leads.length} unique leads · {leads.filter(l=>l.review==='approved').length} reviewed</p></div><div className="export-actions"><button className="button outline" disabled={!completed} onClick={()=>download('o6-lead-review.csv',exportCSV(leads))}><Download size={15}/>Export CSV</button><button className="icon-button" disabled={!completed} aria-label="Export full review packet as JSON" title="Export full packet as JSON" onClick={()=>download('o6-review-packet.json',JSON.stringify({...makeReport(leads,runMode,date),events,usage},null,2),'application/json')}><FileText size={18}/></button></div></div><div className="list-controls"><label className="search-field"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a name or business…" aria-label="Search leads"/></label><Select value={filter} onValueChange={v=>setFilter(v||'all')}><SelectTrigger className="filter-select"><SelectValue/></SelectTrigger><SelectContent>{[['all','All leads'],['ready','Ready for review'],['hold','On hold'],['excluded','Excluded'],['queued','In the inbox'],['approved','Reviewed']].map(([v,l])=><SelectItem key={v} value={v}>{l}</SelectItem>)}</SelectContent></Select></div><Table className="lead-table"><TableHeader><TableRow><TableHead>CONTACT</TableHead><TableHead>STATUS</TableHead><TableHead>WHAT WE KNOW</TableHead><TableHead>LAST CONTACT</TableHead><TableHead><span className="sr-only">Inspect</span></TableHead></TableRow></TableHeader><TableBody>{visible.map(l=><TableRow key={l.id}><TableCell><button className="contact-button" onClick={()=>inspect(l.id)}><span className="avatar">{l.name.split(' ').map(n=>n[0]).slice(0,2).join('')}</span><span><strong>{l.name}</strong><small>{l.company||l.email}</small></span></button></TableCell><TableCell><span className={`state-badge ${l.review==='held'?'hold':l.state}`}>{status(l)}</span></TableCell><TableCell className="reason-cell">{active[l.id]?`At ${active[l.id]}…`:l.reason}</TableCell><TableCell className="date-cell">{l.last_contact||'Not supplied'}</TableCell><TableCell><button className="icon-button" aria-label={`Inspect ${l.name}`} onClick={()=>inspect(l.id)}><ArrowUpRight size={17}/></button></TableCell></TableRow>)}</TableBody></Table>{!visible.length&&<div className="empty-results">No leads match this view.<button className="text-button" onClick={()=>{setFilter('all');setQuery('');}}>Show all leads</button></div>}<div className="table-note"><ShieldCheck size={15}/>{sample?'All sample names and companies are fictional.':'Imported data stays in this tab unless you explicitly run with AI.'} Review every draft before using it.</div></section></TabsContent>
- <TabsContent value="activity"><section className="floor activity-surface"><div className="list-heading"><div><span className="eyebrow">THE AUDIT TRAIL</span><h2>The work, as it happens.</h2><p>Assignments, results, and handoffs. Click an event to follow its lead.</p></div><span className="pill">{events.length} events</span></div>{events.length?activityList([...activity].reverse()):<div className="empty-results"><Activity size={32}/><h3>A clear trail starts with the first assignment.</h3><p>Start a run from the bar above.</p></div>}</section></TabsContent></Tabs><footer className="site-footer"><span>O6 APPLIED <i>/</i> MAKE INVISIBLE WORK VISIBLE.</span><button className="text-button" onClick={()=>setModal('about')}>Inside the experiment <ArrowUpRight size={13}/></button></footer></div>
- <Dialog open={modal!==null} onOpenChange={open=>{if(!open){setModal(null);setError('');}}}><DialogContent className="office-dialog"><DialogHeader><DialogTitle>{modal==='import'?'Bring your leads to the office':modal==='settings'?'Set the team up for success':'Make invisible work visible.'}</DialogTitle><DialogDescription>{modal==='import'?'Upload or paste a CSV. Up to 25 records, processed in this tab.':modal==='settings'?'Describe your offer, then choose local processing or live AI.':'O6 Invention Lab · Experiment 001'}</DialogDescription></DialogHeader>
- {modal==='import'&&<><label className="file-zone"><Upload size={25}/><strong>Choose a CSV file</strong><span>Up to 250 KB · 25 records</span><input type="file" accept=".csv,text/csv" onChange={e=>void readFile(e.target.files?.[0])}/></label><div className="or-divider">OR PASTE CSV</div><textarea className="field csv-input" value={importText} onChange={e=>setImportText(e.target.value)} placeholder="name,company,email,last_contact,..." aria-label="CSV content"/><p className="field-help">Required headers: <code>name, email, notes</code>. Include <code>last_contact, next_followup, opted_out, active_customer</code> to qualify leads. Dates use YYYY-MM-DD. Unknown contact preferences are held.</p><div className="dialog-actions"><button className="text-button" onClick={()=>download('o6-sample-leads.csv',SAMPLE_CSV)}>Download sample CSV <Download size={14}/></button><button className="button primary" disabled={!importText.trim()} onClick={()=>importCSV(importText,'Pasted CSV')}>Import records <ArrowRight size={15}/></button></div></>}
- {modal==='settings'&&<><label className="field-label" htmlFor="offer">What do you offer?</label><textarea id="offer" className="field" maxLength={2000} value={offer} onChange={e=>setOffer(e.target.value)} placeholder="We help independent businesses…"/><p className="field-help">Drafts use this description. Be specific about what you actually provide.</p><div className="settings-divider"/><label className="field-label" htmlFor="api-key">API key (OpenAI or Anthropic) <span>OPTIONAL</span></label><input id="api-key" className="field key-input" type="password" autoComplete="off" spellCheck={false} value={apiKey} onChange={e=>setApiKey(e.target.value)} placeholder="sk-…"/><p className="field-help">With a key, Context, Outreach, and Review use GPT-4.1 mini. The key stays in memory and passes through this site’s server to whichever vendor the key belongs to — an sk-ant- key goes to Anthropic, anything else to OpenAI. No key or lead is saved by this app. Eligible records are sent to OpenAI; API charges apply. Refreshing clears the key and your run.</p><div className="mode-card"><Zap size={18}/><div><strong>{liveConfigured?'Live AI is selected':'Local processing is selected'}</strong><p>{liveConfigured?'Up to three model calls per eligible lead. Two leads can run in parallel.':'Real record checks and template drafts. No model calls, tokens, or API costs.'}</p></div></div><div className="dialog-actions"><button className="text-button" disabled={running} onClick={()=>{o.resetSample();setSelected(null);setModal(null);setNotice('Sample records loaded.');}}><RotateCcw size={14}/>Load fictional sample</button><button className="button primary" onClick={()=>{if(!offer.trim()){setError('Please describe your offer.');return;}setError('');setModal(null);}}>Save settings <Check size={15}/></button></div></>}
- {modal==='about'&&<div className="about-content"><p>This office turns a lead workflow into a process you can follow. Desks light up when an assignment starts. Click a desk for its work, or a lead for its history and draft.</p><div className="about-grid"><div><strong>Local mode</strong><p>CSV checks, duplicate handling, eligibility rules, and editable template drafts. No AI calls.</p></div><div><strong>Live AI mode</strong><p>Your API key powers three bounded specialists: Context, Outreach, and Review. Reported usage appears during the run.</p></div></div><h3>The first experiment has clear boundaries.</h3><p>Research checks supplied notes only. There is no external enrichment, CRM sync or email sending. A local bridge does stream a live Claude Code session into this same office, and any other runtime can report to it directly — see CONNECT.md. The office is a live renderer driven by the event stream, not an illustration.</p><details><summary>See the qualification rules</summary><p>Opt-outs and active customers are excluded. Missing preferences, invalid contacts or dates, identity conflicts, future follow-ups, contact within 30 days, explicit rejection, and history older than 365 days are held. Other leads need useful notes and a documented follow-up date. These are prototype defaults; readiness always requires human judgment.</p></details><p className="field-help">Data and keys live in this tab’s memory. Export your packet before refreshing. Cost estimates use reported successful calls and published GPT-4.1 mini token rates; failed calls may add usage. The sample is evaluated as of September 6, 2026.</p><a href="https://developers.openai.com/api/docs/models/gpt-4.1-mini" target="_blank" rel="noreferrer" className="text-button">Model and pricing reference <ArrowUpRight size={14}/></a></div>}
- {error&&<div className="error-message" role="alert"><AlertCircle size={17}/>{error}</div>}</DialogContent></Dialog>
- <Sheet open={Boolean(selectedLead)||Boolean(desk)||Boolean(roomInfo)} onOpenChange={open=>{if(!open){setSelected(null);setDesk(null);setRoom(null);}}}><SheetContent className="detail-sheet"><SheetHeader><SheetTitle>{selectedLead?selectedLead.name:desk?desk:roomInfo?.label}</SheetTitle><SheetDescription>{selectedLead?selectedLead.company:desk?deskInfo?.type:roomInfo?`Department · ${roomDesks.length} desk${roomDesks.length===1?'':'s'}`:undefined}</SheetDescription></SheetHeader>
- {selectedLead&&<div className="detail-body"><div className="lead-title-row"><span className={`state-badge ${selectedLead.state}`}>{status(selectedLead)}</span><span className="source-count">{selectedLead.sources.length} source record{selectedLead.sources.length>1?'s':''}</span></div><p className="detail-reason">{selectedLead.reason}</p>{selectedLead.aiError&&<div className="error-message"><AlertCircle size={17}/>{selectedLead.aiError}</div>}<div className="detail-facts"><div><span>Email</span><strong>{selectedLead.email||'Not supplied'}</strong></div><div><span>Last contact</span><strong>{selectedLead.last_contact||'Not supplied'}</strong></div><div><span>Follow-up</span><strong>{selectedLead.next_followup||'Not supplied'}</strong></div></div><h3>The story so far</h3><p className="history-summary">{selectedLead.summary||'The Context desk has not processed this lead yet.'}</p><details className="source-details"><summary>Original source notes <span>{selectedLead.sources.length}</span></summary>{selectedLead.sources.map(s=><div className="source-note" key={s.row}><span>CSV ROW {s.row} · {s.last_contact||'NO DATE'}</span><p>{s.notes||'No notes supplied.'}</p><small>Opted out: {s.opted_out||'unknown'} · Active customer: {s.active_customer||'unknown'}</small></div>)}</details>
- {selectedLead.draft&&<div className="draft-editor"><div className="draft-heading"><h3>The next conversation</h3><span>{runMode.startsWith('Live')?'AI DRAFT':'TEMPLATE DRAFT'}</span></div><label htmlFor="draft-subject" className="field-label">Subject</label><input className="field" id="draft-subject" value={editSubject} onChange={e=>setEditSubject(e.target.value)} disabled={running}/><label htmlFor="draft-body" className="field-label">Message</label><textarea id="draft-body" className="field message-field" value={editDraft} onChange={e=>setEditDraft(e.target.value)} disabled={running}/><p className="field-help">Review the original notes and personalize the message. Approval records your decision; it does not send email.</p>{selectedLead.evidence.length>0&&<details className="source-details"><summary>Evidence attached to this draft</summary>{selectedLead.evidence.map((e,i)=><p className="evidence-quote" key={i}>{e}</p>)}</details>}<div className="review-actions"><button className="button outline" disabled={running} onClick={()=>saveReview('held')}>Hold</button><button className="button outline" disabled={running} onClick={()=>{o.updateLead(selectedLead.id,{draft:editDraft,subject:editSubject,review:'pending'});setNotice('Draft saved in this tab.');}}>Save edits</button><button className="button primary" disabled={running||!editDraft.trim()||!editSubject.trim()||selectedLead.state!=='ready'} onClick={()=>saveReview('approved')}><Check size={15}/>Mark reviewed</button></div></div>}
- <h3>This lead’s journey</h3>{activity.some(e=>e.leadId===selectedLead.id)?activityList(activity.filter(e=>e.leadId===selectedLead.id).reverse()):<p className="field-help">Waiting for the first assignment.</p>}</div>}
- {roomInfo&&<div className="detail-body">
-   <div className="mode-card"><Activity size={19}/><div><strong>{roomLive} of {roomDesks.length} desks working</strong><p>{roomActivity.length} events at this department this run</p></div></div>
-   <h3>Desks in this department</h3>
-   <div className="dept-desks">{roomDesks.map(st=><div key={st.id} className="dept-desk"><button className="dept-desk-name" onClick={()=>{setRoom(null);setDesk(departments.find(d=>d.name.toLowerCase()===st.id)?.name??null);}}><strong>{st.role}</strong><ArrowUpRight size={13}/></button><span className={liveStations.has(st.id)?'dept-desk-live':'dept-desk-idle'}>{liveStations.has(st.id)?'Working':'Standing by'}</span></div>)}</div>
-   <h3>At this department</h3>
-   {roomActivity.length?activityList(roomActivity.slice(-10).reverse()):<div className="empty-results"><p>Nothing has happened here yet in this run.</p></div>}
-   {/* Usage is reported per worker and never per station, so a departmental token figure
-       would have to be invented. Saying so is the honest answer; a zero would not be. */}
-   <p className="detail-note">Tokens are reported per worker, not per department, so there is no departmental figure to show.</p>
-  </div>}
- {deskInfo&&<div className="detail-body"><div className="department-detail-icon"><deskInfo.icon size={30}/></div><p className="detail-reason">{deskInfo.job}</p><div className="mode-card"><Activity size={19}/><div><strong>{Object.values(active).filter(v=>v===desk).length} active assignments</strong><p>{activity.filter(e=>e.station===(desk??'').toLowerCase()&&e.tone==='completed').length} completed events this run</p></div></div><h3>At this desk</h3>{activity.some(e=>e.station===(desk??'').toLowerCase())?activityList(activity.filter(e=>e.station===(desk??'').toLowerCase()).slice(-10).reverse()):<div className="empty-results"><p>No assignments yet. Start the office to see this department work.</p></div>}</div>}
- </SheetContent></Sheet>{notice&&<output className="notice"><Check size={17}/>{notice}<button aria-label="Dismiss notification" onClick={()=>setNotice('')}><X size={15}/></button></output>}</main>;
+/**
+ * /office — the office itself.
+ *
+ * This route used to be the lead-reactivation product, which meant the nav item labelled
+ * "The office" opened on "Good leads deserve a second conversation" and the renderer was
+ * one tab among three. The thing the whole project is named after was a sub-feature of its
+ * own demo. The lead workflow now lives at /office/leads, and this is the office: a floor
+ * you can watch, scrub, drill into, and read back.
+ *
+ * It runs a committed recording rather than a live session, and says so. The live path is
+ * the bridge — see CONNECT.md — and it renders this same office from the same contract.
+ */
+
+import { useMemo, useState } from 'react';
+import { ArrowUpRight, Layers3, Pause, Play, Terminal } from 'lucide-react';
+
+import { OfficeStage } from '@/lib/office-view/three/OfficeStage';
+import { OfficeView, type Selection } from '@/lib/office-view/react/OfficeView';
+import { codingSessionPlan } from '@/lib/floorplans/coding-session';
+import { leadReactivationPlan } from '@/lib/floorplans/lead-reactivation';
+import recordedCodingRun from '@/fixtures/recorded-coding-run.json';
+import recordedLeadRun from '@/fixtures/recorded-lead-run.json';
+import type { OfficeEvent } from '@/lib/office-view/core/types';
+import './office-page.css';
+
+type RunName = 'coding' | 'lead';
+
+/** The two committed recordings, each carrying its own account of what it is. */
+const RUNS = {
+  coding: {
+    label: 'A coding session',
+    plan: codingSessionPlan,
+    events: recordedCodingRun.events as unknown as OfficeEvent[],
+    provenance: recordedCodingRun.provenance,
+    stamp: 'Recorded run · real Claude Code session · reconstructed, redacted',
+  },
+  lead: {
+    label: 'A lead workflow',
+    plan: leadReactivationPlan,
+    events: recordedLeadRun.events as unknown as OfficeEvent[],
+    provenance: recordedLeadRun.provenance,
+    stamp: 'Recorded run · lead reactivation · fictional sample',
+  },
+} as const;
+
+export default function OfficePage() {
+  const [runName, setRunName] = useState<RunName>('coding');
+  const [threeD, setThreeD] = useState(true);
+  const [playing, setPlaying] = useState(true);
+  const [speed, setSpeed] = useState(4);
+  const [seek, setSeek] = useState<number | null>(null);
+  const [progress, setProgress] = useState({ t: 0, duration: 1 });
+  const [selection, setSelection] = useState<Selection>(null);
+
+  const run = RUNS[runName];
+  const events = useMemo(() => run.events, [run]);
+
+  /** The desks each department owns, so a department can be matched to its own work. */
+  const roomStations = useMemo(() => {
+    const byRoom = new Map<string, Set<string>>();
+    for (const station of run.plan.stations) {
+      if (!station.room) continue;
+      const set = byRoom.get(station.room) ?? new Set<string>();
+      set.add(station.id);
+      byRoom.set(station.room, set);
+    }
+    return byRoom;
+  }, [run.plan]);
+
+  /**
+   * Everything that happened, newest first, narrowed to whatever is selected.
+   *
+   * The floor is the lossy view on purpose — it shows what is happening at an instant.
+   * This is the other half, and it is why a run can be read rather than only watched.
+   */
+  const operations = useMemo(() => {
+    const desks = selection?.kind === 'department' ? roomStations.get(selection.id) : null;
+    const wanted = (event: OfficeEvent) => {
+      if (!selection) return true;
+      if (selection.kind === 'station') return 'station' in event && event.station === selection.id;
+      if (selection.kind === 'worker') return 'worker' in event && event.worker === selection.id;
+      if (selection.kind === 'work') return 'work' in event && event.work?.id === selection.id;
+      if (selection.kind === 'department') {
+        return Boolean(desks) && 'station' in event && typeof event.station === 'string'
+          ? desks!.has(event.station)
+          : false;
+      }
+      return true;
+    };
+    // Usage is a running meter, not an operation; it has its own readout and would drown
+    // the log.
+    return events.filter((event) => event.type !== 'usage.reported' && wanted(event)).slice(-500).reverse();
+  }, [events, selection, roomStations]);
+
+  /** What the log is scoped to, in the plan's own words. */
+  const scope = useMemo(() => {
+    if (!selection) return null;
+    if (selection.kind === 'department') {
+      const room = run.plan.rooms.find((candidate) => candidate.id === selection.id);
+      const desks = roomStations.get(selection.id);
+      return room ? `${room.label} · ${desks?.size ?? 0} ${desks?.size === 1 ? 'desk' : 'desks'}` : null;
+    }
+    if (selection.kind === 'station') {
+      const station = run.plan.stations.find((candidate) => candidate.id === selection.id);
+      return station ? `${station.role} desk` : selection.id;
+    }
+    if (selection.kind === 'worker') return selection.id === 'main' ? 'The agent' : selection.id;
+    return 'One unit of work';
+  }, [selection, run.plan, roomStations]);
+
+  const stageProps = {
+    plan: run.plan,
+    events,
+    modeLabel: run.stamp,
+    playing,
+    speed,
+    seekMs: seek,
+    selection,
+    onSelect: setSelection,
+    onTime: (t: number, duration: number) => setProgress({ t, duration }),
+  };
+
+  return (
+    <main className="office-page">
+      <header className="office-page-top">
+        <a className="brand" href="/" aria-label="O6 Invention Lab home">
+          <b>O6</b> office<span>.</span>
+        </a>
+        <nav>
+          <a href="/office/leads">
+            Run a lead workflow <ArrowUpRight size={13} />
+          </a>
+          <a href="https://github.com/Aaltaye/o6-office/blob/main/CONNECT.md" rel="noreferrer" target="_blank">
+            Connect your own agent <ArrowUpRight size={13} />
+          </a>
+        </nav>
+      </header>
+
+      <div className="office-page-controls">
+        <div className="office-page-runs" role="tablist" aria-label="Which recording">
+          {(Object.keys(RUNS) as RunName[]).map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={runName === key}
+              className={runName === key ? 'is-on' : ''}
+              onClick={() => {
+                // A selection from one floor plan means nothing on the other.
+                setSelection(null);
+                setSeek(0);
+                setRunName(key);
+              }}
+            >
+              {key === 'coding' ? <Terminal size={14} /> : <Layers3 size={14} />}
+              {RUNS[key].label}
+            </button>
+          ))}
+        </div>
+
+        <button type="button" className="office-page-play" onClick={() => setPlaying((on) => !on)}>
+          {playing ? <Pause size={14} /> : <Play size={14} />}
+          {playing ? 'Pause' : 'Play'}
+        </button>
+
+        <label className="office-page-speed">
+          Speed
+          <select value={speed} onChange={(event) => setSpeed(Number(event.target.value))}>
+            {[1, 2, 4, 8, 14].map((rate) => (
+              <option key={rate} value={rate}>
+                {rate}×
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="office-page-toggle">
+          <input type="checkbox" checked={threeD} onChange={(event) => setThreeD(event.target.checked)} />
+          3D
+        </label>
+
+        <span className="office-page-clock">
+          {(progress.t / 1000).toFixed(0)}s / {(progress.duration / 1000).toFixed(0)}s of the
+          compressed timeline
+        </span>
+      </div>
+
+      {/* Scrubbing is the point of the timeline architecture — dragging backwards is
+          exactly as correct as playing forwards. */}
+      <input
+        type="range"
+        className="office-page-scrub"
+        min={0}
+        max={progress.duration}
+        value={progress.t}
+        onChange={(event) => setSeek(Number(event.target.value))}
+        aria-label="Scrub the run"
+      />
+
+      <div className="office-page-body">
+        <div className="office-page-floor">
+          {threeD ? <OfficeStage {...stageProps} /> : <OfficeView {...stageProps} />}
+        </div>
+
+        <aside className="office-page-log" aria-label="Operations">
+          <div className="office-page-log-head">
+            <strong>{scope ?? 'All operations'}</strong>
+            {selection ? (
+              <button type="button" onClick={() => setSelection(null)}>
+                Show everything
+              </button>
+            ) : null}
+          </div>
+          <p className="office-page-log-count">
+            {operations.length} {operations.length === 1 ? 'operation' : 'operations'}
+            {selection ? ' here' : ' in this run'} · click a desk or a department
+          </p>
+          <ol className="office-page-log-list">
+            {operations.map((event) => (
+              <li key={event.id} className={`is-${event.type.split('.')[1] ?? event.type}`}>
+                <span className="office-page-op-meta">
+                  {'station' in event && event.station ? String(event.station) : '—'}
+                </span>
+                {/* The producer's own words. Never re-phrased, never summarised. */}
+                <span className="office-page-op-label">{event.label}</span>
+                {event.detail ? <span className="office-page-op-detail">{event.detail}</span> : null}
+              </li>
+            ))}
+          </ol>
+        </aside>
+      </div>
+
+      {/* Quoted from the recording's metadata, so this page cannot claim more for a
+          fixture than the fixture claims for itself. */}
+      <p className="office-page-provenance">{run.provenance}</p>
+    </main>
+  );
 }

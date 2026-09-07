@@ -17,6 +17,9 @@ import { loadConfig, requireToken, suggestToken } from '../bridge/config.mjs';
 import { TranscriptWatcher, readSessionUsage, subagentsDirFor } from '../bridge/transcript.mjs';
 import { connectProject, mergeHooks } from '../bridge/connect.mjs';
 import { buildEvent, sendEvent } from '../bridge/emit.mjs';
+import { DESKS } from '../bridge/emit.mjs';
+import { describeProblems } from '../bridge/contract.mjs';
+import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
 import { isOfficeEvent } from '../lib/office-view/core/events.ts';
 
 const TOKEN = 'test-token-that-is-long-enough';
@@ -643,15 +646,35 @@ test('connecting refuses to overwrite settings it cannot parse', () => {
   }
 });
 
-test('emit refuses an event that would render as a blank desk', () => {
-  // A label is the line a person reads. An event without one draws a silent box, which is
-  // worse than no event at all.
-  assert.throws(() => buildEvent({ type: 'note', label: '   ' }), /needs a label/);
+test('emit refuses exactly what the office would have dropped', () => {
+  // Before this, five of the documented event shapes passed the door with {ok:true} and
+  // were then discarded by the renderer for a missing required field — a success response
+  // and an empty floor. emit and the door now share one contract, so neither can accept
+  // something the other would throw away.
+  assert.throws(() => buildEvent({ type: 'note' }), /missing "label"/);
   assert.throws(() => buildEvent({ type: 'made.up', label: 'x' }), /Unknown event type/);
   assert.throws(
     () => buildEvent({ type: 'assignment.started', label: 'Reading' }),
-    /happens AT a desk/,
+    /needs "station"/,
     'work has to happen somewhere',
+  );
+  assert.throws(
+    () => buildEvent({ type: 'assignment.failed', label: 'Build', desk: 'operations' }),
+    /needs "reason"/,
+    'a failure without a reason tells a viewer nothing',
+  );
+  assert.throws(
+    () => buildEvent({ type: 'specialist.joined', label: 'Someone arrived', worker: 'agent:x' }),
+    /needs "role"/,
+  );
+  assert.throws(
+    () => buildEvent({ type: 'artifact.created', label: 'Wrote it', desk: 'workshop' }),
+    /artifact:\{id,name,kind\}/,
+  );
+  assert.throws(
+    () => buildEvent({ type: 'assignment.started', label: 'Reading', desk: 'planning' }),
+    /unknown station "planning"/,
+    'a desk that does not exist renders nowhere at all',
   );
 });
 
@@ -725,5 +748,54 @@ test('a producer that names its own source keeps it', async () => {
       body: JSON.stringify({ type: 'note', label: 'Mine', source: 'claude-code' }),
     });
     assert.equal(bridge.events.at(-1).source, 'claude-code');
+  });
+});
+
+test('the door and the renderer agree about every event in the fixtures', () => {
+  // bridge/contract.mjs mirrors lib/office-view/core/events.ts because a plain-Node server
+  // cannot import a .ts module. A mirror that drifts is worse than no mirror, so this
+  // walks every committed recording through both and requires the same verdict.
+  const fixtures = ['recorded-lead-run.json', 'recorded-coding-run.json'];
+  let checked = 0;
+
+  for (const name of fixtures) {
+    const url = new URL(`../fixtures/${name}`, import.meta.url);
+    const { events } = JSON.parse(readFileSync(url, 'utf8'));
+    for (const event of events) {
+      const doorSaysFine = describeProblems(event).length === 0;
+      const rendererSaysFine = isOfficeEvent(event);
+      assert.equal(
+        doorSaysFine,
+        rendererSaysFine,
+        `${name} ${event.type} (${event.id}): door=${doorSaysFine} renderer=${rendererSaysFine}`,
+      );
+      checked += 1;
+    }
+  }
+  assert.ok(checked > 500, `only ${checked} events checked — the fixtures look wrong`);
+});
+
+test('the door knows the same desks the floor plan actually has', () => {
+  // The station list is hard-coded in server.mjs because the plan is a .ts module. If a
+  // desk is added to the plan, this fails rather than the door quietly rejecting real work.
+  const planStations = codingSessionPlan.stations.map((station) => station.id).sort();
+  assert.deepEqual(
+    [...DESKS].sort(),
+    planStations,
+    'the desks emit knows must match the floor the bridge draws',
+  );
+});
+
+test('the contract is published so an agent can correct itself', async () => {
+  await withBridge(async ({ url }) => {
+    const res = await fetch(url('/contract'));
+    assert.equal(res.status, 200, 'deliberately unauthenticated — it is a schema, not session data');
+    const contract = await res.json();
+    assert.ok(contract.events['artifact.created'].requires.length > 0);
+    assert.ok(contract.stations.includes('workshop'));
+    assert.ok(
+      contract.rules.some((rule) => /literal/i.test(rule)),
+      'the honesty rules travel with the schema, not just in prose',
+    );
   });
 });

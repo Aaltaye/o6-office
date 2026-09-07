@@ -1,0 +1,262 @@
+/**
+ * /office — the office itself.
+ *
+ * Built on the authoritative O6 tokens declared in office.css. Violet appears only on the
+ * selected run tab and on live activity inside the renderer, which keeps it inside the
+ * brand's 5% cap and, more usefully, keeps "violet means something is happening" true.
+ */
+
+.office-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  color: var(--ink);
+}
+
+.office-page-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 18px;
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+
+.office-page-top .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.office-page-top .brand b {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 13px;
+}
+
+.office-page-top nav {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+}
+
+.office-page-top nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--subtle);
+  text-decoration: none;
+}
+
+.office-page-top nav a:hover {
+  color: var(--ink);
+}
+
+/* --- controls -------------------------------------------------------------- */
+
+.office-page-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px 8px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.office-page-runs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.office-page-runs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--subtle);
+  cursor: pointer;
+}
+
+.office-page-runs button.is-on {
+  background: var(--signal);
+  color: #fff;
+}
+
+.office-page-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 9px;
+  padding: 8px 13px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.office-page-speed,
+.office-page-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.office-page-speed select {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.office-page-clock {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.office-page-scrub {
+  width: calc(100% - 36px);
+  margin: 0 18px 10px;
+  flex: none;
+}
+
+/* --- floor and log --------------------------------------------------------- */
+
+.office-page-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 14px;
+  padding: 0 18px 12px;
+  min-height: 0;
+  flex: 1;
+}
+
+.office-page-floor {
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--porcelain);
+}
+
+.office-page-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.office-page-log-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px 4px;
+  font-size: 14px;
+}
+
+.office-page-log-head button {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 7px;
+  padding: 4px 9px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.office-page-log-count {
+  margin: 0;
+  padding: 0 14px 8px;
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+.office-page-log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 14px 14px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.office-page-log-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 0 7px 10px;
+  border-left: 2px solid var(--line);
+  margin-bottom: 2px;
+}
+
+/* Only states that mean something get a colour, and violet stays reserved for live. */
+.office-page-log-list li.is-started { border-left-color: var(--signal); }
+.office-page-log-list li.is-failed { border-left-color: #d0603f; }
+.office-page-log-list li.is-created { border-left-color: #4a9d6e; }
+
+.office-page-op-meta {
+  font-size: 11px;
+  color: #8a8f98;
+}
+
+.office-page-op-label {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.office-page-op-detail {
+  font-size: 12px;
+  color: var(--subtle);
+  overflow-wrap: anywhere;
+}
+
+.office-page-provenance {
+  margin: 0;
+  padding: 0 18px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--subtle);
+  max-width: 90ch;
+  flex: none;
+}
+
+@media (max-width: 900px) {
+  .office-page {
+    height: auto;
+    max-height: none;
+  }
+
+  .office-page-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(320px, 60vh) minmax(0, 1fr);
+  }
+
+  .office-page-clock {
+    margin-left: 0;
+    width: 100%;
+  }
+}

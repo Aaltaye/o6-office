@@ -14,25 +14,21 @@
  * If your agent can run `bash`, it can drive the office. That is the whole idea.
  */
 
+import { describeProblems, KNOWN_TYPES } from './contract.mjs';
+
 /** The desks a coding session has, so the error message can list them. */
 export const DESKS = ['frontdesk', 'reading', 'research', 'operations', 'workshop', 'approvals'];
 
 /**
- * Event types worth emitting by hand. The contract has more, but these are the ones a
- * producer actually reaches for; the rest are derived or come from the transcript.
+ * Event types worth emitting by hand.
+ *
+ * A subset of the contract: handoff, review.* and blocked belong to a workflow that knows
+ * about units of work moving, and usage.reported is read from a transcript rather than
+ * asserted — a producer inventing token counts is exactly what the office must not show.
  */
-export const EMITTABLE = [
-  'run.started',
-  'run.finished',
-  'work.received',
-  'assignment.started',
-  'assignment.finished',
-  'assignment.failed',
-  'artifact.created',
-  'specialist.joined',
-  'specialist.left',
-  'note',
-];
+export const EMITTABLE = KNOWN_TYPES.filter(
+  (type) => !['handoff', 'review.requested', 'review.resolved', 'blocked', 'usage.reported'].includes(type),
+);
 
 /**
  * Build the event body from CLI arguments.
@@ -40,29 +36,47 @@ export const EMITTABLE = [
  * Deliberately strict about `label`: it is what a person reads on the desk, and an event
  * without one renders as a blank status. Better to refuse than to draw a silent box.
  */
-export function buildEvent({ type, label, desk, worker, detail, work }) {
+export function buildEvent({
+  type,
+  label,
+  desk,
+  worker,
+  detail,
+  work,
+  reason,
+  role,
+  outcome,
+  artifact,
+}) {
   if (!type || !EMITTABLE.includes(type)) {
     throw new Error(
       `Unknown event type ${JSON.stringify(type ?? '')}.\nTry one of: ${EMITTABLE.join(', ')}`,
     );
   }
-  if (!label || !String(label).trim()) {
-    throw new Error(
-      'Every event needs a label — it is the line a person reads on the desk.\n' +
-        'Say what actually happened, literally: "Reading src/app.ts", not "thinking".',
-    );
-  }
 
-  const needsDesk = type.startsWith('assignment.') || type === 'artifact.created';
-  if (needsDesk && !desk) {
-    throw new Error(`${type} happens AT a desk. Pass --desk <${DESKS.join('|')}>.`);
-  }
-
-  const event = { type, label: String(label) };
+  const event = { type, label: label === undefined ? undefined : String(label) };
   if (desk) event.station = desk;
   if (worker) event.worker = worker;
   if (detail) event.detail = String(detail);
   if (work) event.work = { id: String(work), label: String(work) };
+  if (reason) event.reason = String(reason);
+  if (role) event.role = String(role);
+  if (outcome) event.outcome = String(outcome);
+  // An artifact is something a person could open, so it needs a name and a kind.
+  if (artifact) {
+    event.artifact = { id: String(artifact), name: String(artifact), kind: 'file' };
+  }
+  // run.started's plan is supplied by the bridge, which knows which floor it draws.
+  if (type === 'run.started') event.plan = 'coding-session';
+
+  /*
+   * Judged by the same rules the door uses, so the CLI can never accept something the
+   * office would silently drop. Two validators drift; one does not.
+   */
+  const problems = describeProblems(event, { stations: DESKS });
+  if (problems.length > 0) {
+    throw new Error(problems.join('\n'));
+  }
   return event;
 }
 
