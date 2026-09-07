@@ -109,7 +109,8 @@ async function callAgentViaProxy(
   const body = (await response.json()) as {
     error?: string;
     output: AgentResult['output'];
-    usage: { input: number; output: number; estimatedCost: number };
+    // null when the proxy could not price the model. Kept null all the way to the meter.
+    usage: { input: number; output: number; estimatedCost: number | null };
     // The proxy reports which provider and model actually ran. The client does not
     // assume — guessing would put a wrong model name on the office's own meter.
     model?: string;
@@ -232,13 +233,26 @@ export function useOffice() {
     let tokens = 0;
     let cost = 0;
     let calls = 0;
+    // One call we cannot price makes the whole total unknowable. Reporting the rest as
+    // if it were the bill would understate it, and understating a cost is the dangerous
+    // direction to be wrong in.
+    let unpriced = 0;
+
     for (const event of events) {
       if (event.type !== 'usage.reported') continue;
       tokens += (event.usage.inputTokens ?? 0) + (event.usage.outputTokens ?? 0);
-      cost += event.usage.estimatedCostUsd ?? 0;
+      if (event.usage.estimatedCostUsd === undefined) unpriced += 1;
+      else cost += event.usage.estimatedCostUsd;
       calls += 1;
     }
-    return { tokens, cost, calls };
+
+    return {
+      tokens,
+      calls,
+      unpriced,
+      /** null means "we cannot say", which is not the same as zero. */
+      cost: unpriced > 0 ? null : cost,
+    };
   }, [events]);
 
   /** The activity trail, derived from the canonical stream. */

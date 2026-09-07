@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { estimateCost } from '../app/api/agent/providers.ts';
 import fs from 'node:fs';
 import ts from 'typescript';
 import {deduplicate,parseCSV,SAMPLE_CSV,SAMPLE_DATE,DEFAULT_OFFER} from '../lib/lead-engine.ts';
@@ -172,4 +173,50 @@ test('a cheaper default still costs less per assignment', async () => {
   assert.ok(haiku < opus, `haiku ${haiku} should undercut opus ${opus}`);
   assert.equal(estimateCost('some-model-released-next-year', 10, 10, 0), null,
     'an unknown model reports no cost rather than a fabricated one');
+});
+
+/* --- cost, and refusing to guess it ----------------------------------------
+ *
+ * estimateCost returns null for a model with no price on file, and its docstring promises
+ * the office renders that as unavailable rather than as zero. Three separate places used
+ * to throw that null away, so an unpriced model showed up as free — next to somebody's
+ * API bill, which is the worst place to be quietly wrong.
+ */
+
+test('an unpriced model reports no cost rather than a cost of zero', () => {
+  assert.equal(
+    estimateCost('some-model-shipped-next-year', 1000, 500, 0),
+    null,
+    'we do not know this price, and null is how that is said',
+  );
+  const known = estimateCost('gpt-4.1-mini', 1_000_000, 0, 0);
+  assert.ok(typeof known === 'number' && known > 0, 'a known model still prices normally');
+});
+
+test('cached tokens are priced as an upper bound, never optimistically', () => {
+  // Being wrong high next to a bill is recoverable; being wrong low is not.
+  const allCached = estimateCost('gpt-4.1-mini', 1_000_000, 0, 1_000_000);
+  const noneCached = estimateCost('gpt-4.1-mini', 1_000_000, 0, 0);
+  assert.ok(allCached <= noneCached, 'cached input never costs more than fresh input');
+  assert.ok(allCached > 0, 'and is never free');
+});
+
+test('a run containing one unpriced call reports the whole total as unknown', () => {
+  // Summing only the calls we can price would understate the bill and look authoritative
+  // doing it. One unknown makes the total unknown.
+  const events = [
+    { type: 'usage.reported', usage: { source: 'provider-response', inputTokens: 10, outputTokens: 5, estimatedCostUsd: 0.01 } },
+    { type: 'usage.reported', usage: { source: 'provider-response', inputTokens: 20, outputTokens: 7 } },
+  ];
+
+  let cost = 0;
+  let unpriced = 0;
+  for (const event of events) {
+    if (event.usage.estimatedCostUsd === undefined) unpriced += 1;
+    else cost += event.usage.estimatedCostUsd;
+  }
+  const reported = unpriced > 0 ? null : cost;
+
+  assert.equal(unpriced, 1);
+  assert.equal(reported, null, 'the total is not knowable, so it is not asserted');
 });

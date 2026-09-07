@@ -52,7 +52,7 @@ export type AgentOutput = {
 
 export type AgentResult = {
   output: AgentOutput;
-  usage: { input: number; output: number; estimatedCost: number; model: string };
+  usage: { input: number; output: number; estimatedCost: number | null; model: string };
 };
 
 /** Everything the workflow needs from its environment. */
@@ -203,7 +203,14 @@ export async function runLeadWorkflow(
           model: result.usage.model,
           inputTokens: result.usage.input,
           outputTokens: result.usage.output,
-          estimatedCostUsd: result.usage.estimatedCost,
+          /*
+           * Omitted entirely when unknown, never sent as null. The contract says
+           * `estimatedCostUsd?: number`, so absence IS how "we do not know this
+           * model's price" is represented. A null would fail validation; a zero would lie.
+           */
+          ...(result.usage.estimatedCost === null
+            ? {}
+            : { estimatedCostUsd: result.usage.estimatedCost }),
         },
       });
       return result.output;

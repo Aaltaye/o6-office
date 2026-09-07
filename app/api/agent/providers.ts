@@ -20,7 +20,12 @@ export type Task = 'context' | 'draft' | 'review';
 export type ProviderResult = {
   /** Raw JSON text the model produced, before schema and quote validation. */
   text: string;
-  usage: { input: number; output: number; cached: number; estimatedCost: number };
+  /**
+   * `estimatedCost` is null when we do not know the model's price. The null is the
+   * point: flattening it to zero tells the caller the work was free, which is a very
+   * different and much worse claim than saying nothing at all.
+   */
+  usage: { input: number; output: number; cached: number; estimatedCost: number | null };
   model: string;
 };
 
@@ -201,7 +206,7 @@ async function callAnthropic(request: ProviderRequest): Promise<ProviderResult> 
       input,
       output,
       cached,
-      estimatedCost: estimateCost(request.model, input, output, cached) ?? 0,
+      estimatedCost: estimateCost(request.model, input, output, cached),
     },
     model: request.model,
   };
@@ -262,7 +267,7 @@ async function callOpenAI(request: ProviderRequest): Promise<ProviderResult> {
       input,
       output,
       cached,
-      estimatedCost: estimateCost(request.model, input, output, cached) ?? 0,
+      estimatedCost: estimateCost(request.model, input, output, cached),
     },
     model: request.model,
   };
