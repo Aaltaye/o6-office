@@ -57,6 +57,13 @@ export type OfficeStageProps = {
   seekMs?: number | null;
   follow?: boolean;
   /**
+   * Restart a finished recording instead of freezing on its last frame.
+   *
+   * For an ambient demo — the landing hero — stopping dead is worse than repeating: a
+   * visitor who arrives a minute late sees a still image and concludes it is one.
+   */
+  loop?: boolean;
+  /**
    * Whether selecting something moves the camera to it. Default true.
    *
    * The landing hero turns this off: there, selection exists so a viewer can tap a dot and
@@ -89,6 +96,7 @@ export function OfficeStage({
   seekMs = null,
   follow = false,
   focusOnSelect = true,
+  loop = false,
   onTime,
   onSelect,
   selection = null,
@@ -224,7 +232,15 @@ export function OfficeStage({
 
   useEffect(() => {
     clock.current.extend(timeline.duration);
-  }, [timeline.duration]);
+    /*
+     * Re-assert the intent. The clock stops itself the moment it reaches the end, and in a
+     * LIVE run it reaches the end constantly — duration starts near zero and grows one
+     * event at a time, so without this the clock dies on the first frame and never moves
+     * again. Everything then jumps between positions instead of travelling, which reads as
+     * teleporting and is exactly what the office is not supposed to do.
+     */
+    if (playing) clock.current.play();
+  }, [timeline.duration, playing]);
 
   /**
    * Below this the office switches to dots-plus-live-labels. Measured on the stage's own
@@ -254,6 +270,9 @@ export function OfficeStage({
    *
    * Same split as the SVG renderer: object transforms every frame, text on a throttle.
    */
+  /** True once a finished recording has been restarted at least once, for the stamp. */
+  const loopedRef = useRef(false);
+
   const applyTime = useCallback(
     (t: number, force = false) => {
       const current = stage.current;
@@ -411,9 +430,23 @@ export function OfficeStage({
         );
         current.camera.lookAt(cam.target);
 
-        applyTime(clock.current.advance(deltaMs));
+        const t = clock.current.advance(deltaMs);
+        /*
+         * A finished recording restarts rather than freezing on its last frame. Only for
+         * an ambient demo that opted in: a visitor who arrives after the run has ended
+         * would otherwise see a still image and reasonably conclude it is one.
+         *
+         * This is a repeat, not a claim of new work — nothing about the events changes,
+         * and the stamp still says it is a recording.
+         */
+        if (loop && t >= clock.current.duration && clock.current.duration > 0) {
+          loopedRef.current = true;
+          clock.current.seek(0);
+          clock.current.play();
+        }
+        applyTime(t);
       },
-      [applyTime, focus, reducedMotion],
+      [applyTime, focus, reducedMotion, loop],
     ),
     true,
   );

@@ -114,6 +114,8 @@ export default function LabHome() {
             selection={selection}
             onSelect={setSelection}
             focusOnSelect={false}
+            /* Ambient demo: repeat rather than freeze on the last frame. */
+            loop
           />
         </div>
       </section>

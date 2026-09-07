@@ -877,3 +877,39 @@ test('a departed subagent is in no department at all', () => {
     );
   }
 });
+
+test('a clock that has run to the end can be restarted by the run growing', () => {
+  // The bug this pins: SimClock stops itself at the end, and a LIVE run reaches its end
+  // constantly — duration starts near zero and grows one event at a time. A renderer that
+  // only calls play() when its `playing` prop changes therefore dies on the first frame
+  // and never moves again, so people jump between desks instead of walking. The live view
+  // was a slideshow for as long as it existed.
+  const clock = new SimClock();
+  clock.extend(100);
+  clock.play();
+
+  clock.advance(200);
+  assert.equal(clock.time, 100, 'it runs to the end');
+  assert.equal(clock.playing, false, 'and stops itself there');
+
+  // What a live run does: more events arrive, so the timeline gets longer.
+  clock.extend(500);
+  assert.equal(clock.playing, false, 'extending alone does not resume — that is the trap');
+
+  clock.play();
+  clock.advance(50);
+  assert.equal(clock.time, 150, 'once resumed it advances again');
+});
+
+test('seeking backwards into a finished run still replays it', () => {
+  const clock = new SimClock();
+  clock.extend(100);
+  clock.play();
+  clock.advance(500);
+  assert.equal(clock.playing, false);
+
+  clock.seek(0);
+  clock.play();
+  clock.advance(30);
+  assert.equal(clock.time, 30, 'a finished recording can be watched again');
+});
