@@ -803,3 +803,77 @@ test('subagents with no assignment wait in the room named for them', () => {
     `the subagent waits at (${at.x.toFixed(1)}, ${at.y.toFixed(1)}), outside the room meant for it`,
   );
 });
+
+test('a worker’s desk is a fact about a moment, not about where they ended up', () => {
+  // The scalar `station` is mutated while scheduling, so after the run it only says where
+  // someone finished. Asking "who is in this department right now" needs a channel.
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const emit = createEmitter({ runId: 'moves', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({ type: 'assignment.started', label: 'Read a file', station: 'reading', occurredAt: 1000 }),
+    emit({ type: 'assignment.finished', label: 'Read', station: 'reading', occurredAt: 2000 }),
+    emit({ type: 'assignment.started', label: 'Run the build', station: 'operations', occurredAt: 3000 }),
+  ];
+  const timeline = schedule(events, compiled);
+  assert.deepEqual(timeline.violations, []);
+
+  const main = timeline.workers.get('main');
+  assert.ok(main, 'the agent is on the floor');
+  // Early on they are at reading; later they are at operations. A scalar could only ever
+  // report one of these.
+  const early = main.stationAt.sampleAt(2500);
+  const late = main.stationAt.sampleAt(timeline.duration);
+  assert.equal(early, 'reading', `expected reading at 2500ms, got ${early}`);
+  assert.equal(late, 'operations', `expected operations at the end, got ${late}`);
+});
+
+test('a department reports who is standing in it, and empty when nobody is', () => {
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const emit = createEmitter({ runId: 'occupants', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({ type: 'assignment.started', label: 'Read a file', station: 'reading', occurredAt: 1000 }),
+  ];
+  const timeline = schedule(events, compiled);
+
+  const readingRoom = compiled.roomOf.get('reading');
+  const reading = departmentAt(compiled, timeline, readingRoom, timeline.duration);
+  assert.deepEqual(reading.occupants, ['main'], 'the agent is in the reading room');
+
+  // Every other department is genuinely empty, and says so rather than being staffed by
+  // assumption — this office is dynamically staffed, so there is no roster to fall back on.
+  for (const department of departmentsAt(compiled, timeline, timeline.duration)) {
+    if (department.room.id === readingRoom) continue;
+    assert.deepEqual(
+      department.occupants,
+      [],
+      `${department.room.label} invented an occupant`,
+    );
+  }
+});
+
+test('a departed subagent is in no department at all', () => {
+  const compiled = compileFloorPlan(codingSessionPlan);
+  const emit = createEmitter({ runId: 'left', source: 'claude-code' });
+  const events = [
+    emit({ type: 'run.started', label: 'Session opens', occurredAt: 0 }),
+    emit({ type: 'specialist.joined', label: 'A subagent joins', worker: 'agent:x', occurredAt: 1000 }),
+    emit({
+      type: 'assignment.started',
+      label: 'Search the docs',
+      station: 'research',
+      worker: 'agent:x',
+      occurredAt: 2000,
+    }),
+    emit({ type: 'specialist.left', label: 'Subagent finished', worker: 'agent:x', occurredAt: 4000 }),
+  ];
+  const timeline = schedule(events, compiled);
+
+  for (const department of departmentsAt(compiled, timeline, timeline.duration)) {
+    assert.ok(
+      !department.occupants.includes('agent:x'),
+      `${department.room.label} still has a subagent that has left the building`,
+    );
+  }
+});

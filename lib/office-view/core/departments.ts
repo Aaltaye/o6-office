@@ -56,6 +56,14 @@ export type DepartmentView = {
   /** How many of this department's desks are working at this instant. */
   liveCount: number;
   /**
+   * Who is actually standing in this department at this instant, by worker id.
+   *
+   * Sampled from each worker's own station channel, so an empty department renders empty.
+   * Nobody is ever placed here because the plan says a desk exists — under dynamic
+   * staffing a modelled desk with no one at it is the correct and common answer.
+   */
+  occupants: string[];
+  /**
    * Tokens are attributed to workers, never to stations, so this is always false today.
    * It exists so the panel has something explicit to render instead of a silent gap.
    */
@@ -117,9 +125,19 @@ function viewOf(
     });
   }
 
+  // Who is here, asked of this moment rather than of where people ended up.
+  const here = new Set(stationIds);
+  const occupants: string[] = [];
+  for (const [id, worker] of timeline.workers) {
+    if (!worker.present.sampleAt(t)) continue;
+    const at = worker.stationAt.sampleAt(t);
+    if (at && here.has(at)) occupants.push(id);
+  }
+  occupants.sort();
+
   const liveCount = desks.filter((desk) => desk.status !== null).length;
   const status: DepartmentStatus =
     liveCount > 0 ? 'active' : anyChannel ? 'idle' : 'never-used';
 
-  return { room, desks, status, liveCount, usageAttributed: false };
+  return { room, desks, status, liveCount, occupants, usageAttributed: false };
 }

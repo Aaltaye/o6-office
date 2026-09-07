@@ -57,12 +57,15 @@ export default function Home(){
  const visible=leads.filter(l=>(filter==='all'||(filter==='approved'?l.review==='approved':l.state===filter))&&`${l.name} ${l.company} ${l.email}`.toLowerCase().includes(query.toLowerCase()));
  const liveConfigured=Boolean(apiKey.trim());
  useEffect(()=>{if(!notice)return;const id=setTimeout(()=>setNotice(''),4500);return()=>clearTimeout(id);},[notice]);
- /* Load the selected lead into the editor. Deliberately keyed on the fields rather than
-    on `selectedLead` itself: that object comes from .find(), so it has a new identity every
-    render and depending on it would re-fire forever. The react-compiler rule flags this
-    shape; suppressing it would stop the compiler optimizing this whole component, which
-    costs more than it saves, so the warning is left standing and tracked instead. */
- useEffect(()=>{if(selectedLead){setEditDraft(selectedLead.draft);setEditSubject(selectedLead.subject);}},[selectedLead?.id,selectedLead?.draft,selectedLead?.subject]);
+ /* Load the selected lead into the editor when the selection changes.
+    Adjusted during render rather than in an effect — React's documented pattern for
+    "reset state when a prop changes". An effect here would paint the previous lead's text
+    first and correct it on the next frame, and could not depend on `selectedLead` itself
+    because that object comes from .find() and has a new identity every render. Comparing a
+    key of the fields sidesteps both problems and needs no dependency array. */
+ const leadKey=selectedLead?`${selectedLead.id}|${selectedLead.draft}|${selectedLead.subject}`:null;
+ const [loadedLeadKey,setLoadedLeadKey]=useState<string|null>(null);
+ if(selectedLead&&leadKey!==loadedLeadKey){setLoadedLeadKey(leadKey);setEditDraft(selectedLead.draft);setEditSubject(selectedLead.subject);}
  const stateRef=useRef<()=>unknown>(()=>({})),sampleRef=useRef<()=>Promise<unknown>>(async()=>({}));
  /* Latest-value refs, refreshed after every commit. The MCP tools below are registered
     once for the lifetime of the page, so their closures have to read through a ref to see

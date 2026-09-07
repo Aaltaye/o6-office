@@ -260,3 +260,36 @@ test('live labels that cannot all fit stay in frame and never land on the same p
     }
   }
 });
+
+test('an idle label always yields to a live one, never the other way round', () => {
+  // The guarantee is an asymmetry, not "a live label never moves": when two LIVE labels
+  // collide one of them has to move, which is arithmetic. What must never happen is
+  // "Standing by" pushing a producer's literal action off its own desk.
+  for (const [idleTop, liveTop] of [
+    [300, 320],
+    [320, 300],
+    [300, 300],
+  ]) {
+    const spaced = deCollideLabels({
+      idle: { left: 200, top: idleTop, visible: true },
+      live: { left: 205, top: liveTop, visible: true, active: true },
+    });
+    assert.equal(spaced.live.top, liveTop, `live label moved (idle ${idleTop}, live ${liveTop})`);
+    assert.notEqual(spaced.idle.top, idleTop, 'the idle one is the one that gives way');
+  }
+});
+
+test('when two live labels collide, one moves and both stay readable', () => {
+  const spaced = deCollideLabels({
+    a: { left: 200, top: 300, visible: true, active: true },
+    b: { left: 205, top: 310, visible: true, active: true },
+  });
+  assert.notEqual(spaced.a.top, spaced.b.top, 'they cannot both keep their place');
+  assert.ok(
+    Math.abs(spaced.a.top - spaced.b.top) >= LABEL_BOX.h,
+    'and once separated neither hides the other',
+  );
+  for (const id of ['a', 'b']) {
+    assert.equal(spaced[id].collapsed, undefined, 'neither live label is ever collapsed');
+  }
+});

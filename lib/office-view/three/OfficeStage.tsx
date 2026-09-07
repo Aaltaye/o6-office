@@ -56,6 +56,13 @@ export type OfficeStageProps = {
   speed?: number;
   seekMs?: number | null;
   follow?: boolean;
+  /**
+   * Whether selecting something moves the camera to it. Default true.
+   *
+   * The landing hero turns this off: there, selection exists so a viewer can tap a dot and
+   * read the label back, not so the demo can rearrange itself under their finger.
+   */
+  focusOnSelect?: boolean;
   onTime?: (ms: number, duration: number) => void;
   onSelect?: (selection: Selection) => void;
   selection?: Selection;
@@ -81,6 +88,7 @@ export function OfficeStage({
   speed = 1,
   seekMs = null,
   follow = false,
+  focusOnSelect = true,
   onTime,
   onSelect,
   selection = null,
@@ -344,6 +352,8 @@ export function OfficeStage({
   /** Where the camera should settle. Derived from the host's selection rather than
    *  stored, so the two can never disagree about which desk is being looked at. */
   const focus = useMemo<{ at: World; distance: number } | null>(() => {
+    // Selection still happens — a label still comes back — the camera simply stays put.
+    if (!focusOnSelect) return null;
     if (selection?.kind === 'station') {
       const seat = plan.stations.find((s) => s.id === selection.id)?.seat;
       return seat ? { at: seat, distance: 0 } : null;
@@ -361,7 +371,7 @@ export function OfficeStage({
       };
     }
     return null;
-  }, [selection, plan.stations, plan.rooms]);
+  }, [selection, plan.stations, plan.rooms, focusOnSelect]);
   const cameraState = useRef({ angle: -0.9, target: new THREE.Vector3(), distance: 0 });
 
   useAnimationLoop(
@@ -508,19 +518,49 @@ export function OfficeStage({
             const point = readable.labels[station.id];
             if (!point?.visible) return null;
             const status = readable.stationStatus[station.id] ?? null;
-            const isSelected = selection?.kind === 'station' && selection.id === station.id;
+            /* "Selected" covers the department too. A dot is drawn at the label's anchor,
+               which floats above the desk, so tapping one raycasts past the desk mesh and
+               lands on the floor — which selects the department it sits in. Revealing that
+               department's desk labels is what makes the dot rule's promise ("a tap brings
+               the label back") actually true on a phone. */
+            const isSelected =
+              (selection?.kind === 'station' && selection.id === station.id) ||
+              (selection?.kind === 'department' &&
+                selection.id === compiled.roomOf.get(station.id));
 
             /* Two ways a desk ends up as a dot: the stage is too narrow to carry six
                labels, or placement could not fit this one inside the frame. Both only ever
                happen to a label that would have read "Standing by" — text this renderer
                wrote, not a producer. A live status is never collapsed, and a tap brings
                the label back. */
-            if (point.collapsed || labelModeFor({ isNarrow, status, isSelected }) === 'dot') {
+            /* Selection wins over both reasons a desk becomes a dot. Collapsing is an
+               automatic decision made to save room; asking for a specific desk is not, and
+               an explicit request must never be overruled by a layout heuristic. It may
+               now overlap a neighbour — that is the correct trade when someone has asked
+               for exactly this one. */
+            if (!isSelected && (point.collapsed || labelModeFor({ isNarrow, status, isSelected }) === 'dot')) {
+              /* The dot is its own tap target rather than relying on the raycast beneath
+                 it: a dot sits at the label's anchor, which floats ABOVE the desk, so a ray
+                 cast through it passes over the desk and lands on floor further back —
+                 often outside the room entirely. Tapping the thing you can see should
+                 select the thing it stands for.
+
+                 pointer-events is re-enabled on the dot alone; the rest of the overlay
+                 stays inert so it never steals clicks from the canvas. It remains inside
+                 the aria-hidden overlay deliberately — the screen-reader path is the
+                 outline, and announcing every desk twice would be worse than not at all. */
               return (
-                <div
+                <button
                   key={station.id}
+                  type="button"
+                  /* Deliberately out of the tab order: the outline is the keyboard and
+                     screen-reader path, and this whole overlay is aria-hidden. A real
+                     button rather than a div so a pointer or touch gets native behaviour. */
+                  tabIndex={-1}
+                  aria-label={`${station.role} desk. ${status ?? 'Standing by'}.`}
                   className="office-dot"
-                  style={{ left: point.left, top: point.top }}
+                  style={{ left: point.left, top: point.top, pointerEvents: 'auto' }}
+                  onClick={() => onSelectRef.current?.({ kind: 'station', id: station.id })}
                 />
               );
             }

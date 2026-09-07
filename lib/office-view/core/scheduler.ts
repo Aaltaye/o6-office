@@ -90,6 +90,18 @@ export type WorkerState = {
   status: StepChannel<string | null>;
   /** Present on the floor between joining and leaving. */
   present: StepChannel<boolean>;
+  /**
+   * Which desk this person is at, at any moment, or null when they hold none.
+   *
+   * A channel rather than a scalar because "who is in this department right now" is a
+   * question about an instant, and a field mutated during scheduling can only answer
+   * "where did they end up". Sampled like every other fact on the floor.
+   */
+  stationAt: StepChannel<StationId | null>;
+  /**
+   * Final desk. Scheduler bookkeeping only (hot-desk release and occupancy); it is NOT
+   * time-aware, so never read it to decide where somebody is at time t.
+   */
   station?: StationId;
 };
 
@@ -248,10 +260,12 @@ export function schedule(
         ]),
         status: new StepChannel<string | null>(),
         present: new StepChannel<boolean>(),
+        stationAt: new StepChannel<StationId | null>(),
         station: station.id,
       };
       worker.present.push(0, true);
       worker.status.push(0, null);
+      worker.stationAt.push(0, station.id);
       workers.set(worker.id, worker);
       positionOf.set(`worker:${worker.id}`, station.seat);
     }
@@ -292,9 +306,12 @@ export function schedule(
         motion: new MotionChannel(),
         status: new StepChannel<string | null>(),
         present: new StepChannel<boolean>(),
+        stationAt: new StepChannel<StationId | null>(),
       };
       worker.present.push(at, true);
       worker.status.push(at, null);
+      // They exist and are on the floor, but hold no desk until work sends them to one.
+      worker.stationAt.push(at, null);
       workers.set(workerId, worker);
       const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
       positionOf.set(`worker:${workerId}`, entrance ? entrance.at : plan.plan.inbox.at);
@@ -481,6 +498,7 @@ export function schedule(
                 const index = occupancy.get(event.station) ?? 0;
                 occupancy.set(event.station, index + 1);
                 worker.station = event.station;
+                worker.stationAt.push(simTime, event.station);
                 moveEntity(
                   `worker:${worker.id}`,
                   worker.motion,
@@ -531,6 +549,7 @@ export function schedule(
               motion: new MotionChannel(),
               status: new StepChannel<string | null>(),
               present: new StepChannel<boolean>(),
+              stationAt: new StepChannel<StationId | null>(),
             } as WorkerState);
 
           state.role = event.role;
@@ -563,17 +582,20 @@ export function schedule(
             const waiting = standingSpot('door', base, occupancy.get('door') ?? 0);
             occupancy.set('door', (occupancy.get('door') ?? 0) + 1);
             state.station = undefined;
+            state.stationAt.push(simTime, null);
             moveEntity(key, state.motion, waiting, arriveMs);
           } else if (desk) {
             // Permanent plans have a modelled pool: take the lowest free hot desk, by
             // plan order, so a replay seats the same specialist at the same desk.
             state.station = desk.id;
+            state.stationAt.push(simTime, desk.id);
             hotDeskTaken.set(desk.id, event.worker);
             moveEntity(key, state.motion, desk.seat, arriveMs);
           } else {
             // Pool exhausted: the specialist stands at the edge rather than the plan
             // growing new desks at runtime, which would break determinism and the art.
             state.station = undefined;
+            state.stationAt.push(simTime, null);
           }
           break;
         }
@@ -585,6 +607,9 @@ export function schedule(
           const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
           if (entrance) moveEntity(key, state.motion, entrance.at, arriveMs);
           state.present.push(freeAt.get(key) ?? simTime, false);
+          // They hold no desk from the moment they head for the door; the scalar below is
+          // only kept so the hot desk can be released.
+          state.stationAt.push(simTime, null);
           if (state.station) hotDeskTaken.delete(state.station);
           break;
         }

@@ -496,8 +496,10 @@ export type PlacedLabel = {
  * status text changes, and no event is reordered.
  *
  * Three rules, in priority order:
- *  1. A live label is placed first and never moves. The one label that must sit on its
- *     own desk is the one carrying a producer's literal action.
+ *  1. Live labels are placed first, so an idle label can never displace one carrying a
+ *     producer's literal action. Note what this does NOT claim: when two LIVE labels
+ *     collide, one of them has to move — that is arithmetic, not a policy choice. What is
+ *     guaranteed is the asymmetry, that "Standing by" always yields to real work.
  *  2. The lift is bounded by the frame. The overlay clips with `overflow: hidden`, so
  *     lifting a label past the top edge would hide it while still calling it visible —
  *     a label removed with nothing said, which is the one thing this pass must not do.

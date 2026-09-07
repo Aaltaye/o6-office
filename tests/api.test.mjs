@@ -39,7 +39,9 @@ test('the provider is inferred from the key, with no extra configuration', async
   try {
     let calledUrl = null;
     globalThis.fetch = async (url, init) => {
-      calledUrl = String(url);
+      // fetch accepts a string, a URL or a Request; read the href from each honestly
+      // rather than stringifying and hoping.
+      calledUrl = typeof url === 'string' ? url : url instanceof URL ? url.href : url.url;
       const sent = JSON.parse(init.body);
       // Structured outputs, so the schema guarantee is the same one the OpenAI path has.
       assert.ok(sent.output_config?.format?.schema, 'must constrain the response schema');

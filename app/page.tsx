@@ -20,6 +20,7 @@ import { codingSessionPlan } from '@/lib/floorplans/coding-session';
 import recordedLeadRun from '@/fixtures/recorded-lead-run.json';
 import recordedCodingRun from '@/fixtures/recorded-coding-run.json';
 import type { OfficeEvent } from '@/lib/office-view/core/types';
+import type { Selection } from '@/lib/office-view/react/OfficeView';
 import './lab-home.css';
 
 type Mode = 'lead' | 'coding';
@@ -55,6 +56,9 @@ const MODES = {
 
 export default function LabHome() {
   const [mode, setMode] = useState<Mode>('lead');
+  // Cleared whenever the mode swaps, because a desk id from one floor plan means nothing
+  // on the other.
+  const [selection, setSelection] = useState<Selection>(null);
   const current = MODES[mode];
   // Both recordings are static imports; memoising keeps the scheduler from re-running
   // on every render of this page.
@@ -104,6 +108,12 @@ export default function LabHome() {
             modeLabel={current.stamp}
             playing
             speed={current.speed}
+            /* Tapping a desk brings its label back, which is what the narrow-screen dot
+               rule promises. The camera deliberately does not follow: this is meant to be
+               a calm demo that runs itself, not one that rearranges when touched. */
+            selection={selection}
+            onSelect={setSelection}
+            focusOnSelect={false}
           />
         </div>
       </section>
@@ -117,7 +127,10 @@ export default function LabHome() {
               role="tab"
               aria-selected={mode === key}
               className={mode === key ? 'is-on' : ''}
-              onClick={() => setMode(key)}
+              onClick={() => {
+                setSelection(null);
+                setMode(key);
+              }}
             >
               {key === 'lead' ? <Layers3 size={15} /> : <Terminal size={15} />}
               {MODES[key].label}

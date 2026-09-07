@@ -30,7 +30,10 @@
     "dist/**",
     "coverage/**",
     "next-env.d.ts",
-    "bridge/public/**"
+    "bridge/public/**",
+    // Vendored shadcn/ui primitives. Generated third-party code we do not author or
+    // review; linting it produces noise that buries findings in code we DO own.
+    "components/ui/**"
   ],
   "rules": {
     "no-array-constructor": "error",
@@ -47,6 +50,12 @@
     // of React here and throws "Invalid hook call", so plain anchors are the correct
     // and only working way to navigate between our pages.
     "nextjs/no-html-link-for-pages": "off",
+    // A deliberate, stated trade-off. StationId is a string, so a union like
+    // `StationId | Endpoint` collapses structurally and the rule is technically right.
+    // But that union is the only place the code says "a desk, or one of the building's
+    // two ends", and the alternative — branding StationId — would add casts through every
+    // floor-plan literal to buy nothing at runtime. Documentation wins here.
+    "typescript/no-redundant-type-constituents": "off",
     "react/require-render-return": "error",
     "react/rules-of-hooks": "error",
     "typescript/ban-ts-comment": "error",

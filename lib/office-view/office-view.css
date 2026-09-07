@@ -74,6 +74,11 @@
 /* Narrow screens: only the active or selected desk keeps a label; the rest become dots.
    Six overlapping labels on a phone destroy the diorama read entirely. */
 .office-dot {
+  /* Also rendered as a <button> in the 3D stage so a tap selects the desk it marks; reset
+     the button chrome so both renderers draw the identical dot. */
+  appearance: none;
+  padding: 0;
+  cursor: pointer;
   position: absolute;
   width: 7px;
   height: 7px;

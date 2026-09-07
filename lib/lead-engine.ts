@@ -58,5 +58,12 @@ export function qualify(lead:Lead,date:string):Pick<Lead,'state'|'reason'>{
 }
 export function summarize(lead:Lead){return lead.sources.filter(s=>s.notes).map(s=>s.notes).join('\n\n');}
 export function draftTemplate(lead:Lead,offer:string){const name=lead.name.split(' ')[0];return {subject:`Picking up our conversation${lead.company?` — ${lead.company}`:''}`,draft:`Hi ${name},\n\nI'm following up on our earlier conversation. Is this still something you would like to explore?\n\n${offer.trim()}\n\nWould a short conversation be useful?`,evidence:lead.sources.filter(s=>s.notes).map(s=>`Row ${s.row}: ${s.notes}`)};}
-export function exportCSV(leads:Lead[]):string{const quote=(value:unknown)=>{let s=String(value??'');if(/^[\s\u0000-\u001f]*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};const fields=['name','company','email','state','reason','review','subject','draft','summary','source_rows'];return '\uFEFF'+[fields,...leads.map(l=>[l.name,l.company,l.email,l.state,l.reason,l.review,l.subject,l.draft,l.summary,l.sources.map(s=>s.row).join(';')])].map(r=>r.map(quote).join(',')).join('\r\n');}
+export function exportCSV(leads:Lead[]):string{
+ /* A cell that begins with = + @ or - is a formula-injection vector in Excel and Sheets,
+    and the trigger can be hidden behind leading whitespace or control characters — which
+    is exactly why the character class includes them. Narrowing it to satisfy the linter
+    would weaken a security control, so the rule is suppressed and the reason stated. */
+ const quote=(value:string|number|null|undefined)=>{let s=String(value??'');
+  // eslint-disable-next-line no-control-regex
+  if(/^[\s\u0000-\u001f]*[=+@-]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};const fields=['name','company','email','state','reason','review','subject','draft','summary','source_rows'];return '\uFEFF'+[fields,...leads.map(l=>[l.name,l.company,l.email,l.state,l.reason,l.review,l.subject,l.draft,l.summary,l.sources.map(s=>s.row).join(';')])].map(r=>r.map(quote).join(',')).join('\r\n');}
 export function makeReport(leads:Lead[],mode:string,date:string){return {product:'O6 Office',mode,evaluated_at:date,created_at:new Date().toISOString(),sent_messages:0,leads};}

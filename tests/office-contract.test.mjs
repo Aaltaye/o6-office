@@ -82,6 +82,7 @@ test('every declared event type has a valid example that passes validation', () 
 
 test('validator rejects malformed envelopes', () => {
   const { v: _v, ...noVersion } = VALID_EVENTS.note;
+  /** @type {[unknown, string][]} */
   const cases = [
     [noVersion, 'missing v'],
     [{ ...VALID_EVENTS.note, v: 2 }, 'wrong contract version'],
@@ -103,6 +104,7 @@ test('validator rejects malformed envelopes', () => {
 });
 
 test('validator enforces per-variant required fields', () => {
+  /** @type {[unknown, string][]} */
   const cases = [
     [{ ...base, type: 'handoff', work, from: 'records', to: 'context' }, 'handoff without direction'],
     [
