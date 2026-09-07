@@ -19,6 +19,7 @@ import { createRoot } from 'react-dom/client';
 
 import type { Selection } from '../../../lib/office-view/react/OfficeView.tsx';
 import { Inspector } from '../../../lib/office-view/react/Inspector.tsx';
+import { useDismissed } from '../../../lib/office-view/react/useDismissed.ts';
 import { OfficeStage } from '../../../lib/office-view/three/OfficeStage.tsx';
 import { isOfficeEvent } from '../../../lib/office-view/core/events.ts';
 import type { OfficeEvent } from '../../../lib/office-view/core/types.ts';
@@ -42,6 +43,7 @@ function App() {
   const [selection, setSelection] = useState<Selection>(null);
   /** Chrome off, floor only — for putting a running session on a second screen. */
   const [presenting, setPresenting] = useState(false);
+  const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed('bridge:live');
   /** Batch incoming events into one render per frame rather than one per event. */
   const pending = useRef<OfficeEvent[]>([]);
   const flushing = useRef(false);
@@ -124,6 +126,7 @@ function App() {
       follow
       selection={selection}
       onSelect={setSelection}
+      dismissed={dismissed}
     />
   );
 
@@ -173,6 +176,10 @@ function App() {
           onSelect={setSelection}
           showClock
           emptyHint="Nothing here yet. Operations appear as your session performs them."
+          dismissed={dismissed}
+          onDismiss={dismiss}
+          onDismissAll={dismissAll}
+          onRestore={restoreAll}
         />
       </div>
 

@@ -331,3 +331,123 @@
   color: var(--subtle);
   overflow-wrap: anywhere;
 }
+
+/* --- who is on the floor ----------------------------------------------------
+   Finished agents stay at the desk they used, so the panel has to answer "who is
+   here, and who has stopped" — and give you a way to clear the stopped ones that
+   is honest about what it did. */
+
+.oi-roster {
+  padding: 0 14px 10px;
+}
+
+.oi-roster-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  margin-bottom: 5px;
+}
+
+.oi-roster-head button {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  background: var(--surface, #fff);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  color: var(--subtle);
+  cursor: pointer;
+}
+
+.oi-roster ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 132px;
+  overflow-y: auto;
+}
+
+.oi-roster li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-left: 2px solid var(--line);
+  padding-left: 8px;
+  margin-bottom: 2px;
+}
+
+/* Working is the only state that gets the live colour, and only as a hairline. */
+.oi-roster li.is-working { border-left-color: var(--signal); }
+
+/* A finished agent is quiet on purpose: it is a record, not a colleague. */
+.oi-roster li.is-finished { opacity: 0.62; }
+
+.oi-roster li > button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.oi-roster-who {
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+
+.oi-roster-what {
+  font-size: 11px;
+  color: var(--subtle);
+  overflow-wrap: anywhere;
+}
+
+.oi-roster-clear {
+  flex: none;
+  border: 0;
+  background: none;
+  padding: 2px 5px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--subtle);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.oi-roster-clear:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.oi-cleared {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--subtle);
+}
+
+.oi-cleared button {
+  border: 1px solid var(--line);
+  background: var(--surface, #fff);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font: inherit;
+  font-size: 11px;
+  color: inherit;
+  cursor: pointer;
+}

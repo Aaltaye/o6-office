@@ -70,6 +70,20 @@ export function createMaterials() {
       emissiveIntensity: 0.35,
       roughness: 0.5,
     }),
+    /*
+     * A finished agent, still at the desk it used so its work can be reviewed.
+     *
+     * Deliberately the quietest thing on the floor: no identity colour, translucent, and
+     * drawn without a shadow by setWorkerDormant. It has to be impossible to mistake for
+     * somebody working, and it is nowhere near violet — violet means right now.
+     */
+    dormantWorker: new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#A9AEB8'),
+      roughness: 0.95,
+      metalness: 0,
+      transparent: true,
+      opacity: 0.42,
+    }),
   };
 }
 
@@ -611,4 +625,44 @@ export function deCollideLabels<T extends PlacedLabel>(
   // Labels outside the frustum keep their position; they are not drawn either way.
   for (const [id, point] of Object.entries(labels)) if (!(id in out)) out[id] = point;
   return out;
+}
+
+/**
+ * Switch a figure between working and finished.
+ *
+ * A finished agent stays at the desk it used so a viewer can still see what it did, and it
+ * has to be impossible to mistake for one that is working. Three things carry that, in
+ * descending order of how much they matter:
+ *
+ *  1. NO SHADOW. A contact shadow is the claim that something is standing there. Removing
+ *     it is what turns a figure into a marker, and it is the single detail that keeps this
+ *     from being the office asserting a presence that ended.
+ *  2. No identity colour. The cast's colours belong to agents that are running; a record
+ *     takes the same graphite the structure uses, so it reads as part of the furniture.
+ *  3. Transparency, so a live agent walking past is never occluded by a finished one.
+ *
+ * Violet is not involved at any point. Violet means "right now", and this is the opposite.
+ */
+export function setWorkerDormant(
+  figure: THREE.Group,
+  materials: ReturnType<typeof createMaterials>,
+  dormant: boolean,
+): void {
+  if (figure.userData.dormant === dormant) return;
+  figure.userData.dormant = dormant;
+
+  if (dormant) {
+    // Keep the live material so the figure can be brought back exactly as it was — a
+    // replay scrubbed backwards past the departure has to show a working agent again.
+    figure.userData.liveMaterial ??= (figure.children[0] as THREE.Mesh).material;
+  }
+  const live = figure.userData.liveMaterial as THREE.Material | undefined;
+
+  figure.traverse((part) => {
+    if (!(part instanceof THREE.Mesh)) return;
+    part.castShadow = !dormant;
+    part.receiveShadow = !dormant;
+    if (dormant) part.material = materials.dormantWorker;
+    else if (live) part.material = live;
+  });
 }

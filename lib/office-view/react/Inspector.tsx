@@ -47,7 +47,15 @@ export type InspectorProps = {
   showClock?: boolean;
   /** What to say when the list is empty. A live office starts empty and should explain it. */
   emptyHint?: string;
+  /** Finished agents the viewer has cleared off the floor. A view filter, never a deletion. */
+  dismissed?: ReadonlySet<string>;
+  onDismiss?: (worker: string) => void;
+  onDismissAll?: (workers: readonly string[]) => void;
+  onRestore?: () => void;
 };
+
+/** Stable identity so a host that passes nothing does not re-render on every frame. */
+const NO_DISMISSALS: ReadonlySet<string> = new Set();
 
 export function Inspector({
   plan,
@@ -56,6 +64,10 @@ export function Inspector({
   onSelect,
   showClock = false,
   emptyHint,
+  dismissed = NO_DISMISSALS,
+  onDismiss,
+  onDismissAll,
+  onRestore,
 }: InspectorProps) {
   const [tab, setTab] = useState<'operations' | 'artifacts'>('operations');
 
@@ -175,6 +187,41 @@ export function Inspector({
     };
   }, [selection, events]);
 
+  /**
+   * Everyone the run has had, and whether they are still working.
+   *
+   * The only always-visible list of people either surface has. A finished agent stays on
+   * the floor at the desk it used so its work can be reviewed, which makes "who is here,
+   * and who has stopped" a question the panel now has to answer plainly.
+   *
+   * Derived from the stream, like everything else in this file: somebody exists because
+   * they were seen working or announced, and they are finished because the producer said
+   * so. Nothing is inferred from a timeout or a silence.
+   */
+  const roster = useMemo(() => {
+    const people = new Map<string, { id: string; role: string | null; finished: boolean; last: string | null }>();
+    for (const event of events) {
+      const id = workerOf(event);
+      if (!id) continue;
+      const person = people.get(id) ?? { id, role: null, finished: false, last: null };
+      if (event.type === 'specialist.joined') person.role = event.role ?? person.role;
+      if (event.type === 'assignment.started') {
+        person.last = event.label;
+        // Working again after finishing is not a contradiction — an agent id can be
+        // re-used by the producer — so the flag follows the most recent word.
+        person.finished = false;
+      }
+      if (event.type === 'specialist.left') person.finished = true;
+      people.set(id, person);
+    }
+    const all = [...people.values()];
+    return {
+      working: all.filter((person) => !person.finished),
+      finished: all.filter((person) => person.finished && !dismissed.has(person.id)),
+      clearedCount: all.filter((person) => person.finished && dismissed.has(person.id)).length,
+    };
+  }, [events, dismissed]);
+
   /** What the panel is scoped to, in the plan's own words. */
   const scope = useMemo(() => {
     if (!selection) return null;
@@ -237,6 +284,76 @@ export function Inspector({
               <dd>{dossier.tokens === null ? 'not reported' : dossier.tokens.toLocaleString()}</dd>
             </div>
           </dl>
+        </div>
+      ) : null}
+
+      {/*
+        * Everyone this run has had. Like the operations and artifact lists beside it, this
+        * describes the WHOLE run rather than the instant the floor is showing — a scrub
+        * back to the first second would otherwise empty a panel whose job is to let you
+        * read what happened. It is headed accordingly: "on the floor" would be a claim
+        * about right now, and at t=1s it would be false.
+        */}
+      {roster.working.length + roster.finished.length + roster.clearedCount > 0 ? (
+        <div className="oi-roster">
+          <div className="oi-roster-head">
+            <span>People in this run</span>
+            {onDismissAll && roster.finished.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => onDismissAll(roster.finished.map((person) => person.id))}
+                title="Clear every finished agent off the floor. Nothing is deleted."
+              >
+                Clear finished ({roster.finished.length})
+              </button>
+            ) : null}
+          </div>
+
+          <ul>
+            {[...roster.working, ...roster.finished].map((person) => (
+              <li key={person.id} className={person.finished ? 'is-finished' : 'is-working'}>
+                <button type="button" onClick={() => onSelect({ kind: 'worker', id: person.id })}>
+                  <span className="oi-roster-who">
+                    {person.id === 'main' ? 'The agent' : person.id}
+                  </span>
+                  {/* The producer's own last words, never "idle" or "done" — the office
+                      reports what was said, and nobody said those. */}
+                  <span className="oi-roster-what">
+                    {person.finished
+                      ? `finished${person.last ? ` · ${person.last}` : ''}`
+                      : (person.last ?? person.role ?? 'no action reported yet')}
+                  </span>
+                </button>
+                {person.finished && onDismiss ? (
+                  <button
+                    type="button"
+                    className="oi-roster-clear"
+                    onClick={() => onDismiss(person.id)}
+                    aria-label={`Clear ${person.id} off the floor`}
+                    title="Clear this record off the floor. Nothing is deleted."
+                  >
+                    ×
+                  </button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+
+          {/*
+            * Permanently stated and deliberately not dismissible. An office that reported
+            * less after you tidied it, without saying so, would be exactly the kind of
+            * quiet subtraction this project exists not to do.
+            */}
+          {roster.clearedCount > 0 ? (
+            <p className="oi-cleared">
+              {roster.clearedCount} cleared from the floor · still in the log
+              {onRestore ? (
+                <button type="button" onClick={onRestore}>
+                  Put back
+                </button>
+              ) : null}
+            </p>
+          ) : null}
         </div>
       ) : null}
 

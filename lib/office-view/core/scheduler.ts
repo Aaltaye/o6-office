@@ -40,6 +40,14 @@ import { SPOT_PITCH } from './figure.ts';
 import { workerOf } from './attribution.ts';
 import { MotionChannel, StepChannel, type MotionTrack } from './timeline.ts';
 
+/** What a finished agent leaves behind: where it was, and the last thing it actually did. */
+export type DepartureRecord = {
+  station: StationId | null;
+  lastAction: string | null;
+  /** The producer's own timestamp for the stop, not the scheduled one. */
+  at: number;
+};
+
 export type SchedulerOptions = {
   /** Base time for a folder to travel one desk-to-desk trip, before compression. */
   walkMs: number;
@@ -109,6 +117,19 @@ export type WorkerState = {
    * being nowhere while drawing them plainly inside Operations.
    */
   roomAt: StepChannel<RoomId | null>;
+  /**
+   * The record an agent leaves when it finishes.
+   *
+   * Null while they are working, and from the moment the stream says they stopped it
+   * carries what they were last doing, in the producer's own words, at the desk they were
+   * actually at. It is what makes a finished agent reviewable instead of simply gone: the
+   * office used to erase a subagent the instant it left, taking the only on-floor trace of
+   * what it had been for.
+   *
+   * It is emphatically NOT a claim that anybody is present — `present` still goes false,
+   * and every consumer that asks "who is working" gets the same answer it always did.
+   */
+  departed: StepChannel<DepartureRecord | null>;
   /**
    * Final desk. Scheduler bookkeeping only (hot-desk release and occupancy); it is NOT
    * time-aware, so never read it to decide where somebody is at time t.
@@ -282,9 +303,14 @@ export function schedule(
         present: new StepChannel<boolean>(),
         stationAt: new StepChannel<StationId | null>(),
         roomAt: new StepChannel<RoomId | null>(),
+        departed: new StepChannel<DepartureRecord | null>(),
         station: station.id,
       };
       worker.present.push(0, true);
+      // Every channel starts with a value, so a consumer never has to tell "never pushed"
+      // apart from "nothing here" — they mean the same thing and should read the same.
+      worker.roomAt.push(0, station.room ?? null);
+      worker.departed.push(0, null);
       worker.status.push(0, null);
       worker.stationAt.push(0, station.id);
       workers.set(worker.id, worker);
@@ -361,11 +387,15 @@ export function schedule(
         present: new StepChannel<boolean>(),
         stationAt: new StepChannel<StationId | null>(),
         roomAt: new StepChannel<RoomId | null>(),
+        departed: new StepChannel<DepartureRecord | null>(),
       };
       worker.present.push(at, true);
       worker.status.push(at, null);
-      // They exist and are on the floor, but hold no desk until work sends them to one.
+      // They exist and are on the floor, but hold no desk until work sends them to one,
+      // are in no department yet, and have finished nothing.
       worker.stationAt.push(at, null);
+      worker.roomAt.push(at, null);
+      worker.departed.push(at, null);
       workers.set(workerId, worker);
       const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
       positionOf.set(`worker:${workerId}`, entrance ? entrance.at : plan.plan.inbox.at);
@@ -650,7 +680,18 @@ export function schedule(
               present: new StepChannel<boolean>(),
               stationAt: new StepChannel<StationId | null>(),
               roomAt: new StepChannel<RoomId | null>(),
+              departed: new StepChannel<DepartureRecord | null>(),
             } as WorkerState);
+
+          /*
+           * Give every channel a starting value. A StepChannel that was never pushed
+           * samples as `undefined`, which a consumer then has to tell apart from `null`
+           * even though they mean the same thing here — nothing yet. This constructor
+           * builds its object behind an `as WorkerState` cast, so a missing channel is not
+           * a type error either; the cast hides exactly this class of hole.
+           */
+          if (state.departed.length === 0) state.departed.push(simTime, null);
+          if (state.roomAt.length === 0) state.roomAt.push(simTime, null);
 
           state.role = event.role;
           state.kind = 'specialist';
@@ -711,13 +752,43 @@ export function schedule(
           const state = workers.get(event.worker);
           if (!state) break;
           const key = `worker:${event.worker}`;
-          const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
-          if (entrance) moveEntity(key, state.motion, entrance.at, arriveMs);
-          state.present.push(freeAt.get(key) ?? simTime, false);
-          // They hold no desk from the moment they head for the door; the scalar below is
-          // only kept so the hot desk can be released.
-          state.stationAt.push(simTime, null);
-          state.roomAt.push(simTime, null);
+
+          /*
+           * A finished agent stays where it worked, so what it did can still be read off
+           * the floor. It does not walk to the door and it is not erased — the office used
+           * to delete a subagent the moment it left, which is why a session's most
+           * interesting participants were the ones you could never look at afterwards.
+           *
+           * Staying is not the same as being present. `present` still goes false, the
+           * status goes quiet, and the record below is what a viewer reads instead: the
+           * desk they used and the last thing they actually did, in the producer's words.
+           * The desk stays claimed until that record is discarded, which is what stops a
+           * live agent being seated on top of a finished one.
+           */
+          const restingAt = state.stationAt.sampleAt(simTime) ?? null;
+          const lastAction = state.status.sampleAt(simTime) ?? null;
+
+          if (staffing === 'dynamic') {
+            state.present.push(freeAt.get(key) ?? simTime, false);
+            state.departed.push(simTime, { station: restingAt, lastAction, at: event.occurredAt });
+          } else {
+            /*
+             * A permanent office keeps its own arrangement: a specialist is a visitor with
+             * a modelled hot desk that the NEXT visitor reuses, so leaving a record sitting
+             * in that chair would put two figures in it. They walk out, as they always did.
+             *
+             * The distinction is real rather than convenient. In a dynamic office the cast
+             * IS the record — those agents are the thing a viewer came to look at, and
+             * erasing them on exit erased the only trace of what they were for. In a
+             * modelled team the desk is the constant and the visitor is passing through.
+             */
+            const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
+            if (entrance) moveEntity(key, state.motion, entrance.at, arriveMs);
+            state.present.push(freeAt.get(key) ?? simTime, false);
+            state.stationAt.push(simTime, null);
+            state.roomAt.push(simTime, null);
+            releaseWorker(claims, event.worker);
+          }
           /*
            * And they stop working. status was never cleared here, so a departed agent's
            * last tool label stayed on its channel for the rest of the run — invisible only
@@ -725,8 +796,12 @@ export function schedule(
            * an agent walking out of the door is not doing anything right now.
            */
           state.status.push(simTime, null);
-          // Give the desk and the waiting spot back, so the next arrival can have them.
-          releaseWorker(claims, event.worker);
+          /*
+           * The waiting spot goes back, but the DESK does not. A finished agent keeps the
+           * desk its record sits on; releasing it would seat the next arrival in the same
+           * chair and draw the two inside one another — the pile this whole change exists
+           * to remove. Discarding the record is what frees the desk.
+           */
           releaseWaitingSpot(event.worker);
           if (state.station) hotDeskTaken.delete(state.station);
           /*

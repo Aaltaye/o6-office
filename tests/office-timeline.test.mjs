@@ -979,3 +979,115 @@ test('several agents working at once never stand inside one another', () => {
       overlaps.join('\n  '),
   );
 });
+
+/* --- finished agents stay, without claiming to be working --------------------
+ *
+ * A subagent used to be erased the instant it left, which meant the most interesting
+ * participants in a session were the ones you could never look at afterwards. They now
+ * stay at the desk they used, carrying a record of the last thing they actually did.
+ *
+ * The whole feature rests on staying being distinguishable from working, so that is what
+ * these pin: present goes false, the status goes quiet, and the record repeats the
+ * producer's own words rather than inventing "idle" or "done".
+ */
+
+test('a finished agent stays at its desk with a record of what it did', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash: npm test', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'assignment.finished', occurredAt: 900, label: 'done', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'specialist.left', occurredAt: 1000, label: 'Assignment complete', worker: 'agent:a' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const worker = result.workers.get('agent:a');
+  const end = result.duration;
+
+  assert.equal(worker.present.sampleAt(end), false, 'staying on the floor is not being present');
+
+  const record = worker.departed.sampleAt(end);
+  assert.ok(record, 'a finished agent leaves a record');
+  assert.equal(record.station, 'operations', 'at the desk it was actually at');
+  assert.equal(
+    record.lastAction,
+    'Bash: npm test',
+    'the producer’s own words — never "idle", "done" or anything nobody said',
+  );
+
+  // Before it stopped there is no record at all, so a scrub backwards shows it working.
+  assert.equal(worker.departed.sampleAt(0), null, 'nothing is claimed before the stop');
+});
+
+test('no worker is still working when the run is over', () => {
+  /*
+   * The regression. `status` was pushed a label on assignment.started and never pushed
+   * back, so an agent reported its last tool forever. That stayed invisible only because a
+   * departed worker was not drawn — and finished agents are now drawn. Violet means "right
+   * now", so an office full of retained agents each captioned with a live action would
+   * breach the one rule the palette exists to keep.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'run.started', occurredAt: 0, label: 'Started' });
+    for (const id of ['agent:x', 'agent:y']) {
+      emit({ type: 'specialist.joined', occurredAt: 10, label: 'Joined', worker: id, role: 'Explorer' });
+      emit({ type: 'assignment.started', occurredAt: 20, label: 'Bash', station: 'operations', worker: id });
+      emit({ type: 'assignment.finished', occurredAt: 500, label: 'ok', station: 'operations', worker: id });
+    }
+    emit({ type: 'specialist.left', occurredAt: 900, label: 'Done', worker: 'agent:x' });
+    emit({ type: 'run.finished', occurredAt: 1000, label: 'Session ended' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  for (const [id, worker] of result.workers) {
+    assert.equal(
+      worker.status.sampleAt(result.duration),
+      null,
+      `${id} is still reported as working after the run ended`,
+    );
+  }
+});
+
+test('a finished agent keeps its desk, so nobody is seated on top of it', () => {
+  // Releasing the desk on departure would seat the next arrival in the same chair and draw
+  // the two inside one another — the pile this whole change exists to remove.
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:first', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 50, label: 'Bash', station: 'operations', worker: 'agent:first' });
+    emit({ type: 'specialist.left', occurredAt: 100, label: 'Done', worker: 'agent:first' });
+    emit({ type: 'specialist.joined', occurredAt: 150, label: 'Joined', worker: 'agent:second', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 200, label: 'Bash again', station: 'operations', worker: 'agent:second' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const end = result.duration;
+  const first = result.workers.get('agent:first');
+  const second = result.workers.get('agent:second');
+
+  assert.notEqual(
+    second.stationAt.sampleAt(end),
+    first.departed.sampleAt(end).station,
+    'the newcomer takes a different desk from the one the record sits at',
+  );
+
+  const a = first.motion.sampleAt(end);
+  const b = second.motion.sampleAt(end);
+  const gap = Math.hypot(a.x - b.x, a.y - b.y);
+  assert.ok(gap >= WORKER_DIAMETER, `a record and a live agent overlap (${gap.toFixed(2)} apart)`);
+});
+
+test('a departed specialist in a MODELLED team still leaves, because its desk is reused', () => {
+  // The lead workflow is a permanent office: a visitor has a hot desk that the next visitor
+  // takes. Leaving a record in that chair would put two figures in it, so retention is
+  // deliberately a dynamic-office behaviour and this pins the difference.
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'A', worker: 'a', role: 'Researcher' });
+    emit({ type: 'specialist.left', occurredAt: 100, label: 'A done', worker: 'a' });
+  });
+  const result = schedule(events, compiled);
+  const worker = result.workers.get('a');
+  assert.equal(worker.present.sampleAt(result.duration), false);
+  assert.equal(worker.departed.sampleAt(result.duration), null, 'no record is left in a reused chair');
+});

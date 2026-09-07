@@ -29,6 +29,7 @@ import { compileFloorPlan, type CompiledPlan } from '../core/plan.ts';
 import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { PROP_SHAPES } from '../art/theme.ts';
+import { setWorkerDormant } from './stage-scene.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
 import type { Selection } from '../react/OfficeView.tsx';
 import {
@@ -50,6 +51,16 @@ import {
 
 export type OfficeStageProps = {
   plan: FloorPlan;
+  /**
+   * Finished agents the viewer has cleared away.
+   *
+   * A view filter and nothing more: it hides a record, and never touches the event stream,
+   * the timeline, the operations log or any total. What was discarded is still counted and
+   * still stated — see the Inspector's cleared line — because a discard that silently
+   * shrank what the office reports would be the same class of lie as a truncated list that
+   * does not say it is truncated.
+   */
+  dismissed?: ReadonlySet<string>;
   events: readonly OfficeEvent[];
   modeLabel: string;
   playing?: boolean;
@@ -87,8 +98,12 @@ function labelAnchorFor(station: Station): World {
   return { x: desk.x, y: desk.y, z: Math.max(1.6, tallest + LABEL_CLEARANCE) };
 }
 
+/** Stable identity, so a component with no discards does not re-render every frame. */
+const EMPTY_DISMISSED: ReadonlySet<string> = new Set();
+
 export function OfficeStage({
   plan,
+  dismissed = EMPTY_DISMISSED,
   events,
   modeLabel,
   playing = true,
@@ -282,8 +297,17 @@ export function OfficeStage({
       // --- the cast, which changes only when someone joins or leaves ---
       for (const [id, state] of timeline.workers) {
         const present = state.present.sampleAt(t) ?? false;
+        /*
+         * A finished agent stays at the desk it used so its work can still be reviewed,
+         * but it is drawn as a record rather than as a colleague: no identity colour, no
+         * shadow, and — through `stationStatus` — no caption claiming an action. The
+         * shadow matters most. A contact shadow is the claim that something is standing
+         * there; without one the figure reads as a marker on the floor, which is what it is.
+         */
+        const record = dismissed.has(id) ? null : (state.departed.sampleAt(t) ?? null);
+        const onFloor = present || Boolean(record);
         let figure = workers.get(id);
-        if (!figure && present) {
+        if (!figure && onFloor) {
           figure = buildWorker(colorForWorker(id));
           workers.set(id, figure);
           scene.add(figure);
@@ -299,7 +323,15 @@ export function OfficeStage({
           current.pickables.push(figure);
         }
         if (!figure) continue;
-        figure.visible = present;
+        figure.visible = onFloor;
+        /*
+         * Raycasting tests layers, never `visible`, so a hidden figure still swallows
+         * clicks unless its layers go with it. A discarded record must be unclickable as
+         * well as unseen.
+         */
+        if (onFloor) figure.layers.enableAll();
+        else figure.layers.disableAll();
+        setWorkerDormant(figure, materials, Boolean(record) && !present);
         const at = state.motion.sampleAt(t);
         if (at) figure.position.set(at.x, 0, at.y);
       }
@@ -388,7 +420,7 @@ export function OfficeStage({
       });
       onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, plan.stations, project, isNarrow, size.height],
+    [timeline, plan.stations, project, isNarrow, size.height, dismissed],
   );
 
   // --- camera ---------------------------------------------------------------

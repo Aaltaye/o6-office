@@ -18,6 +18,7 @@ import { ArrowUpRight, Layers3, Pause, Play, Terminal } from 'lucide-react';
 import { OfficeStage } from '@/lib/office-view/three/OfficeStage';
 import { OfficeView, type Selection } from '@/lib/office-view/react/OfficeView';
 import { Inspector } from '@/lib/office-view/react/Inspector';
+import { useDismissed } from '@/lib/office-view/react/useDismissed';
 import { codingSessionPlan } from '@/lib/floorplans/coding-session';
 import { leadReactivationPlan } from '@/lib/floorplans/lead-reactivation';
 import recordedCodingRun from '@/fixtures/recorded-coding-run.json';
@@ -54,6 +55,9 @@ export default function OfficePage() {
   const [progress, setProgress] = useState({ t: 0, duration: 1 });
   const [selection, setSelection] = useState<Selection>(null);
   const [presenting, setPresenting] = useState(false);
+
+  // Scoped per run, so tidying one recording does not tidy the other.
+  const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed(`office:${runName}`);
 
   const run = RUNS[runName];
   const events = useMemo(() => run.events, [run]);
@@ -135,6 +139,8 @@ export default function OfficePage() {
     selection,
     onSelect: setSelection,
     onTime: (t: number, duration: number) => setProgress({ t, duration }),
+    // Cleared records leave the floor as well as the roster; the count stays stated.
+    dismissed,
   };
 
   if (presenting) {
@@ -251,6 +257,10 @@ export default function OfficePage() {
           events={events}
           selection={selection}
           onSelect={setSelection}
+          dismissed={dismissed}
+          onDismiss={dismiss}
+          onDismissAll={dismissAll}
+          onRestore={restoreAll}
         />
       </div>
 
