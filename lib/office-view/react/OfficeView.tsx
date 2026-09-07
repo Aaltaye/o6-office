@@ -53,8 +53,18 @@ export type Selection =
   | { kind: 'work'; id: string }
   | null;
 
+/** Stable identity, so a host that passes nothing does not churn the animation loop. */
+const NO_DISMISSALS: ReadonlySet<string> = new Set();
+
 export type OfficeViewProps = {
   plan: FloorPlan;
+  /**
+   * Finished agents the viewer has cleared off the floor.
+   *
+   * A view filter and nothing more: it hides a record and never touches the stream, the
+   * timeline or any total. What was cleared is still counted and still stated in the panel.
+   */
+  dismissed?: ReadonlySet<string>;
   events: readonly OfficeEvent[];
   /** Shown verbatim in the corner. The viewer must always know what they are watching. */
   modeLabel: string;
@@ -105,6 +115,7 @@ function labelAnchorFor(station: Station): World {
 
 export function OfficeView({
   plan,
+  dismissed = NO_DISMISSALS,
   events,
   modeLabel,
   playing = true,
@@ -182,9 +193,17 @@ export function OfficeView({
   // render. Holding them in refs keeps `applyTime` and `select` stable.
   const onTimeRef = useRef(onTime);
   const onSelectRef = useRef(onSelect);
+  /*
+   * Read through a ref for the same reason the callbacks are: the frame loop runs outside
+   * React's render path, and rebuilding it whenever a viewer clears one record would drop
+   * the animation for a frame. A discard takes effect on the next frame, which is the next
+   * sixtieth of a second.
+   */
+  const dismissedRef = useRef(dismissed);
   useEffect(() => {
     onTimeRef.current = onTime;
     onSelectRef.current = onSelect;
+    dismissedRef.current = dismissed;
   });
 
   /**
@@ -218,8 +237,18 @@ export function OfficeView({
         const node = nodes.current.get(`worker:${id}`);
         if (!node) continue;
         const present = state.present.sampleAt(t) ?? false;
+        /*
+         * A finished agent stays at the desk it used so its work can still be reviewed —
+         * the same rule the three.js floor follows, and it has to be the same rule, because
+         * the two renderers are two views of one contract and the last time they drifted
+         * the live one quietly lost a whole panel.
+         */
+        const record = dismissedRef.current.has(id) ? null : state.departed.sampleAt(t);
         // `hidden` rather than removal: React owns the tree, the loop only styles it.
-        node.style.display = present ? '' : 'none';
+        node.style.display = present || record ? '' : 'none';
+        // A record is a marker, not a colleague: quiet, and never carrying a live colour.
+        node.style.opacity = !present && record ? '0.45' : '';
+        node.dataset.dormant = !present && record ? 'true' : 'false';
         const at = state.motion.sampleAt(t);
         if (!at) continue;
         const { sx, sy } = worldToScreen(at, plan.tile);
@@ -242,9 +271,14 @@ export function OfficeView({
       // (where the desk front will occlude them); anyone walking belongs to an aisle
       // band chosen by depth. Same for a folder: resting in a desk's tray, or in transit.
       const presentWorkers: string[] = [];
+      // Includes finished agents that are still on the floor, so the accessible outline
+      // and the click targets cover exactly what is drawn — no more, and no less.'
       const bands: Record<string, string> = {};
       for (const [id, state] of timeline.workers) {
-        if (!state.present.sampleAt(t)) continue;
+        const shown =
+          (state.present.sampleAt(t) ?? false) ||
+          Boolean(!dismissedRef.current.has(id) && state.departed.sampleAt(t));
+        if (!shown) continue;
         presentWorkers.push(id);
         const at = state.motion.sampleAt(t);
         if (!at) continue;
