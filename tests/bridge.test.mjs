@@ -919,24 +919,116 @@ test('a settings file we cannot parse stops the wizard rather than being overwri
   assert.match(steps[0].detail, /not valid JSON/);
 });
 
-test('the plan says what is already done rather than hiding it', () => {
-  // Re-running setup should tell you that you were already set up, not leave you
-  // wondering whether it took.
-  const root = mkdtempSync(join(tmpdir(), 'o6-again-'));
+/** A hook command shaped exactly like the one the CLI writes. */
+const hookCommandFor = (url, token) =>
+  `curl -s -m 2 -X POST ${url}/hook -H "Content-Type: application/json" ` +
+  `-H "x-o6-token: ${token}" --data-binary @- >/dev/null || true`;
+
+const projectWiredTo = (url, token) => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-wired-'));
   mkdirSync(join(root, '.claude'), { recursive: true });
   writeFileSync(
     join(root, '.claude', 'settings.json'),
     JSON.stringify({
-      hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: 'curl .../hook' }] }] },
+      hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: hookCommandFor(url, token) }] }] },
     }),
   );
+  return root;
+};
 
-  const survey = surveyProject({ root, port: 4141 });
+test('the plan says what is already done rather than hiding it', () => {
+  // Re-running setup should tell you that you were already set up, not leave you
+  // wondering whether it took.
+  const root = projectWiredTo('http://127.0.0.1:4141', 'the-same-token');
+  const survey = surveyProject({
+    root,
+    port: 4141,
+    url: 'http://127.0.0.1:4141',
+    token: 'the-same-token',
+  });
   assert.deepEqual(survey.connectedEvents, ['PreToolUse'], 'ours is recognised by its endpoint');
+  assert.equal(survey.wiringMatches, true);
 
   const hooks = planSteps(survey).find((step) => step.id === 'hooks');
   assert.equal(hooks.needed, false);
   assert.match(hooks.detail, /Already wired/);
+});
+
+test('hooks wired to a different token or port are refreshed, not called done', () => {
+  /*
+   * The failure the whole command exists to prevent, which the first version walked into.
+   * The token is regenerated on every run unless O6_BRIDGE_TOKEN is set, so a second run
+   * left the previous token in settings.json, announced "already wired", and every real
+   * hook then got a silent 401 — silent because the hook command ends in `|| true`, so a
+   * broken office never interrupts the work it is meant to be showing.
+   */
+  const cases = [
+    ['token', 'http://127.0.0.1:4141', 'last-weeks-token', 'http://127.0.0.1:4141', 'todays-token'],
+    ['port', 'http://127.0.0.1:4311', 'same-token', 'http://127.0.0.1:4141', 'same-token'],
+  ];
+  for (const [label, wasUrl, wasToken, nowUrl, nowToken] of cases) {
+    const root = projectWiredTo(wasUrl, wasToken);
+    const survey = surveyProject({ root, port: 4141, url: nowUrl, token: nowToken });
+
+    assert.deepEqual(survey.wiredTo, { url: wasUrl, token: wasToken }, `${label}: read off disk`);
+    assert.equal(survey.wiringMatches, false, `${label}: recognised as not this bridge`);
+
+    const hooks = planSteps(survey).find((step) => step.id === 'hooks');
+    assert.equal(hooks.needed, true, `${label}: so the hooks are rewritten`);
+    assert.match(hooks.detail, /will refresh/i, `${label}: and it says so`);
+  }
+});
+
+test('a project keeping its own scripts in .claude/hooks is not read as connected', () => {
+  /*
+   * The old marker was the four characters `/hook`, which is also a substring of `/hooks/`
+   * — the conventional directory a project keeps its hook scripts in. So a project running
+   * `bash .claude/hooks/format.sh` read as already connected to the office, and setup
+   * skipped wiring anything at all while still reporting success.
+   */
+  const root = mkdtempSync(join(tmpdir(), 'o6-theirs-'));
+  mkdirSync(join(root, '.claude'), { recursive: true });
+  writeFileSync(
+    join(root, '.claude', 'settings.json'),
+    JSON.stringify({
+      hooks: {
+        PostToolUse: [{ hooks: [{ type: 'command', command: 'bash .claude/hooks/format.sh' }] }],
+      },
+    }),
+  );
+
+  const survey = surveyProject({ root, port: 4141, url: 'http://127.0.0.1:4141', token: 'a-token' });
+  assert.deepEqual(survey.connectedEvents, [], 'their script is not our hook');
+  assert.deepEqual(survey.foreignEvents, ['PostToolUse'], 'and it is seen, so it survives');
+
+  const hooks = planSteps(survey).find((step) => step.id === 'hooks');
+  assert.equal(hooks.needed, true, 'so setup actually wires the office up');
+});
+
+test('the check replays the wiring on disk, so a stale token fails honestly', async () => {
+  /*
+   * The old check POSTed with the token this process was holding, so it could not fail for
+   * a token mismatch however wrong settings.json was — it verified the bridge, not the
+   * wiring, which is the same shortcut the command exists to catch.
+   */
+  await withBridge(async ({ port, url }) => {
+    const good = await verifyRoundTrip({
+      port,
+      token: TOKEN,
+      wiredTo: { url: url(''), token: TOKEN },
+      timeoutMs: 4000,
+    });
+    assert.equal(good.ok, true, `matching wiring should pass: ${good.reason}`);
+
+    const stale = await verifyRoundTrip({
+      port,
+      token: TOKEN,
+      wiredTo: { url: url(''), token: 'the-token-from-last-week' },
+      timeoutMs: 2500,
+    });
+    assert.equal(stale.ok, false, 'a stale token on disk must not pass');
+    assert.match(stale.reason, /token your hooks are using/, 'and must say what is wrong');
+  });
 });
 
 test('the check pushes an event down the real path and waits for it on the real stream', async () => {

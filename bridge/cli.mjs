@@ -165,7 +165,8 @@ if (command === 'setup') {
    */
   const projectRoot = value('path', process.cwd());
   const assumeYes = flag('yes') || flag('y');
-  const survey = surveyProject({ root: projectRoot, port });
+  // The survey is told what THIS run will use, so it can spot hooks pointing elsewhere.
+  const survey = surveyProject({ root: projectRoot, port, url, token });
   const steps = planSteps(survey);
   const say = (text) => process.stdout.write(text);
 
@@ -203,7 +204,31 @@ if (command === 'setup') {
     say('\n');
   }
 
-  // 1. The hooks.
+  /*
+   * 1. The office page, if it is not built.
+   *
+   * Listing a step and then not performing it is its own small lie, and without it the
+   * bridge hands over a URL that serves a 404 — which is exactly the "did it work?"
+   * confusion this command exists to remove.
+   */
+  const buildStep = steps.find((step) => step.id === 'build');
+  if (buildStep?.needed) {
+    say('  Building the office page... ');
+    const { spawnSync } = await import('node:child_process');
+    const built = spawnSync('npm', ['run', 'build:bridge'], {
+      cwd: fileURLToPath(new URL('..', import.meta.url)),
+      stdio: 'ignore',
+      shell: process.platform === 'win32',
+    });
+    say(
+      built.status === 0
+        ? 'done.\n'
+        : 'could not.\n  The bridge will still run, but its office page is not built —\n' +
+          '  run "npm run build:bridge" in the o6-office checkout.\n',
+    );
+  }
+
+  // 2. The hooks.
   const hookStep = steps.find((step) => step.id === 'hooks');
   if (hookStep?.needed) {
     try {
@@ -221,12 +246,22 @@ if (command === 'setup') {
 
   // 2. The bridge, started here so the check has something to talk to.
   const setupBridge = createBridge({ token, port, log: () => {} });
-  try {
-    await setupBridge.listen();
-  } catch (error) {
+  /*
+   * A busy port arrives as an 'error' EVENT on the server, not as a rejection from
+   * listen() — so the try/catch that used to be here was dead code, and EADDRINUSE killed
+   * the process with an unhandled-error stack trace one line after telling the user their
+   * hooks had been written.
+   */
+  const failure = await new Promise((resolve) => {
+    setupBridge.server.once('error', resolve);
+    setupBridge.listen().then(() => resolve(null), resolve);
+  });
+  if (failure) {
     say(
-      `\n  Could not start the bridge on port ${port}: ${error.message}\n` +
-        `  If something else is using that port: o6-office setup --port 4142\n\n`,
+      `\n  Could not start the bridge on port ${port}: ${failure.message}\n\n` +
+        `  If something else is using that port, choose another and re-run — the hooks are\n` +
+        `  wired to whichever port setup used, so the port has to match:\n\n` +
+        `    o6-office setup --port 4142\n\n`,
     );
     process.exit(1);
   }
@@ -240,7 +275,13 @@ if (command === 'setup') {
    * thing the user actually needs stayed broken.
    */
   say('  Checking the connection... ');
-  const check = await verifyRoundTrip({ port, token });
+  /*
+   * Re-read settings.json first, so the check replays what is ACTUALLY on disk — whether
+   * this run wrote it or an earlier one did. Using the in-process token instead is what
+   * made the old check structurally unable to fail for the one mismatch it exists to catch.
+   */
+  const { wiredTo } = surveyProject({ root: projectRoot, port, url, token });
+  const check = await verifyRoundTrip({ port, token, wiredTo });
   say(check.ok ? 'it works.\n\n' : `no.\n\n  ${check.reason}\n\n`);
 
   if (!check.ok) {
@@ -256,6 +297,8 @@ if (command === 'setup') {
 
   say(
     `  Open the office:\n\n    ${url}/#token=${token}\n\n` +
+      '  One entry in the log will read "o6-office setup check" — that was this command\n' +
+      '  proving the connection, not your agent.\n\n' +
       '  Then use Claude Code in this project and watch it work. The bridge is running in\n' +
       '  this terminal — leave it open, and press Ctrl-C when you are done.\n\n' +
       '  Not using Claude Code? Anything that can run a shell command can report:\n\n    ' +

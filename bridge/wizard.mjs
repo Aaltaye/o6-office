@@ -23,7 +23,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { O6_MARKER, settingsPathFor } from './connect.mjs';
+import { settingsPathFor } from './connect.mjs';
 
 /**
  * What we found, before changing anything.
@@ -31,7 +31,7 @@ import { O6_MARKER, settingsPathFor } from './connect.mjs';
  * Deliberately just facts. Everything the wizard decides is derived from this, so the
  * decisions can be tested without a filesystem, a terminal or a port.
  */
-export function surveyProject({ root, port }) {
+export function surveyProject({ root, port, url: expectUrl, token: expectToken }) {
   const settingsPath = settingsPathFor(root);
   const claudeDir = join(root, '.claude');
 
@@ -49,9 +49,32 @@ export function surveyProject({ root, port }) {
 
   const hooks = settings?.hooks ?? {};
   const events = Object.keys(hooks);
-  const ours = events.filter((event) =>
-    JSON.stringify(hooks[event] ?? '').includes(O6_MARKER),
-  );
+
+  /*
+   * Which hooks are OURS, and where they point.
+   *
+   * Matched on the endpoint URL, not on the substring `/hook`. That substring is also
+   * inside `/hooks/` — the conventional directory a project keeps its own hook scripts in —
+   * so `bash .claude/hooks/format.sh` was being read as "already connected to the office",
+   * and setup then skipped wiring anything at all while still reporting success.
+   *
+   * The url and token are pulled out too, because "is there a hook" is the wrong question.
+   * A hook wired to last week's token, or to a port nothing is listening on, is not a
+   * working connection — and telling somebody they are set up when every event will be
+   * refused is worse than telling them nothing.
+   */
+  const wiring = (event) => {
+    const text = JSON.stringify(hooks[event] ?? '');
+    // Anchored on the endpoint followed by a non-path character, so a project keeping
+    // its own scripts in .claude/hooks/ is not mistaken for a connection to the office.
+    const url = /(https?:\/\/[^\s"\\]+?)\/hook(?![\w/-])/.exec(text);
+    if (!url) return null;
+    const token = /x-o6-token:\s*([^\s"\\]+)/.exec(text);
+    return { url: url[1], token: token?.[1] ?? null };
+  };
+
+  const ours = events.filter((event) => wiring(event) !== null);
+  const wiredTo = ours.length ? wiring(ours[0]) : null;
 
   return {
     root,
@@ -63,6 +86,16 @@ export function surveyProject({ root, port }) {
     settingsUnreadable: unreadable,
     /** Hooks already wired to this office. */
     connectedEvents: ours,
+    /**
+     * Where those hooks actually send events, read off the command on disk.
+     *
+     * Null when nothing is wired. Compared against THIS run's url and token, because a
+     * hook pointing somewhere else is the failure the wizard exists to catch, not a state
+     * to report as success.
+     */
+    wiredTo,
+    /** True when what is on disk will reach the bridge this run is about to start. */
+    wiringMatches: wiredTo !== null && wiredTo.url === expectUrl && wiredTo.token === expectToken,
     /** Hooks belonging to something else, which must survive untouched. */
     foreignEvents: events.filter((event) => !ours.includes(event)),
     /** Is the office page built? Without it the bridge serves nothing to look at. */
@@ -104,15 +137,27 @@ export function planSteps(survey) {
       : 'The bridge serves the office from bridge/public, which is not in git. `npm run build:bridge`.',
   });
 
+  /*
+   * The hooks need writing unless what is on disk already points at THIS bridge. "There is
+   * a hook" is not the same question: the token is regenerated on every run unless
+   * O6_BRIDGE_TOKEN is set, so a second run left last run's token in settings.json while
+   * announcing "already wired" — and every real hook then got a silent 401, because the
+   * hook command ends in `|| true` so a failing office never interrupts the work.
+   */
+  const stale = survey.connectedEvents.length > 0 && !survey.wiringMatches;
   steps.push({
     id: 'hooks',
-    needed: survey.connectedEvents.length === 0,
+    needed: survey.connectedEvents.length === 0 || stale,
     title: 'Wire the hooks into .claude/settings.json',
-    detail: survey.connectedEvents.length
-      ? `Already wired: ${survey.connectedEvents.join(', ')}.`
-      : survey.foreignEvents.length
-        ? `Will add ours and keep yours (${survey.foreignEvents.join(', ')}), with a backup.`
-        : `Will write ${survey.settingsPath}, with a backup if it exists.`,
+    detail: stale
+      ? `Already wired, but to ${survey.wiredTo?.url ?? 'somewhere else'}` +
+        `${survey.wiredTo?.token && survey.wiredTo.token !== survey.expectToken ? ' with a different token' : ''}` +
+        ' — will refresh them so they reach this bridge.'
+      : survey.connectedEvents.length
+        ? `Already wired to this bridge: ${survey.connectedEvents.join(', ')}.`
+        : survey.foreignEvents.length
+          ? `Will add ours and keep yours (${survey.foreignEvents.join(', ')}), with a backup.`
+          : `Will write ${survey.settingsPath}, with a backup if it exists.`,
   });
 
   steps.push({
@@ -129,18 +174,35 @@ export function planSteps(survey) {
 }
 
 /**
- * Push one event through the running bridge and confirm it comes back out.
+ * Replay what the hooks on disk would send, and confirm it comes back out.
  *
- * The whole point is that it uses the REAL path — an HTTP POST to /hook, shaped like a
- * Claude Code hook payload, and a listener on /events, which is precisely what the office
- * subscribes to. A check that called an internal function instead would pass while the
- * thing people actually need was broken.
+ * It uses the REAL path — an HTTP POST to /hook shaped like a Claude Code hook payload,
+ * and a listener on /events, which is precisely what the office subscribes to.
+ *
+ * Crucially it uses the URL and token from the hook command ON DISK, not the ones this
+ * process happens to be holding. The first version used the in-process token and therefore
+ * could not fail for a token mismatch however wrong settings.json was — so a second run,
+ * which regenerates the token unless O6_BRIDGE_TOKEN is set, left last run's token wired up
+ * and still reported success. Every real hook then got a silent 401, because the hook
+ * command ends in `|| true` so a broken office never interrupts the work. That is the
+ * precise failure this command exists to prevent, and the check was structurally incapable
+ * of seeing it.
  *
  * Returns what it saw rather than throwing, because "it did not arrive" is a result the
  * wizard has to report honestly, not an exception to swallow.
  */
-export async function verifyRoundTrip({ port, token, timeoutMs = 4000, fetchImpl = fetch }) {
+export async function verifyRoundTrip({
+  port,
+  token,
+  /** What the hooks on disk actually send, when we can read it. This is what gets replayed. */
+  wiredTo = null,
+  timeoutMs = 4000,
+  fetchImpl = fetch,
+}) {
+  // The stream is ours to read; the POST is the hook's, so it uses the hook's credentials.
   const base = `http://127.0.0.1:${port}`;
+  const postTo = wiredTo?.url ? `${wiredTo.url}/hook` : `${base}/hook`;
+  const postToken = wiredTo?.token ?? token;
   const marker = `setup-check-${Date.now()}`;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -154,9 +216,9 @@ export async function verifyRoundTrip({ port, token, timeoutMs = 4000, fetchImpl
       return { ok: false, reason: `the office stream refused the connection (${stream.status})` };
     }
 
-    const posted = await fetchImpl(`${base}/hook`, {
+    const posted = await fetchImpl(postTo, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-o6-token': token },
+      headers: { 'content-type': 'application/json', 'x-o6-token': postToken },
       body: JSON.stringify({
         hook_event_name: 'PreToolUse',
         tool_name: 'Bash',
@@ -165,7 +227,14 @@ export async function verifyRoundTrip({ port, token, timeoutMs = 4000, fetchImpl
       }),
     });
     if (!posted.ok) {
-      return { ok: false, reason: `the bridge refused the test event (${posted.status})` };
+      return {
+        ok: false,
+        reason:
+          posted.status === 401
+            ? `the bridge refused the token your hooks are using — they are wired to ` +
+              `${wiredTo?.url ?? postTo}, which this bridge does not accept`
+            : `the bridge refused the test event (${posted.status})`,
+      };
     }
 
     // Read the stream until our own event comes back, or we run out of patience.
@@ -176,7 +245,19 @@ export async function verifyRoundTrip({ port, token, timeoutMs = 4000, fetchImpl
       const { value, done } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
-      if (buffer.includes(marker)) return { ok: true, marker };
+      if (buffer.includes(marker)) {
+        await fetchImpl(postTo, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-o6-token': postToken },
+          body: JSON.stringify({
+            hook_event_name: 'PostToolUse',
+            tool_name: 'Bash',
+            tool_use_id: marker,
+            tool_response: 'ok',
+          }),
+        }).catch(() => {});
+        return { ok: true, marker };
+      }
       // A long-lived stream replays history first; do not read forever on a busy bridge.
       if (buffer.length > 2_000_000) break;
     }
