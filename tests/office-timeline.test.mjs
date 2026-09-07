@@ -1244,3 +1244,32 @@ test('an agent that works again after leaving is no longer a record', () => {
   assert.equal(worker.departed.sampleAt(end), null, 'working again cancels the record');
   assert.equal(worker.present.sampleAt(end), true, 'and puts them back on the floor properly');
 });
+
+test('an agent that leaves mid-tool does not leave its desk claiming to be busy', () => {
+  /*
+   * A live session never sends run.finished, so nothing else would ever close an
+   * assignment its agent walked away from. Before this, the desk kept the departed agent's
+   * last command — in violet, meaning "happening right now" — for as long as the office
+   * stayed open. Measured at an hour.
+   *
+   * Null means "not happening now". It deliberately does not claim the work finished,
+   * succeeded or failed: the stream said none of those, and the operations log still shows
+   * a start with no finish, which is what actually happened.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 100, label: 'Bash: long thing', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'specialist.left', occurredAt: 200, label: 'Left mid-flight', worker: 'agent:a' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const wellAfter = result.duration + 3_600_000;
+  for (const [station, channel] of result.stationBusy) {
+    assert.equal(
+      channel.sampleAt(wellAfter),
+      null,
+      `${station} still claims to be busy long after the agent working there left`,
+    );
+  }
+});

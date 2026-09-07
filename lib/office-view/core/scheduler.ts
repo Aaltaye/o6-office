@@ -344,6 +344,31 @@ export function schedule(
   const litKey = (worker: WorkerId | null, station: StationId) => `${worker ?? 'main'}::${station}`;
 
   /**
+   * Let go of every desk this worker still had lit.
+   *
+   * Somebody can leave — or be interrupted, or crash — with a tool call still open, and
+   * nothing else closes it: a live session never sends `run.finished`, so without this the
+   * desk stayed lit with the departed agent's last command, in violet, for as long as the
+   * office was open. Verified before fixing: an agent that left at 200ms still had
+   * "Bash: long thing" burning at its desk an hour later.
+   *
+   * Pushing null says "not happening now". It deliberately does NOT say the assignment
+   * finished, succeeded or failed — the stream said none of those, and the operations log
+   * still shows a start with no finish, which is the truth of what happened.
+   */
+  const releaseLit = (worker: WorkerId, at: number) => {
+    const prefix = `${worker}::`;
+    // Deleting the entry a Map iterator is currently on is well-defined, so no snapshot.
+    for (const [key, station] of litFor) {
+      if (!key.startsWith(prefix)) continue;
+      litFor.delete(key);
+      if (busyChannel(station).sampleAt(at) === null) continue;
+      busyChannel(station).push(at, null);
+      setDeskStatus(station, at, null);
+    }
+  };
+
+  /**
    * Where somebody stands while they have no assignment at all.
    *
    * The lounge is not a department and has no desks, so spots are handed out by arrival
@@ -823,6 +848,8 @@ export function schedule(
            */
           const restingAt = state.stationAt.sampleAt(simTime) ?? null;
           const lastAction = state.status.sampleAt(simTime) ?? null;
+          // Whatever they still had running stops being claimed as running.
+          releaseLit(event.worker, simTime);
 
           if (staffing === 'dynamic') {
             /*
