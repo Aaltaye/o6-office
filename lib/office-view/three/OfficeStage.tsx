@@ -93,6 +93,15 @@ export type OfficeStageProps = {
    */
   focusOnSelect?: boolean;
   onTime?: (ms: number, duration: number) => void;
+  /**
+   * Who is on the floor at this instant, and which of them are working.
+   *
+   * Reported so the panel beside the floor can describe the same people the floor is
+   * drawing. The roster used to answer "who worked in this run" while the floor answered
+   * "who is working now" — different questions, and under "Only active" they disagreed
+   * about which agent to show. Called on the readable throttle, not per frame.
+   */
+  onCast?: (cast: { shown: string[]; working: string[]; finished: string[] }) => void;
   onSelect?: (selection: Selection) => void;
   selection?: Selection;
   schedulerOptions?: Partial<SchedulerOptions>;
@@ -125,6 +134,7 @@ export function OfficeStage({
   focusOnSelect = true,
   loop = false,
   onTime,
+  onCast,
   onSelect,
   selection = null,
   schedulerOptions,
@@ -147,12 +157,14 @@ export function OfficeStage({
   if (clock.current === null) clock.current = new SimClock(timeline.duration);
 
   const onTimeRef = useRef(onTime);
+  const onCastRef = useRef(onCast);
   const onSelectRef = useRef(onSelect);
   // The click handler is deliberately dependency-free so it never re-binds mid-drag; it
   // reads the plan through a ref rather than closing over it.
   const planRef = useRef(plan);
   useEffect(() => {
     onTimeRef.current = onTime;
+    onCastRef.current = onCast;
     onSelectRef.current = onSelect;
     planRef.current = plan;
   });
@@ -528,6 +540,19 @@ export function OfficeStage({
         compression: timeline.compression.sampleAt(t) ?? { rate: 1, batched: 0, skippedMs: 0 },
       });
       onTimeRef.current?.(t, timeline.duration);
+      // Exactly who was drawn this pass, and which of them have an action running.
+      onCastRef.current?.({
+        shown: [...timeline.workers.values()]
+          .filter((worker) => presenceAt(worker, t, { activeOnly, dismissed }).shown)
+          .map((worker) => worker.id),
+        working: [...timeline.workers.values()]
+          .filter((worker) => presenceAt(worker, t).working)
+          .map((worker) => worker.id),
+        // Finished AT THIS INSTANT — not "leaves at some point in the run".
+        finished: [...timeline.workers.values()]
+          .filter((worker) => presenceAt(worker, t).dormant)
+          .map((worker) => worker.id),
+      });
     },
     [timeline, plan, project, isNarrow, size.height, dismissed, selection, activeOnly],
   );

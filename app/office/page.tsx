@@ -57,6 +57,8 @@ export default function OfficePage() {
   const [presenting, setPresenting] = useState(false);
   /** Show only agents with something running. A view filter; the panel says it is on. */
   const [activeOnly, setActiveOnly] = useState(false);
+  /** Who the floor is drawing, reported by the renderer so the panel cannot disagree. */
+  const [cast, setCast] = useState<{ shown: string[]; working: string[]; finished: string[] } | null>(null);
 
   // Scoped per run, so tidying one recording does not tidy the other.
   const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed(`office:${runName}`);
@@ -141,6 +143,7 @@ export default function OfficePage() {
     selection,
     onSelect: setSelection,
     onTime: (t: number, duration: number) => setProgress({ t, duration }),
+    onCast: setCast,
     // Cleared records leave the floor as well as the roster; the count stays stated.
     dismissed,
     activeOnly,
@@ -157,8 +160,16 @@ export default function OfficePage() {
         <div className="office-page-floor">
           {threeD ? <OfficeStage {...stageProps} /> : <OfficeView {...stageProps} />}
         </div>
+        {/*
+          * The filter survives into presentation, so its disclosure has to as well. An
+          * audience watching a filtered floor with no note of it is being shown fewer
+          * people than are working, which is the one thing the filter must never do
+          * silently — and presentation is exactly when nobody can check.
+          */}
         <p className="office-page-presenting-hint">
-          {run.stamp} · press P or Esc to come back
+          {run.stamp}
+          {activeOnly ? ' · showing only agents with something running' : ''} · press P or Esc
+          to come back
         </p>
       </main>
     );
@@ -266,6 +277,7 @@ export default function OfficePage() {
           onRestore={restoreAll}
           activeOnly={activeOnly}
           onActiveOnly={setActiveOnly}
+          cast={cast}
         />
       </div>
 

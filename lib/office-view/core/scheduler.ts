@@ -514,7 +514,20 @@ export function schedule(
       worker.departed.push(at, null);
       workers.set(workerId, worker);
       const entrance = plan.plan.doors.find((d) => d.entrance) ?? plan.plan.doors[0];
-      positionOf.set(`worker:${workerId}`, entrance ? entrance.at : plan.plan.inbox.at);
+      const start = entrance ? entrance.at : plan.plan.inbox.at;
+      positionOf.set(`worker:${workerId}`, start);
+      /*
+       * And a standing track at that spot, so they have a position from the instant they
+       * exist rather than only once something moves them.
+       *
+       * Without it, a worker who had been seen but not yet sent anywhere sampled to no
+       * position at all — and the two renderers disagreed about what that meant. The SVG
+       * counted them as on the floor and then drew nothing, so the panel beside it listed
+       * somebody the floor did not show; the three.js floor left `figure.position` at its
+       * default and drew them at the world origin, outside the building. Neither is a
+       * thing that happened.
+       */
+      worker.motion.push({ startMs: at, endMs: at, from: start, to: start, ease: 'stepEnd' });
     }
     return worker;
   };

@@ -45,6 +45,8 @@ function App() {
   const [presenting, setPresenting] = useState(false);
   /** Show only agents with something running. Most useful here, where a live burst is. */
   const [activeOnly, setActiveOnly] = useState(false);
+  /** Who the floor is drawing, reported by the renderer so the panel cannot disagree. */
+  const [cast, setCast] = useState<{ shown: string[]; working: string[]; finished: string[] } | null>(null);
   const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed('bridge:live');
   /** Batch incoming events into one render per frame rather than one per event. */
   const pending = useRef<OfficeEvent[]>([]);
@@ -130,6 +132,7 @@ function App() {
       onSelect={setSelection}
       dismissed={dismissed}
       activeOnly={activeOnly}
+      onCast={setCast}
     />
   );
 
@@ -139,7 +142,12 @@ function App() {
     return (
       <main className="bridge is-presenting">
         <div className="bridge-floor">{floor}</div>
-        <p className="bridge-presenting-hint">Live · press P or Esc to come back</p>
+        {/* The filter survives into presentation, so its disclosure must too. */}
+        <p className="bridge-presenting-hint">
+          Live
+          {activeOnly ? ' · showing only agents with something running' : ''} · press P or Esc
+          to come back
+        </p>
       </main>
     );
   }
@@ -185,6 +193,7 @@ function App() {
           onRestore={restoreAll}
           activeOnly={activeOnly}
           onActiveOnly={setActiveOnly}
+          cast={cast}
         />
       </div>
 

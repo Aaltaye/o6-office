@@ -55,6 +55,20 @@ export type InspectorProps = {
   /** Whether the floor is currently showing only agents that are doing something. */
   activeOnly?: boolean;
   onActiveOnly?: (only: boolean) => void;
+  /**
+   * Who the floor is drawing right now, and which of them are working.
+   *
+   * Supplied by the renderer rather than derived here, because the two questions are
+   * different: this panel reads the whole event stream, the floor reads the timeline at
+   * one instant. With "Only active" on they disagreed outright — an instant where the
+   * floor drew one agent and the roster listed another. When it is absent (a host that
+   * does not pass it) the roster falls back to describing the run, and says so.
+   */
+  cast?: {
+    shown: readonly string[];
+    working: readonly string[];
+    finished: readonly string[];
+  } | null;
 };
 
 /** Stable identity so a host that passes nothing does not re-render on every frame. */
@@ -73,6 +87,7 @@ export function Inspector({
   onRestore,
   activeOnly = false,
   onActiveOnly,
+  cast = null,
 }: InspectorProps) {
   const [tab, setTab] = useState<'operations' | 'artifacts'>('operations');
 
@@ -220,6 +235,22 @@ export function Inspector({
     const people = new Map<string, Person>();
 
     for (const event of events) {
+      /*
+       * A run ending belongs to nobody, so it has to be handled BEFORE the `continue`
+       * below. It was not: workerOf returns null for run.finished, so the clause that
+       * closed everyone's work was unreachable and a finished session's agents went on
+       * being listed as running for the rest of the stream.
+       */
+      if (event.type === 'run.finished') {
+        for (const person of people.values()) {
+          if (person.runId === event.runId) {
+            person.open = 0;
+            person.current = null;
+          }
+        }
+        continue;
+      }
+
       const id = workerOf(event);
       if (!id) continue;
       const person =
@@ -251,17 +282,6 @@ export function Inspector({
          */
         if (person.open === 0) person.current = null;
       }
-      /*
-       * A run ending closes that run's work — and only that run's. Applying it to everyone
-       * unconditionally read every agent as idle for the rest of a live office, because a
-       * bridge can carry several sessions in one stream: session one ends, session two
-       * starts working, and the whole floor reported nobody doing anything.
-       */
-      if (event.type === 'run.finished') {
-        for (const other of people.values()) {
-          if (other.runId === event.runId) other.open = 0;
-        }
-      }
       if (event.type === 'specialist.left') {
         person.left = true;
         person.open = 0;
@@ -270,12 +290,35 @@ export function Inspector({
     }
 
     const all = [...people.values()];
+
+    /*
+     * When the floor has told us who it is drawing, that is the answer — a panel beside a
+     * picture must not describe a different set of people from the picture.
+     */
+    const workingNow = cast ? new Set(cast.working) : null;
+    const finishedNow = cast ? new Set(cast.finished) : null;
+    if (workingNow && finishedNow) {
+      for (const person of all) {
+        person.open = workingNow.has(person.id) ? Math.max(1, person.open) : 0;
+        if (!workingNow.has(person.id)) person.current = null;
+        /*
+         * And whether they have finished AT THIS INSTANT. Derived from the stream, the flag
+         * meant "leaves at some point in this run", so an agent was treated as finished at
+         * every earlier moment too — the floor drew them working while the roster filed
+         * them under finished and, with "Only active" on, dropped them entirely.
+         */
+        person.left = finishedNow.has(person.id);
+      }
+    }
+
     return {
       working: all.filter((person) => !person.left),
       finished: all.filter((person) => person.left && !dismissed.has(person.id)),
       clearedCount: all.filter((person) => person.left && dismissed.has(person.id)).length,
+      /** True when these states describe the instant on screen rather than the whole run. */
+      live: workingNow !== null,
     };
-  }, [events, dismissed]);
+  }, [events, dismissed, cast]);
 
   /** What the panel is scoped to, in the plan's own words. */
   const scope = useMemo(() => {
@@ -436,7 +479,10 @@ export function Inspector({
           {activeOnly ? (
             <p className="oi-cleared">
               {roster.working.filter((person) => person.open === 0).length + roster.finished.length}{' '}
-              hidden · showing only agents with something running
+              hidden ·{' '}
+              {roster.live
+                ? 'showing only agents with something running'
+                : 'showing only agents that worked at some point — this run, not this moment'}
               {onActiveOnly ? (
                 <button type="button" onClick={() => onActiveOnly(false)}>
                   Show everyone

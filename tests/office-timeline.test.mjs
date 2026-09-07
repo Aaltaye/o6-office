@@ -1708,3 +1708,40 @@ test('"only active" hides the idle and the finished, and never anything that is 
     }
   }
 });
+
+test('a worker has a position from the moment they exist', () => {
+  /*
+   * A worker who had been seen but not yet sent anywhere sampled to no position at all, and
+   * the renderers disagreed about what that meant: the SVG counted them as on the floor and
+   * drew nothing, so the panel listed somebody the floor did not show; the three.js floor
+   * left the figure at its default and drew them at the world origin, outside the building.
+   *
+   * Measured on /office at t=300s before the fix: the roster listed one agent, the floor
+   * rendered none.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'run.started', occurredAt: 0, label: 'Session opens' });
+    // Announced, and nothing else: no assignment, so nothing ever moves them.
+    emit({ type: 'specialist.joined', occurredAt: 100, label: 'Joined', worker: 'agent:idle', role: 'Explorer' });
+  });
+
+  const result = schedule(events, codingCompiled);
+
+  /*
+   * The invariant is conditional, and deliberately so: before somebody exists they are not
+   * drawn either, and `present` samples falsy there. What must never happen is being
+   * SHOWN without a place to be shown at.
+   */
+  for (const [id, worker] of result.workers) {
+    for (let t = 0; t <= result.duration; t += Math.max(1, result.duration / 20)) {
+      if (!presenceAt(worker, t).shown) continue;
+      const at = worker.motion.sampleAt(t);
+      assert.ok(
+        at && Number.isFinite(at.x) && Number.isFinite(at.y),
+        `${id} is on the floor at t=${t} with no position — one renderer would list them ` +
+          `and draw nothing, the other would draw them at the world origin`,
+      );
+    }
+  }
+});

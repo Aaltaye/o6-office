@@ -85,6 +85,15 @@ export type OfficeViewProps = {
    */
   follow?: boolean;
   onTime?: (ms: number, duration: number) => void;
+  /**
+   * Who is on the floor at this instant, and which of them are working.
+   *
+   * Reported so the panel beside the floor can describe the same people the floor is
+   * drawing. The roster used to answer "who worked in this run" while the floor answered
+   * "who is working now" — different questions, and under "Only active" they disagreed
+   * about which agent to show. Called on the readable throttle, not per frame.
+   */
+  onCast?: (cast: { shown: string[]; working: string[]; finished: string[] }) => void;
   onSelect?: (selection: Selection) => void;
   selection?: Selection;
   schedulerOptions?: Partial<SchedulerOptions>;
@@ -127,6 +136,7 @@ export function OfficeView({
   seekMs = null,
   follow = false,
   onTime,
+  onCast,
   onSelect,
   selection = null,
   schedulerOptions,
@@ -196,6 +206,7 @@ export function OfficeView({
   // Host callbacks are almost always inline arrows, so their identity changes every
   // render. Holding them in refs keeps `applyTime` and `select` stable.
   const onTimeRef = useRef(onTime);
+  const onCastRef = useRef(onCast);
   const onSelectRef = useRef(onSelect);
   /*
    * Read through a ref for the same reason the callbacks are: the frame loop runs outside
@@ -207,6 +218,7 @@ export function OfficeView({
   const activeOnlyRef = useRef(activeOnly);
   useEffect(() => {
     onTimeRef.current = onTime;
+    onCastRef.current = onCast;
     onSelectRef.current = onSelect;
     dismissedRef.current = dismissed;
     activeOnlyRef.current = activeOnly;
@@ -334,6 +346,24 @@ export function OfficeView({
       });
 
       onTimeRef.current?.(t, timeline.duration);
+      // Exactly who was drawn this pass, and which of them have an action running.
+      onCastRef.current?.({
+        shown: [...timeline.workers.values()]
+          .filter((worker) =>
+            presenceAt(worker, t, {
+              activeOnly: activeOnlyRef.current,
+              dismissed: dismissedRef.current,
+            }).shown,
+          )
+          .map((worker) => worker.id),
+        working: [...timeline.workers.values()]
+          .filter((worker) => presenceAt(worker, t).working)
+          .map((worker) => worker.id),
+        // Finished AT THIS INSTANT — not "leaves at some point in the run".
+        finished: [...timeline.workers.values()]
+          .filter((worker) => presenceAt(worker, t).dormant)
+          .map((worker) => worker.id),
+      });
     },
     // Deliberately excludes the callbacks: hosts pass inline arrows, so depending on
     // them would give `applyTime` a new identity every render, which re-fires the
@@ -893,6 +923,13 @@ export function OfficeView({
         ref={registerNode(key)}
         role="button"
         tabIndex={0}
+        /*
+         * Names the person this group draws. A desk, a department pad and a person are all
+         * clickable groups with labels, so without it there is no way — from outside — to
+         * ask the floor who it is actually drawing, which is precisely the question the
+         * panel beside it has to give the same answer to.
+         */
+        data-worker={id}
         aria-label={`${state.role}${state.assignment ? `, ${state.assignment}` : ''}. ${status ?? 'Standing by'}.`}
         style={{ cursor: 'pointer' }}
         onClick={() => select({ kind: 'worker', id }, state.motion.sampleAt(readable.t) ?? null)}
