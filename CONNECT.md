@@ -1,8 +1,8 @@
 # Connect your agent to the office
 
-You cloned this repo and you want to watch your own agent work in it. This page has two
-things: the short human version, and a prompt you can hand to your coding agent so it does
-the wiring for you.
+You want to watch your own agent work. This page has two things: the short human version,
+and a prompt you can hand to your coding agent so it does the wiring for you. You do not
+need to clone anything.
 
 The office renders **one event contract**. Claude Code gets a zero-code path because its
 hooks map onto that contract directly. Every other agent — Codex, Replit, a loop you wrote
@@ -16,47 +16,75 @@ token, and the token is written to a gitignored file.
 ## The short human version
 
 ```bash
-npm install && npm run bridge
+npx github:Aaltaye/o6-office
 ```
 
-It prints a hook block to paste and a URL to open. Use your agent as normal; the office
-follows along.
+That starts the bridge and prints a URL. Then, in the project you want to watch:
+
+```bash
+npx github:Aaltaye/o6-office connect
+```
+
+`connect` writes the hooks into that project's `.claude/settings.json` for you. It keeps
+every setting and every hook you already had, backs the file up first, and is safe to run
+twice. Add `--dry-run` to see what it would do and write nothing.
+
+Not using Claude Code? One command reports an event, so anything that can run a shell
+command can drive the office:
+
+```bash
+npx github:Aaltaye/o6-office emit assignment.started "Reading the spec" --desk reading
+```
+
+Nothing leaves your machine. The bridge binds to `127.0.0.1`, refuses to start without a
+token, and writes that token to a gitignored file.
 
 ---
 
 ## The prompt
 
 Paste everything in the box below into Claude Code, Codex, Replit's agent, or whatever you
-use, from the root of this repo.
+use, from the project you want to watch.
 
 ---
 
-> You are working in a cloned copy of **o6-office**, which renders agentic work as a
-> watchable 3D office. I want to connect **your** session to it so I can watch you work.
+> **o6-office** renders agentic work as a watchable office — desks, handoffs, a subagent
+> called in for one job. I want to connect **your** session to it so I can watch you work.
 >
 > Do this:
 >
-> **1. Start the bridge.**
-> Run `npm install` if `node_modules` is missing, then start the bridge with
-> `npm run bridge`. It binds to `127.0.0.1:4141`, generates a token if there isn't one, and
-> prints both a hook block and a URL. Leave it running. If port 4141 is taken, use
-> `npm run bridge -- --port <n>` and use that port everywhere below.
+> **1. Start the bridge**, in its own terminal, and leave it running:
+>
+> ```bash
+> npx github:Aaltaye/o6-office
+> ```
+>
+> It binds to `127.0.0.1:4141`, generates a token if there isn't one, and prints a URL.
+> If port 4141 is taken, add `--port <n>` and use that port everywhere below. (If you are
+> working inside a clone of the repo, `npm run bridge` does the same thing.)
 >
 > **2. Work out which path applies to you, and say which one you picked.**
 >
-> *If you are Claude Code:* you have hooks, so this needs no code. The bridge wrote
-> `.o6-office-hooks.json` in this repo — it contains the real token. **Merge its `hooks`
-> object into `.claude/settings.json`** (project-level is fine). Merge, do not overwrite:
-> if that file already exists, preserve every key already in it, and preserve any existing
-> hooks for other tools. Never commit the token; `.o6-office-hooks.json` is gitignored and
-> `.claude/settings.json` may not be, so if you write the token into a tracked file, tell
-> me instead of doing it.
+> *If you are Claude Code:* run `o6-office connect` in the project I want to watch. It
+> merges the hooks into `.claude/settings.json`, keeping everything already there, and
+> backs the file up. Run it with `--dry-run` first if you want to show me the change.
+> Never commit the token: `.o6-office-hooks.json` is gitignored, `.claude/settings.json`
+> may not be, so if wiring it up would write a token into a tracked file, tell me instead.
 >
 > *If you are any other agent* (Codex, Replit, a custom loop): you have no hook system, so
-> emit the contract directly. `POST` JSON to `http://127.0.0.1:4141/event` with the header
-> `x-o6-token: <token>`, where the token is in `.o6-office-hooks.json`. Send one event or an
-> array. The endpoint replies with `{ok, events, rejected}` and tells you *why* anything was
-> rejected — read that rather than guessing.
+> report events yourself. The easy way is one shell command per event, which needs no HTTP
+> client and no SDK:
+>
+> ```bash
+> o6-office emit assignment.started "Reading the spec" --desk reading
+> o6-office emit artifact.created "Wrote report.md" --desk workshop
+> o6-office emit run.finished "Session ends"
+> ```
+>
+> If you would rather speak HTTP directly, `POST` the contract to
+> `http://127.0.0.1:4141/event` with the header `x-o6-token: <token>` — one event or an
+> array. It replies with `{ok, events, rejected}` and says *why* anything was rejected;
+> read that rather than guessing.
 >
 > **3. Emit events as you work.** Minimum useful set:
 >
@@ -109,7 +137,7 @@ use, from the root of this repo.
 | endpoint | method | what |
 |---|---|---|
 | `/hook` | POST | a Claude Code hook payload, translated into the contract |
-| `/event` | POST | one contract event, or an array of them |
+| `/event` | POST | one contract event, or an array of them (`o6-office emit` wraps this) |
 | `/events` | GET | the SSE stream the office reads, replaying what happened so far |
 | `/health` | GET | `events`, `clients`, `watching`, `malformed` |
 

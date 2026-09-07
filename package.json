@@ -1,5 +1,5 @@
 {
-  "name": "sites-project",
+  "name": "o6-office",
   "version": "0.1.0",
   "engines": {
     "node": ">=22.13.0"
@@ -57,5 +57,9 @@
   },
   "type": "module",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "description": "Make invisible work visible \u2014 agentic work rendered as a watchable office.",
+  "bin": {
+    "o6-office": "bridge/cli.mjs"
+  }
 }

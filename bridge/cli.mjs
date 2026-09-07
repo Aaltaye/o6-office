@@ -20,22 +20,44 @@ import { fileURLToPath } from 'node:url';
 
 import { createBridge } from './server.mjs';
 import { loadConfig, suggestToken } from './config.mjs';
+import { connectProject } from './connect.mjs';
+import { buildEvent, sendEvent, EMITTABLE, DESKS } from './emit.mjs';
 
 const argv = process.argv.slice(2);
+/** The first bare word is the subcommand; everything else keeps working as it did. */
+const command = argv[0] && !argv[0].startsWith('--') ? argv[0] : 'bridge';
+const positional = argv.filter((arg, index) => {
+  if (index === 0 && arg === command && command !== 'bridge') return false;
+  if (arg.startsWith('--')) return false;
+  // Drop values belonging to a preceding --flag.
+  return !(index > 0 && argv[index - 1].startsWith('--'));
+});
 const flag = (name) => argv.includes(`--${name}`);
 const value = (name, fallback) => {
   const index = argv.indexOf(`--${name}`);
   return index > -1 ? argv[index + 1] : fallback;
 };
 
-if (flag('help') || flag('h')) {
+if (flag('help') || flag('h') || command === 'help') {
   process.stdout.write(
-    'o6-office bridge — stream a Claude Code session into the office\n\n' +
+    'o6-office — watch your agent work\n\n' +
+      'COMMANDS\n' +
+      '  o6-office                    start the bridge and print how to connect\n' +
+      '  o6-office connect            wire this project up to Claude Code for you\n' +
+      '  o6-office emit <type> <label>  report one event from any other runtime\n\n' +
+      'BRIDGE\n' +
       '  --port <n>       port to listen on (default 4141, or O6_BRIDGE_PORT)\n' +
       '  --token <s>      token to use (default O6_BRIDGE_TOKEN, else generated)\n' +
       '  --hooks-only     print the hook block and exit without starting\n' +
-      '  --write-snippet  also write bridge/hooks/settings-snippet.json\n' +
-      '  --help\n\n' +
+      '  --write-snippet  also write bridge/hooks/settings-snippet.json\n\n' +
+      'CONNECT\n' +
+      '  --path <dir>     project to wire up (default: the current directory)\n' +
+      '  --dry-run        show what would change, write nothing\n\n' +
+      'EMIT\n' +
+      `  --desk <name>    one of: ${DESKS.join(', ')}\n` +
+      '  --worker <id>    who did it, e.g. agent:planner\n' +
+      '  --detail <text>  a second line, shown under the label\n' +
+      `  types: ${EMITTABLE.join(', ')}\n\n` +
       'Binds to 127.0.0.1 only. Nothing is sent off this machine.\n',
   );
   process.exit(0);
@@ -108,10 +130,13 @@ function writeReadyToPaste() {
 function printInstructions({ hooksPath }) {
   process.stdout.write(
     `\n  O6 Office — bridge\n\n` +
-      `  1. Merge the hooks in this file into .claude/settings.json:\n\n` +
+      `  1. In your project, run:  o6-office connect\n` +
+      `     (or merge this file into .claude/settings.json yourself:)\n\n` +
       `     ${hooksPath}\n\n` +
       `  2. Open the office:\n\n     ${url}/#token=${token}\n\n` +
       `  3. Use Claude Code as normal. The office follows along.\n\n` +
+      `  Not using Claude Code? Anything that runs a shell command can report:\n` +
+      `     o6-office emit assignment.started "Reading the spec" --desk reading\n\n` +
       (officeBuilt
         ? ''
         : `  Note: the office page is not built yet — run \`npm run build:bridge\`.\n` +
@@ -124,6 +149,74 @@ function printInstructions({ hooksPath }) {
 if (flag('hooks-only')) {
   // Explicitly asked for the JSON itself, so print it rather than a path.
   process.stdout.write(`${JSON.stringify(snippet, null, 2)}\n`);
+  process.exit(0);
+}
+
+if (command === 'connect') {
+  /*
+   * Hand-merging ~90 lines of JSON into settings.json is where people give up. This does
+   * it, but conservatively: it never drops a key it did not add, it is idempotent, and it
+   * leaves a backup — because quietly damaging somebody's editor config would be a far
+   * worse bug than a visualisation not working.
+   */
+  const projectRoot = value('path', process.cwd());
+  const dryRun = flag('dry-run');
+  let report;
+  try {
+    report = connectProject({ projectRoot, hooks: snippet.hooks, dryRun });
+  } catch (error) {
+    process.stderr.write(`\n  ${error.message}\n\n`);
+    process.exit(1);
+  }
+
+  const changed = [...report.added, ...report.replaced];
+  process.stdout.write(
+    `\n  O6 Office — ${dryRun ? 'connect (dry run)' : 'connected'}\n\n` +
+      `  ${dryRun ? 'Would write' : 'Wrote'}: ${report.path}\n` +
+      (report.backup ? `  Backed up:  ${report.backup}\n` : '') +
+      `  Hooks:      ${changed.length} (${report.replaced.length} refreshed)\n` +
+      (report.kept.length
+        ? `  Untouched:  hooks you already had — ${report.kept.join(', ')}\n`
+        : '') +
+      `\n  Now run \`o6-office\` in another terminal and open the URL it prints.\n` +
+      `  Your session never leaves this machine.\n\n`,
+  );
+  process.exit(0);
+}
+
+if (command === 'emit') {
+  /*
+   * The escape hatch for every runtime that is not Claude Code. If your agent can run a
+   * shell command, it can drive the office — no HTTP client, no SDK, no envelope to get
+   * right.
+   */
+  let event;
+  try {
+    event = buildEvent({
+      type: positional[0],
+      label: positional.slice(1).join(' ') || value('label', ''),
+      desk: value('desk', undefined),
+      worker: value('worker', undefined),
+      detail: value('detail', undefined),
+      work: value('work', undefined),
+    });
+  } catch (error) {
+    process.stderr.write(`\n  ${error.message}\n\n`);
+    process.exit(1);
+  }
+
+  const result = await sendEvent({ event, url, token });
+  if (result.offline) {
+    // Not an error worth failing a build over: the office being down must never break the
+    // work it is watching.
+    process.stdout.write(`  (no bridge on ${url} — nothing recorded)\n`);
+    process.exit(0);
+  }
+  if (!result.ok) {
+    process.stderr.write(`  Refused (${result.status}): ${JSON.stringify(result.body)}\n`);
+    process.exit(1);
+  }
+  process.stdout.write(`  ${event.type}${event.station ? ` at ${event.station}` : ''}\n`);
   process.exit(0);
 }
 

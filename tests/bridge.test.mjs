@@ -8,13 +8,15 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, mkdirSync, rmSync, appendFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, rmSync, appendFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { createBridge } from '../bridge/server.mjs';
 import { loadConfig, requireToken, suggestToken } from '../bridge/config.mjs';
 import { TranscriptWatcher, readSessionUsage, subagentsDirFor } from '../bridge/transcript.mjs';
+import { connectProject, mergeHooks } from '../bridge/connect.mjs';
+import { buildEvent, sendEvent } from '../bridge/emit.mjs';
 import { isOfficeEvent } from '../lib/office-view/core/events.ts';
 
 const TOKEN = 'test-token-that-is-long-enough';
@@ -548,4 +550,153 @@ test('the office UI is never served from a stale cache', async () => {
       assert.equal(res.status, 404);
     }
   });
+});
+
+/* --- connecting a project, and reporting from anything else -----------------
+ *
+ * These two commands exist because the step people gave up at was hand-merging ~90 lines
+ * of JSON, and because every runtime that is not Claude Code had no path in at all.
+ * `connect` edits somebody's editor configuration, so its tests are mostly about what it
+ * must NOT do.
+ */
+
+/** A throwaway project directory, optionally with existing Claude settings. */
+function withProject(existing, run) {
+  const root = mkdtempSync(join(tmpdir(), 'o6-project-'));
+  if (existing) {
+    mkdirSync(join(root, '.claude'), { recursive: true });
+    writeFileSync(join(root, '.claude', 'settings.json'), JSON.stringify(existing, null, 2));
+  }
+  try {
+    run(root);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
+const HOOKS = {
+  PreToolUse: [{ hooks: [{ type: 'command', command: 'curl -s http://127.0.0.1:4141/hook' }] }],
+  Stop: [{ hooks: [{ type: 'command', command: 'curl -s http://127.0.0.1:4141/hook' }] }],
+};
+
+test('connecting never drops settings or hooks that were already there', () => {
+  // The worst bug this command could have is quietly damaging an editor config. Someone
+  // else's hook is not ours to reorganise.
+  withProject(
+    {
+      permissions: { allow: ['Bash(ls)'] },
+      hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: 'echo theirs' }] }] },
+    },
+    (root) => {
+      const report = connectProject({ projectRoot: root, hooks: HOOKS });
+      const written = JSON.parse(readFileSync(report.path, 'utf8'));
+
+      assert.deepEqual(written.permissions, { allow: ['Bash(ls)'] }, 'unrelated settings kept');
+      assert.equal(written.hooks.PreToolUse.length, 2, 'theirs plus ours');
+      assert.ok(JSON.stringify(written.hooks.PreToolUse).includes('echo theirs'), 'theirs survived');
+      assert.ok(report.backup && existsSync(report.backup), 'the original was backed up');
+    },
+  );
+});
+
+test('connecting twice does not stack up duplicate hooks', () => {
+  withProject({}, (root) => {
+    connectProject({ projectRoot: root, hooks: HOOKS });
+    const second = connectProject({ projectRoot: root, hooks: HOOKS });
+    const written = JSON.parse(readFileSync(second.path, 'utf8'));
+
+    assert.equal(written.hooks.PreToolUse.length, 1, 'ours replaced, not appended');
+    assert.deepEqual(second.replaced.sort(), ['PreToolUse', 'Stop'], 'and it says it refreshed them');
+  });
+});
+
+test('connecting works in a project that has no settings file yet', () => {
+  withProject(null, (root) => {
+    const report = connectProject({ projectRoot: root, hooks: HOOKS });
+    assert.equal(report.existed, false);
+    assert.equal(report.backup, null, 'nothing to back up');
+    assert.ok(existsSync(report.path), 'the file and its directory were created');
+  });
+});
+
+test('a dry run changes nothing on disk', () => {
+  withProject({ permissions: {} }, (root) => {
+    const before = readFileSync(join(root, '.claude', 'settings.json'), 'utf8');
+    const report = connectProject({ projectRoot: root, hooks: HOOKS, dryRun: true });
+    assert.equal(readFileSync(report.path, 'utf8'), before, 'file untouched');
+    assert.ok(report.added.length > 0, 'but it still reports what it would do');
+  });
+});
+
+test('connecting refuses to overwrite settings it cannot parse', () => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-project-'));
+  mkdirSync(join(root, '.claude'), { recursive: true });
+  writeFileSync(join(root, '.claude', 'settings.json'), '{ this is not json');
+  try {
+    assert.throws(
+      () => connectProject({ projectRoot: root, hooks: HOOKS }),
+      /not valid JSON/,
+      'better to refuse than to destroy a file we cannot read',
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('emit refuses an event that would render as a blank desk', () => {
+  // A label is the line a person reads. An event without one draws a silent box, which is
+  // worse than no event at all.
+  assert.throws(() => buildEvent({ type: 'note', label: '   ' }), /needs a label/);
+  assert.throws(() => buildEvent({ type: 'made.up', label: 'x' }), /Unknown event type/);
+  assert.throws(
+    () => buildEvent({ type: 'assignment.started', label: 'Reading' }),
+    /happens AT a desk/,
+    'work has to happen somewhere',
+  );
+});
+
+test('emit builds a contract-shaped event from plain command-line arguments', () => {
+  const event = buildEvent({
+    type: 'assignment.started',
+    label: 'Reading the spec',
+    desk: 'reading',
+    worker: 'agent:planner',
+    detail: 'src/spec.md',
+  });
+  assert.deepEqual(event, {
+    type: 'assignment.started',
+    label: 'Reading the spec',
+    station: 'reading',
+    worker: 'agent:planner',
+    detail: 'src/spec.md',
+  });
+});
+
+test('emit stays quiet when no bridge is listening', async () => {
+  // The office being down must never break the work it is watching — the same reason the
+  // Claude Code hooks all end in `|| true`.
+  const result = await sendEvent({
+    event: { type: 'note', label: 'x' },
+    url: 'http://127.0.0.1:9',
+    token: 'irrelevant',
+    fetchImpl: async () => {
+      throw new Error('ECONNREFUSED');
+    },
+  });
+  assert.equal(result.offline, true);
+  assert.equal(result.ok, false);
+});
+
+test('the merge itself is pure — it never mutates the settings handed to it', () => {
+  // connectProject touches a real disk; this is the part worth reasoning about, so it is
+  // separable and side-effect free.
+  const original = { hooks: { Stop: [{ hooks: [{ type: 'command', command: 'echo theirs' }] }] } };
+  const frozen = JSON.stringify(original);
+
+  const { settings, added, replaced } = mergeHooks(original, HOOKS);
+
+  assert.equal(JSON.stringify(original), frozen, 'the input was not modified');
+  assert.equal(settings.hooks.Stop.length, 2, 'theirs kept, ours added');
+  assert.deepEqual(added.sort(), ['PreToolUse', 'Stop']);
+  assert.deepEqual(replaced, [], 'nothing of ours was there to replace');
 });
