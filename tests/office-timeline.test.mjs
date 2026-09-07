@@ -27,6 +27,7 @@ import {
 import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
 import { frameOffice } from '../lib/office-view/core/framing.ts';
+import { planBox, neededShell } from '../lib/office-view/three/room-kit.ts';
 // A worker's drawn footprint, shared with the renderer so seating and drawing cannot drift.
 import { WORKER_DIAMETER } from '../lib/office-view/core/figure.ts';
 import { createEmitter } from '../lib/office-view/core/events.ts';
@@ -1436,4 +1437,80 @@ test('the frame grows with the crowd and shrinks back when it clears', () => {
   const small = frameOffice({ x: 0, y: 0 }, 8, { minX: -2, maxX: 2, minY: -2, maxY: 2 });
   assert.ok(big.radius > small.radius, 'a bigger crowd needs a wider shot');
   assert.equal(small.radius, 8, 'and it comes all the way back to the plan when they go');
+});
+
+/* --- the building grows to hold the people in it ------------------------------ */
+
+test('an office with nobody outside it is drawn at its own size', () => {
+  // The ordinary case must be untouched: an empty office is exactly its plan.
+  const base = planBox(codingSessionPlan);
+  assert.deepEqual(neededShell(codingSessionPlan, null), base);
+
+  // A crowd well inside the building does not move a wall either.
+  const inside = neededShell(codingSessionPlan, { minX: 5, maxX: 12, minZ: 4, maxZ: 10 });
+  assert.deepEqual(inside, base, 'people indoors are not a reason to rebuild the room');
+});
+
+test('the building grows outward, in whole steps, only on the sides that need it', () => {
+  const base = planBox(codingSessionPlan);
+  // A crowd escaping to the east only.
+  const grown = neededShell(codingSessionPlan, {
+    minX: 10,
+    maxX: base.maxX + 3,
+    minZ: 8,
+    maxZ: 10,
+  });
+  assert.ok(grown.maxX > base.maxX, 'the east wall moved out to hold them');
+  assert.equal(grown.minX, base.minX, 'and the west wall did not move for no reason');
+  assert.equal(grown.minY, base.minY);
+  assert.equal(grown.maxY, base.maxY);
+
+  // Steps, so a crowd drifting by centimetres cannot rebuild the room every frame.
+  const nudged = neededShell(codingSessionPlan, {
+    minX: 10,
+    maxX: base.maxX + 3.2,
+    minZ: 8,
+    maxZ: 10,
+  });
+  assert.deepEqual(nudged, grown, 'a small shift inside the same step changes nothing');
+});
+
+test('the floor really does cover everyone, at every size measured', () => {
+  /*
+   * The property, rather than the mechanism: schedule real bursts and assert that not one
+   * agent stands off the floor. 120 concurrent agents into a single department is well past
+   * anything Claude Code runs, and is the case that put people outside the walls.
+   */
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  for (const count of [20, 50, 120]) {
+    const events = stream((emit) => {
+      for (let i = 0; i < count; i += 1) {
+        const worker = `agent:s${i}`;
+        emit({ type: 'specialist.joined', occurredAt: i, label: 'Joined', worker, role: 'Explorer' });
+        emit({ type: 'assignment.started', occurredAt: 500 + i, label: `Bash ${i}`, station: 'operations', worker });
+      }
+    });
+    const result = schedule(events, codingCompiled);
+    const t = result.duration;
+    const placed = [...result.workers.values()].map((w) => w.motion.sampleAt(t)).filter(Boolean);
+
+    const crowd = placed.reduce(
+      (box, at) => ({
+        minX: Math.min(box.minX, at.x),
+        maxX: Math.max(box.maxX, at.x),
+        minZ: Math.min(box.minZ, at.y),
+        maxZ: Math.max(box.maxZ, at.y),
+      }),
+      { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
+    );
+    const floor = neededShell(codingSessionPlan, crowd);
+
+    for (const at of placed) {
+      assert.ok(
+        at.x >= floor.minX && at.x <= floor.maxX && at.y >= floor.minY && at.y <= floor.maxY,
+        `${count} agents: somebody stands at (${at.x.toFixed(1)}, ${at.y.toFixed(1)}), off a floor of ` +
+          `x ${floor.minX.toFixed(1)}..${floor.maxX.toFixed(1)} y ${floor.minY.toFixed(1)}..${floor.maxY.toFixed(1)}`,
+      );
+    }
+  }
 });

@@ -52,6 +52,9 @@ function box(w: number, h: number, d: number, mat: THREE.Material, x: number, y:
   return mesh;
 }
 
+/** The rectangle the building covers. */
+export type ShellBox = { minX: number; maxX: number; minY: number; maxY: number };
+
 /** Bounds of everything on the plan, so walls can be placed around it. */
 export function planBox(plan: FloorPlan) {
   const points: World[] = [
@@ -81,9 +84,18 @@ export function planBox(plan: FloorPlan) {
  * be architecturally honest and completely unusable — you would be looking at the inside
  * of a box. This is the same trick a stage set uses.
  */
-export function buildRoomShell(plan: FloorPlan) {
+export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
   const group = new THREE.Group();
-  const bounds = planBox(plan);
+  /*
+   * The box the building covers.
+   *
+   * Defaults to the plan's own extent, which is the ordinary office. It can be given a
+   * larger one because a burst of concurrent agents stands beyond the desks — measured,
+   * fifty agents into a single department reach 1.4 units past the floor and a hundred and
+   * twenty reach 5.7 — and a room whose floor stops under their feet is a worse drawing
+   * than a room that is bigger than it needs to be.
+   */
+  const bounds = over ?? planBox(plan);
   const width = bounds.maxX - bounds.minX;
   const depth = bounds.maxY - bounds.minY;
   const cx = (bounds.minX + bounds.maxX) / 2;
@@ -384,4 +396,36 @@ export function buildCooler(at: World) {
   bottle.castShadow = true;
   group.add(bottle);
   return group;
+}
+
+/**
+ * How much the building grows at a time.
+ *
+ * Coarse on purpose. The office is redrawn when this changes, so a fine step would mean
+ * rebuilding the shell constantly as a crowd shifts by centimetres; a coarse one means it
+ * happens a few times in the worst session anybody will run. Measured: a hundred and twenty
+ * agents in one department reach 5.7 units past the floor, so two steps covers the extreme.
+ */
+const GROWTH_STEP = 4;
+
+/**
+ * The box the building has to cover: its own furniture, plus anyone standing outside it.
+ *
+ * Rounded outward to whole steps, which is what stops it flickering between two sizes when
+ * somebody hovers on a boundary.
+ */
+export function neededShell(
+  plan: FloorPlan,
+  crowd: { minX: number; maxX: number; minZ: number; maxZ: number } | null,
+): ShellBox {
+  const base = planBox(plan);
+  if (!crowd) return base;
+  const air = 2.5;
+  const out = (over: number) => Math.ceil(Math.max(0, over) / GROWTH_STEP) * GROWTH_STEP;
+  return {
+    minX: base.minX - out(base.minX - (crowd.minX - air)),
+    maxX: base.maxX + out(crowd.maxX + air - base.maxX),
+    minY: base.minY - out(base.minY - (crowd.minZ - air)),
+    maxY: base.maxY + out(crowd.maxZ + air - base.maxY),
+  };
 }

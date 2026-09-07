@@ -25,6 +25,7 @@ import { palette, PROP_SHAPES, geometry } from '../art/theme.ts';
 import {
   buildBooks,
   buildCooler,
+  type ShellBox,
   buildDeskKit,
   buildMeetingArea,
   buildPlant,
@@ -97,7 +98,7 @@ export type Materials = ReturnType<typeof createMaterials>;
  * they are worth the cost — but a single soft key is plenty. Multiple shadow-casting
  * lights would double the cost for a picture nobody would read as better.
  */
-export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
+export function addLighting(scene: THREE.Scene, plan: FloorPlan, over?: ShellBox) {
   const centre = planCentre(plan);
 
   // Sky above, warm bounce off the wood below.
@@ -105,7 +106,7 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
 
   // Daylight, coming through the window wall on the west so the shadows agree with the
   // architecture. A key light from nowhere is the fastest way to make a room feel fake.
-  const bounds = planBox(plan);
+  const bounds = over ?? planBox(plan);
   const key = new THREE.DirectionalLight(0xfff1dc, 2.9);
   key.position.set(bounds.minX - 6, 11, centre.z + 4);
   key.target.position.set(centre.x, 0, centre.z);
@@ -113,8 +114,21 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.near = 1;
   key.shadow.camera.far = 60;
-  // Fit the shadow frustum to the floor. Too wide and the shadows turn to mush.
-  const extent = Math.max(plan.rooms.length * 2, 16);
+  /*
+   * Fit the shadow frustum to the floor. Too wide and the shadows turn to mush; too narrow
+   * and things simply stop casting one.
+   *
+   * It used to be derived from the NUMBER of rooms, which is a proxy for extent that has
+   * nothing to do with extent: eight rooms gave 16 against a floor 21.2 across, so the far
+   * corners were already outside it before the floor was allowed to grow at all.
+   */
+  const extent =
+    Math.max(
+      Math.abs(bounds.maxX - centre.x),
+      Math.abs(centre.x - bounds.minX),
+      Math.abs(bounds.maxY - centre.z),
+      Math.abs(centre.z - bounds.minY),
+    ) + 2;
   Object.assign(key.shadow.camera, {
     left: -extent,
     right: extent,
@@ -130,6 +144,29 @@ export function addLighting(scene: THREE.Scene, plan: FloorPlan) {
   const fill = new THREE.DirectionalLight(0xdfe8ff, 0.6);
   fill.position.set(centre.x + 8, 9, centre.z + 10);
   scene.add(fill);
+
+  // Handed back so the frustum can follow a floor that grows.
+  return { key };
+}
+
+/**
+ * Re-fit the daylight to a floor that has changed size.
+ *
+ * Same arithmetic as above, applied to a light that already exists — growing the room
+ * without this leaves everything past the old extent casting no shadow at all, which reads
+ * as figures floating rather than standing.
+ */
+export function refitLighting(key: THREE.DirectionalLight, centre: THREE.Vector3, bounds: ShellBox) {
+  key.position.set(bounds.minX - 6, 11, centre.z + 4);
+  const extent =
+    Math.max(
+      Math.abs(bounds.maxX - centre.x),
+      Math.abs(centre.x - bounds.minX),
+      Math.abs(bounds.maxY - centre.z),
+      Math.abs(centre.z - bounds.minY),
+    ) + 2;
+  Object.assign(key.shadow.camera, { left: -extent, right: extent, top: extent, bottom: -extent });
+  key.shadow.camera.updateProjectionMatrix();
 }
 
 /** Middle of the floor, in scene space — used to aim lights and the camera. */
@@ -214,7 +251,7 @@ const DARK_PROPS = new Set<PropKind>(['screen', 'rack']);
  * that desk is live, so the animation loop can light a department without searching the
  * scene graph every frame.
  */
-export function buildStaticScene(plan: FloorPlan, materials: Materials) {
+export function buildStaticScene(plan: FloorPlan, materials: Materials, over?: ShellBox) {
   const root = new THREE.Group();
   const liveMeshes = new Map<string, THREE.Mesh[]>();
   const stationAnchors = new Map<string, THREE.Vector3>();
@@ -223,7 +260,7 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
   // Only two walls, and only the ones furthest from the camera — a fully enclosed room
   // would be architecturally honest and completely unusable.
   const centre = planCentre(plan);
-  const shell = buildRoomShell(plan);
+  const shell = buildRoomShell(plan, over);
   root.add(shell.group);
   const bounds = shell.bounds;
 
@@ -362,7 +399,9 @@ export function buildStaticScene(plan: FloorPlan, materials: Materials) {
     root.add(frame);
   }
 
-  return { root, liveMeshes, stationAnchors };
+  // `shell` is handed back so the building can be rebuilt at a larger size later without
+  // disturbing anything else in the scene — see growShell.
+  return { root, liveMeshes, stationAnchors, shell: shell.group };
 }
 
 /**
@@ -667,4 +706,39 @@ export function setWorkerDormant(
     if (dormant) part.material = materials.dormantWorker;
     else if (live) part.material = live;
   });
+}
+
+
+/**
+ * Rebuild the building at a new size.
+ *
+ * A burst of concurrent agents stands beyond the desks, and past about forty in one
+ * department they stand beyond the floor as well — measured, fifty reach 1.4 units past it
+ * and a hundred and twenty reach 5.7. A room whose floor stops under people's feet is a
+ * worse drawing than a room that is larger than it strictly needs to be, so the building
+ * grows to hold them: floor, plank seams, both walls and the windows, all of it.
+ *
+ * Deliberately a swap rather than an animation. The office growing is a decision about how
+ * to DRAW the run, not something that happened in it, and this project animates only what
+ * happened — so it cuts, the same way an unexplained position change cuts rather than
+ * walking. It is also why the trigger is quantised: a wall that crept outward a
+ * centimetre per frame would be exactly the invented motion the rule exists to forbid.
+ *
+ * The WebGL context, canvas, camera, workers, folders and pickables are all untouched; only
+ * this one group is replaced, and the old one's geometry is disposed on the way out.
+ */
+export function growShell(
+  root: THREE.Group,
+  previous: THREE.Group,
+  plan: FloorPlan,
+  bounds: ShellBox,
+): THREE.Group {
+  root.remove(previous);
+  previous.traverse((object) => {
+    if (object instanceof THREE.Mesh) object.geometry.dispose();
+  });
+  const next = buildRoomShell(plan, bounds).group;
+  // Behind everything else that is already in the group, as the original build had it.
+  root.add(next);
+  return next;
 }

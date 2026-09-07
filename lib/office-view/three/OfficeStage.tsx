@@ -30,7 +30,8 @@ import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { PROP_SHAPES } from '../art/theme.ts';
 import { frameOffice } from '../core/framing.ts';
-import { setWorkerDormant } from './stage-scene.ts';
+import { growShell, refitLighting, setWorkerDormant } from './stage-scene.ts';
+import { type ShellBox, neededShell, planBox } from './room-kit.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
 import type { Selection } from '../react/OfficeView.tsx';
 import {
@@ -167,6 +168,11 @@ export function OfficeStage({
      * which side it is on, which is exactly what framing a lopsided crowd needs to know.
      */
     crowdBox: { minX: number; maxX: number; minZ: number; maxZ: number } | null;
+    /** The building's current extent, and the pieces needed to rebuild it larger. */
+    shellBox: ShellBox;
+    shell: THREE.Group;
+    keyLight: THREE.DirectionalLight;
+    root: THREE.Group;
   } | null>(null);
 
   /** Text the viewer reads. Updated a few times a second, never per frame. */
@@ -203,10 +209,11 @@ export function OfficeStage({
     scene.background = new THREE.Color('#E9E4DA');
     // A little haze so the far wall does not read as a hard cut-out.
     scene.fog = new THREE.Fog('#E9E4DA', 26, 62);
-    addLighting(scene, plan);
+    const baseBox = planBox(plan);
+    const { key } = addLighting(scene, plan, baseBox);
 
     const materials = createMaterials();
-    const { root, liveMeshes } = buildStaticScene(plan, materials);
+    const { root, liveMeshes, shell } = buildStaticScene(plan, materials, baseBox);
     scene.add(root);
 
     const centre = planCentre(plan);
@@ -226,6 +233,10 @@ export function OfficeStage({
       centre,
       radius,
       crowdBox: null,
+      shellBox: baseBox,
+      shell,
+      keyLight: key,
+      root,
     };
 
     return () => {
@@ -382,6 +393,32 @@ export function OfficeStage({
       }
       current.crowdBox = crowdBox;
 
+      /*
+       * Grow the building to hold whoever is standing in it.
+       *
+       * Quantised to GROWTH_STEP so this happens a handful of times at most, and only when
+       * a crowd genuinely crosses a boundary — a wall that crept outward a little every
+       * frame would be animating something that never happened, which is the one thing this
+       * project does not do. It cuts instead.
+       *
+       * It grows and shrinks, but never below the plan's own extent: an office is at least
+       * as big as its own furniture, however empty it is.
+       */
+      const wanted = neededShell(plan, crowdBox);
+      const box = current.shellBox;
+      if (
+        wanted.minX !== box.minX ||
+        wanted.maxX !== box.maxX ||
+        wanted.minY !== box.minY ||
+        wanted.maxY !== box.maxY
+      ) {
+        current.shellBox = wanted;
+        current.shell = growShell(current.root, current.shell, plan, wanted);
+        // The daylight has to cover the new floor or everything past the old edge stops
+        // casting a shadow, which reads as figures floating rather than standing.
+        refitLighting(current.keyLight, current.centre, wanted);
+      }
+
       for (const [id, state] of timeline.work) {
         const at = state.motion.sampleAt(t);
         let folder = folders.get(id);
@@ -470,7 +507,7 @@ export function OfficeStage({
       });
       onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, plan.stations, project, isNarrow, size.height, dismissed, selection],
+    [timeline, plan, project, isNarrow, size.height, dismissed, selection],
   );
 
   // --- camera ---------------------------------------------------------------
