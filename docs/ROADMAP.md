@@ -37,9 +37,17 @@ version of this need is item 2 below.
 
 ---
 
+## Status
+
+All seven shipped. What follows is kept as the record of what was built and why, including
+the three ideas that were considered and declined — that list is the more useful half, and
+it is the one worth re-reading before adding anything.
+
+---
+
 ## Ranked
 
-### 1. Presentation mode — *small*
+### 1. Presentation mode — *done*
 
 One keypress hides the chrome, fixes the camera, and plays a run cleanly, with the
 compression stamp still legible in frame.
@@ -53,7 +61,7 @@ meeting without a browser full of dev controls.
 Deterministic by construction: it drives `seekMs` rather than wall-clock playback, so the
 same run produces the same frames every time.
 
-### 2. Click a person — *small*
+### 2. Click a person — *done*
 
 You cannot currently select a worker on any surface that ships. `Selection` has a `worker`
 kind, and the SVG outline uses it, but the three.js `pickables` array contains only desk
@@ -66,7 +74,7 @@ actually ran, where they have been — the `stationAt` channel already carries t
 their own token burn, which `transcript.mjs` already resolves per subagent and nothing has
 ever displayed. All of it is already in the timeline. None of it is currently reachable.
 
-### 3. What the run produced — *medium*
+### 3. What the run produced — *done*
 
 The office shows process and never output. `artifact.created` is emitted, carries
 `{id, name, kind}`, and is rendered nowhere: a run can write forty files and the office will
@@ -77,7 +85,7 @@ current selection like the operations log — is the analogue of a notes "Brain"
 events we already have rather than a parallel store. It answers the question a viewer asks
 immediately after "what happened": *so what came out of it?*
 
-### 4. Keyboard control — *small*
+### 4. Keyboard control — *done*
 
 Number keys jump to a department; `space` plays and pauses; `←`/`→` scrub; `R` toggles the
 renderer; `Esc` clears the selection.
@@ -86,7 +94,7 @@ The accessibility outline already provides a complete keyboard path through the 
 this is not an access fix — it is a fluency one. It is also what makes the thing usable
 while presenting, which pairs with item 1.
 
-### 5. One config file — *small*
+### 5. One config file — *done*
 
 `office.config.json`: which floor plan, which port, which model, the brand name, the
 compression thresholds currently sitting in `DEFAULT_OPTIONS`.
@@ -95,12 +103,12 @@ Configuration today is split between environment variables the bridge reads, con
 `scheduler.ts`, and literals in page components. Anyone forking this to watch their own
 agents has to edit source to change the port or the office's name.
 
-### 6. `npm run check` — *small*
+### 6. `npm run check` — *done*
 
 One command for the whole gate: build, typecheck, lint, test. It is four commands today and
 they get run in the wrong order or not at all.
 
-### 7. Dark mode — *small*
+### 7. Dark mode — *done*
 
 `globals.css` already defines a `.dark` token set from the original scaffold; nothing
 toggles it, and the office's own stylesheet does not respond to it. The renderer's palette
@@ -120,3 +128,21 @@ which is the better answer.
 **Agent meetings** would need real multi-agent coordination events in the contract. There
 are none, and inventing them to draw a meeting would be exactly the kind of scene this
 project exists not to draw.
+
+
+---
+
+## What shipped, in one place
+
+`P` presents (chrome gone, floor and compression stamp only). Clicking a person opens a
+dossier built from what they did — stated role, assignments, desks used, their own attributed
+tokens, and "not reported" where the stream never said. A **Produced** tab lists what a run
+made, from `artifact.created`; it does not filter by person, because an artifact records the
+desk it was made at and not who made it, and the panel says so rather than guessing.
+`space`, `←`/`→`, `1`–`6`, `R`, `D` and `Esc` drive the rest. `office.config.json` layers
+under `office.config.local.json` under `O6_*` environment variables, and rejects nonsense
+from any of them. `npm run check` is the whole gate.
+
+Dark mode covers the chrome only. The renderer keeps its palette on purpose: the office is a
+lit room, and a room does not invert when you darken the page. `/office/leads` is older
+markup with `#fff` written into it in dozens of places and stays light until that is unpicked.

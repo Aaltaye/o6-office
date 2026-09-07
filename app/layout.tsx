@@ -46,6 +46,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* First thing in the body, before anything paints: reading the stored choice in
+            an effect would show a white page for a frame to everyone who chose dark. It
+            lives here rather than between <html> and <body>, which is not valid HTML and
+            which React rightly refuses to hydrate. Absent means "follow the OS". */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('o6-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}",
+          }}
+        />
         {children}
       </body>
     </html>

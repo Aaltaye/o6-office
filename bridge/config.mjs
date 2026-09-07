@@ -9,6 +9,8 @@
 
 import { randomBytes } from 'node:crypto';
 
+import { loadOfficeConfig } from './office-config.mjs';
+
 const int = (value, fallback) => {
   const parsed = Number.parseInt(value ?? '', 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
@@ -16,16 +18,19 @@ const int = (value, fallback) => {
 
 export function loadConfig(env = process.env) {
   const token = env.O6_BRIDGE_TOKEN?.trim();
+  // Defaults now come from office.config.json rather than being literals here, so a fork
+  // can change the port or the poll interval without editing source.
+  const office = loadOfficeConfig({ env });
 
   return {
     /** Loopback only, always. Session activity must not leave the machine. */
     host: '127.0.0.1',
-    port: int(env.O6_BRIDGE_PORT, 4141),
+    port: int(env.O6_BRIDGE_PORT, office.bridge.port),
     token,
     /** How often to re-read the transcript for usage. */
-    pollMs: int(env.O6_TRANSCRIPT_POLL_MS, 1000),
+    pollMs: int(env.O6_TRANSCRIPT_POLL_MS, office.bridge.transcriptPollMs),
     /** Ring buffer cap, so a long session cannot grow memory without bound. */
-    maxEvents: int(env.O6_MAX_EVENTS, 5000),
+    maxEvents: int(env.O6_MAX_EVENTS, office.bridge.maxEvents),
   };
 }
 

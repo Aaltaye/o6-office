@@ -110,3 +110,43 @@
   line-height: 1.5;
   color: var(--subtle);
 }
+
+/* --- dark ground ------------------------------------------------------------
+ *
+ * Only the tokens change. The renderer keeps its own palette on purpose: the office is a
+ * lit room, and a room does not invert when you turn the page dark — inverting it would
+ * also mean re-deciding what "violet means live" looks like against a dark ground, which
+ * is a design question, not a CSS one.
+ *
+ * Scope, stated honestly: this covers the chrome that was built on these tokens — the
+ * landing page and /office. /office/leads is older markup with #fff written into it in
+ * dozens of places and is left light until that is unpicked.
+ */
+
+:root {
+  /* The colour a panel sits on. Was #fff in a hundred places; now it is a decision. */
+  --surface: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --porcelain: #14161a;
+    --surface: #1b1e24;
+    --ink: #e9eaee;
+    --subtle: #9aa2b0;
+    --line: #2c313a;
+    --titanium: #5d6472;
+    /* Violet holds its meaning; it only lifts enough to stay legible on a dark ground. */
+    --signal: #9b7bff;
+  }
+}
+
+:root[data-theme='dark'] {
+  --porcelain: #14161a;
+  --surface: #1b1e24;
+  --ink: #e9eaee;
+  --subtle: #9aa2b0;
+  --line: #2c313a;
+  --titanium: #5d6472;
+  --signal: #9b7bff;
+}

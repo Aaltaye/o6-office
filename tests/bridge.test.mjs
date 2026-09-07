@@ -16,6 +16,7 @@ import { createBridge } from '../bridge/server.mjs';
 import { loadConfig, requireToken, suggestToken } from '../bridge/config.mjs';
 import { TranscriptWatcher, readSessionUsage, subagentsDirFor } from '../bridge/transcript.mjs';
 import { connectProject, mergeHooks } from '../bridge/connect.mjs';
+import { loadOfficeConfig } from '../bridge/office-config.mjs';
 import { buildEvent, sendEvent } from '../bridge/emit.mjs';
 import { DESKS } from '../bridge/emit.mjs';
 import { describeProblems } from '../bridge/contract.mjs';
@@ -798,4 +799,57 @@ test('the contract is published so an agent can correct itself', async () => {
       'the honesty rules travel with the schema, not just in prose',
     );
   });
+});
+
+/* --- one place that says what this office is -------------------------------- */
+
+test('office config layers env over file over defaults', () => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-config-'));
+  try {
+    writeFileSync(
+      join(root, 'office.config.json'),
+      JSON.stringify({ name: 'Someone Else Office', bridge: { port: 4200 } }),
+    );
+    // A personal override that is not committed, and does not have to exist.
+    writeFileSync(join(root, 'office.config.local.json'), JSON.stringify({ bridge: { port: 4300 } }));
+
+    const config = loadOfficeConfig({ root, env: { O6_BRIDGE_PORT: '4400' } });
+    assert.equal(config.bridge.port, 4400, 'env wins');
+    assert.equal(config.name, 'Someone Else Office', 'file wins over the default');
+    assert.equal(config.bridge.maxEvents, 5000, 'and the default stands where nobody spoke');
+
+    const noEnv = loadOfficeConfig({ root, env: {} });
+    assert.equal(noEnv.bridge.port, 4300, 'the local file wins over the committed one');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('a missing config file is normal; a broken one is not', () => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-config-'));
+  try {
+    // Nothing at all: every default applies, silently. That is what makes the `.local.`
+    // override usable without every checkout needing one.
+    assert.equal(loadOfficeConfig({ root, env: {} }).bridge.port, 4141);
+
+    // Present but broken is a mistake worth stopping for, unlike absent.
+    writeFileSync(join(root, 'office.config.json'), '{ not json');
+    assert.throws(() => loadOfficeConfig({ root, env: {} }), /not valid JSON/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('nonsense knobs fall back wherever they came from', () => {
+  const root = mkdtempSync(join(tmpdir(), 'o6-config-'));
+  try {
+    // A negative cap is a typo, not a preference. Honouring it from a FILE would produce
+    // an office that silently keeps no events — the env path was already guarded, the
+    // file path was not until a test caught it.
+    writeFileSync(join(root, 'office.config.json'), JSON.stringify({ bridge: { maxEvents: -5 } }));
+    assert.equal(loadOfficeConfig({ root, env: {} }).bridge.maxEvents, 5000);
+    assert.equal(loadOfficeConfig({ root, env: { O6_BRIDGE_PORT: 'banana' } }).bridge.port, 4141);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

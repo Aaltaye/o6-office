@@ -287,6 +287,16 @@ export function OfficeStage({
           figure = buildWorker(colorForWorker(id));
           workers.set(id, figure);
           scene.add(figure);
+          /*
+           * A person is only pickable once they exist, which is exactly right: the cast is
+           * built from the stream, so you can never click someone who is not on the floor.
+           * Every mesh in the figure carries the id, because a raycast hits a head or an
+           * arm, not the group.
+           */
+          figure.traverse((part) => {
+            part.userData.workerId = id;
+          });
+          current.pickables.push(figure);
         }
         if (!figure) continue;
         figure.visible = present;
@@ -380,6 +390,10 @@ export function OfficeStage({
       const seat = plan.stations.find((s) => s.id === selection.id)?.seat;
       return seat ? { at: seat, distance: 0 } : null;
     }
+    if (selection?.kind === 'worker') {
+      const at = timeline.workers.get(selection.id)?.motion.sampleAt(readable.t);
+      return at ? { at, distance: 0 } : null;
+    }
     if (selection?.kind === 'department') {
       const room = plan.rooms.find((candidate) => candidate.id === selection.id);
       if (!room) return null;
@@ -393,7 +407,7 @@ export function OfficeStage({
       };
     }
     return null;
-  }, [selection, plan.stations, plan.rooms, focusOnSelect]);
+  }, [selection, plan.stations, plan.rooms, focusOnSelect, timeline.workers, readable.t]);
   const cameraState = useRef({ angle: -0.9, target: new THREE.Vector3(), distance: 0 });
 
   useAnimationLoop(
@@ -484,10 +498,20 @@ export function OfficeStage({
       );
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(pointer, current.camera);
-      // A desk wins over the department it sits in: the finer level is the more specific
-      // answer to "what did I just click".
-      const hit = raycaster.intersectObjects(current.pickables, false)[0];
+      /*
+       * Finest thing wins. A person standing at a desk is a more specific answer to "what
+       * did I just click" than the desk, which is more specific than the department.
+       *
+       * `true` for recursive: a figure is a group of meshes, and a ray hits a head, not
+       * the group.
+       */
+      const hit = raycaster.intersectObjects(current.pickables, true)[0];
       if (hit) {
+        const workerId = hit.object.userData?.workerId;
+        if (typeof workerId === 'string') {
+          onSelectRef.current?.({ kind: 'worker', id: workerId });
+          return;
+        }
         for (const [stationId, meshes] of current.liveMeshes) {
           if (!meshes.includes(hit.object as THREE.Mesh)) continue;
           onSelectRef.current?.({ kind: 'station', id: stationId });

@@ -1,0 +1,26 @@
+{
+  "$comment": "Everything about this office that a fork would reasonably want to change. Environment variables override these (O6_ prefix, e.g. O6_BRIDGE_PORT=4200), and office.config.local.json overrides them for you without being committed.",
+
+  "name": "O6 Office",
+  "tagline": "Make invisible work visible.",
+
+  "bridge": {
+    "port": 4141,
+    "plan": "coding-session",
+    "transcriptPollMs": 1000,
+    "maxEvents": 5000
+  },
+
+  "office": {
+    "$comment": "How aggressively the scheduler compresses time. Every one of these is stated on screen when it bites — see invariant I4.",
+    "maxGapMs": 1400,
+    "maxRate": 3,
+    "aggregateAbove": 4
+  },
+
+  "model": {
+    "$comment": "Used only when you supply your own API key. Keys are never stored.",
+    "anthropic": "claude-haiku-4-5",
+    "openai": "gpt-4.1-mini"
+  }
+}

@@ -12,7 +12,8 @@
     "format": "oxfmt",
     "build:bridge": "vite build --config vite.bridge.config.ts",
     "bridge": "node bridge/cli.mjs",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "check": "npm run build && npx tsc --noEmit && npm run lint && npm test"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
