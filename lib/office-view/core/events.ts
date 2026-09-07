@@ -116,7 +116,7 @@ const VARIANT_CHECKS: Record<OfficeEventType, (e: Record<string, unknown>) => bo
   note: () => true,
 };
 
-const SOURCES = new Set(['lead-workflow', 'claude-code', 'fixture']);
+const SOURCES = new Set(['lead-workflow', 'claude-code', 'fixture', 'external']);
 
 /**
  * Strict runtime validator. Returns a type predicate so callers get a typed event.

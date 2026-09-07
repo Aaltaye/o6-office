@@ -700,3 +700,30 @@ test('the merge itself is pure — it never mutates the settings handed to it', 
   assert.deepEqual(added.sort(), ['PreToolUse', 'Stop']);
   assert.deepEqual(replaced, [], 'nothing of ours was there to replace');
 });
+
+test('an event from another runtime is not recorded as Claude Code', async () => {
+  // /event exists so Codex, Replit and hand-rolled loops can report. Stamping their work
+  // 'claude-code' puts one tool's output under another's name — a lie about provenance in
+  // a product whose subject is not misrepresenting what happened.
+  await withBridge(async ({ bridge, url }) => {
+    await fetch(url('/event'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-o6-token': TOKEN },
+      body: JSON.stringify({ type: 'note', label: 'Reported by some other agent' }),
+    });
+    const event = bridge.events.at(-1);
+    assert.equal(event.source, 'external', 'unattributed events are external, not claude-code');
+    assert.ok(isOfficeEvent(event), 'and still satisfy the contract');
+  });
+});
+
+test('a producer that names its own source keeps it', async () => {
+  await withBridge(async ({ bridge, url }) => {
+    await fetch(url('/event'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-o6-token': TOKEN },
+      body: JSON.stringify({ type: 'note', label: 'Mine', source: 'claude-code' }),
+    });
+    assert.equal(bridge.events.at(-1).source, 'claude-code');
+  });
+});

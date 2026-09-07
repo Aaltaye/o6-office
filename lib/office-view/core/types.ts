@@ -41,7 +41,14 @@ export type AisleNodeId = string;
 
 /** Which producer emitted this event. Used for labelling on screen, never for logic
  *  that changes how the office behaves — the whole point is that both render the same. */
-export type EventSource = 'lead-workflow' | 'claude-code' | 'fixture';
+/**
+ * Who produced an event.
+ *
+ * 'external' covers every runtime that is not Claude Code — Codex, Replit, a loop
+ * somebody wrote — reporting through the bridge's /event endpoint. It exists so the
+ * office never has to guess, and never claims work was Claude Code's when it was not.
+ */
+export type EventSource = 'lead-workflow' | 'claude-code' | 'fixture' | 'external';
 
 /** The two fixed endpoints every floor has, in addition to its stations. */
 export type Endpoint = 'inbox' | 'outbox';

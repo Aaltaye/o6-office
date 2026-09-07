@@ -43,8 +43,13 @@ const MODES = {
     plan: codingSessionPlan,
     events: recordedCodingRun.events as unknown as OfficeEvent[],
     stamp: 'Recorded run · a real Claude Code session',
-    // A 23-minute session, so the hero runs it fast. Playback speed only: the order and
-    // the relative timing of everything that happened are untouched.
+    /*
+     * A 111-minute session. Two things shorten it, and both are stated on screen rather
+     * than hidden here: the scheduler truncates idle gaps to maxGapMs, and the hero then
+     * plays the result at 14x. Ordering is untouched and nothing is reordered — but the
+     * relative timing is NOT preserved, because capping dead air is precisely a change to
+     * relative timing. An earlier version of this comment claimed otherwise.
+     */
     speed: 14,
     title: 'Or point it at your own agents',
     body:

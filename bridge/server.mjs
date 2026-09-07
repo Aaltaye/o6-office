@@ -332,7 +332,14 @@ export function createBridge(options = {}) {
         }
         emit({
           ...candidate,
-          source: candidate.source ?? 'claude-code',
+          /*
+           * Anything arriving here that does not say who it is came from some other
+           * runtime — that is what this endpoint is for. Stamping it 'claude-code' would
+           * put another tool's work under Claude Code's name, which is a lie about
+           * provenance in a product whose whole subject is not misrepresenting what
+           * happened. /hook is the path that may legitimately claim it.
+           */
+          source: candidate.source ?? 'external',
           /*
            * `plan` says which floor to render on, and this bridge only ever renders one.
            * Filling it in is not inventing anything about the work — it is the bridge
