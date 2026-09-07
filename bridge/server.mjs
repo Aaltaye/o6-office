@@ -217,7 +217,9 @@ export function createBridge(options = {}) {
       const looksLikeARoute = !extname(relative);
       const shell = join(STATIC_DIR, 'index.html');
       if (looksLikeARoute && existsSync(shell)) {
-        response.writeHead(200, { 'Content-Type': MIME['.html'] }).end(readFileSync(shell));
+        response
+          .writeHead(200, { 'Content-Type': MIME['.html'], 'Cache-Control': 'no-store' })
+          .end(readFileSync(shell));
         return;
       }
       if (existsSync(shell)) {
@@ -232,7 +234,17 @@ export function createBridge(options = {}) {
         );
       return;
     }
-    response.writeHead(200, { 'Content-Type': MIME[extname(target)] ?? 'application/octet-stream' });
+    /*
+     * The HTML must never be cached. Its whole job is to name the current hashed bundle,
+     * so a stale copy pins the browser to a client build that no longer exists on disk —
+     * you rebuild, reload, and see the old UI with no error to explain it. The hashed
+     * assets themselves are immutable by construction and can be cached hard.
+     */
+    const isHtml = extname(target) === '.html';
+    response.writeHead(200, {
+      'Content-Type': MIME[extname(target)] ?? 'application/octet-stream',
+      'Cache-Control': isHtml ? 'no-store' : 'public, max-age=31536000, immutable',
+    });
     response.end(readFileSync(target));
   }
 

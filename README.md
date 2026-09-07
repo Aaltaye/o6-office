@@ -6,7 +6,7 @@ that what an agent is actually doing is legible to someone who has never read a 
 
 O6 Invention Lab, Experiment 001.
 
-![The office running a recorded lead-reactivation run: desks light violet as work reaches them, each showing the literal action being taken.](docs/office-demo.gif)
+![The office running a recorded lead-reactivation run: six desks in a warm room, lighting violet as work reaches them, each showing the literal action being taken.](docs/office-3d.gif)
 
 *A real recorded run of the lead workflow, sampled evenly across its 33 seconds and played
 back at about 3x. Violet means "happening right now" and nothing else; every label is the
@@ -15,7 +15,7 @@ contacts are invented — the office says so on screen — but the run is not. T
 run is local-rules mode, so no model was called: that is why no specialist walks in and no
 tokens are reported in it.*
 
-Two modes, one renderer:
+Two modes, one contract:
 
 | Mode | What it is |
 |---|---|
@@ -107,6 +107,21 @@ code rather than written down and hoped for — they live as runtime assertions 
 
 Violet means one thing only: work happening right now. That is also how the office stays
 inside the O6 brand's 5% cap on violet — by construction rather than by vigilance.
+
+---
+
+## Two renderers, one contract
+
+![The same recorded run in the isometric SVG renderer: identical desks and identical statuses, drawn as flat vector art instead of a 3D room.](docs/office-demo.gif)
+
+The same run, the same instant-by-instant statuses, through the other renderer. Nothing
+above the contract changed to produce it: identical events, identical timeline, completely
+different pixels. The three.js stage is what ships on the landing page and `/office`; the
+SVG one stays crisp at any zoom and hit-tests natively. `/lab` renders either, on a toggle,
+which is the quickest way to see that the seam holds.
+
+That is the whole point of the seam. A producer emits `OfficeEvent`s and knows nothing
+about pixels; a renderer consumes them and knows nothing about leads, or about Claude Code.
 
 ---
 

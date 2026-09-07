@@ -121,6 +121,58 @@ function App() {
     return match ? `${match.label}${match.detail ? ` — ${match.detail}` : ''}` : 'Nothing yet.';
   }, [selection, events, roomStations]);
 
+  /**
+   * Every operation, newest first — and narrowed to whatever is selected.
+   *
+   * The floor is the lossy view by design: it shows what is happening now, not everything
+   * that has happened. This is the other half, so a session can actually be read back.
+   * Labels are the producer's own words, never re-phrased here.
+   */
+  const operations = useMemo(() => {
+    const desks = selection?.kind === 'department' ? roomStations.get(selection.id) : null;
+    const wanted = (event: OfficeEvent) => {
+      if (!selection) return true;
+      switch (selection.kind) {
+        case 'station':
+          return 'station' in event && event.station === selection.id;
+        case 'worker':
+          return 'worker' in event && event.worker === selection.id;
+        case 'work':
+          return 'work' in event && event.work?.id === selection.id;
+        case 'department':
+          return Boolean(desks) && 'station' in event && typeof event.station === 'string'
+            ? desks!.has(event.station as string)
+            : false;
+        default:
+          return true;
+      }
+    };
+    // Usage reports are a running meter rather than an operation; they have their own
+    // readout in the header and would otherwise drown the log.
+    return events
+      .filter((event) => event.type !== 'usage.reported' && wanted(event))
+      .slice(-400)
+      .reverse();
+  }, [events, selection, roomStations]);
+
+  /** What the panel is currently scoped to, in the plan's own words. */
+  const scope = useMemo(() => {
+    if (!selection) return null;
+    if (selection.kind === 'department') {
+      const room = codingSessionPlan.rooms.find((candidate) => candidate.id === selection.id);
+      const desks = roomStations.get(selection.id);
+      return room
+        ? `${room.label} · ${desks?.size ?? 0} ${desks?.size === 1 ? 'desk' : 'desks'}`
+        : null;
+    }
+    if (selection.kind === 'station') {
+      const station = codingSessionPlan.stations.find((candidate) => candidate.id === selection.id);
+      return station ? `${station.role} desk` : selection.id;
+    }
+    if (selection.kind === 'worker') return selection.id === 'main' ? 'The agent' : selection.id;
+    return 'One unit of work';
+  }, [selection, roomStations]);
+
   const usage = useMemo(() => {
     let input = 0;
     let output = 0;
@@ -158,16 +210,59 @@ function App() {
         </p>
       ) : null}
 
-      <div className="bridge-floor">
-        <OfficeStage
-          plan={codingSessionPlan}
-          events={events}
-          modeLabel="Live · your Claude Code session"
-          playing
-          follow
-          selection={selection}
-          onSelect={setSelection}
-        />
+      <div className="bridge-body">
+        <div className="bridge-floor">
+          <OfficeStage
+            plan={codingSessionPlan}
+            events={events}
+            modeLabel="Live · your Claude Code session"
+            playing
+            follow
+            selection={selection}
+            onSelect={setSelection}
+          />
+        </div>
+
+        <aside className="bridge-log" aria-label="Operations">
+          <div className="bridge-log-head">
+            <strong>{scope ?? 'All operations'}</strong>
+            {selection ? (
+              <button type="button" onClick={() => setSelection(null)}>
+                Show everything
+              </button>
+            ) : null}
+          </div>
+          <p className="bridge-log-count">
+            {operations.length === 400 ? 'last 400 of ' : ''}
+            {operations.length} {operations.length === 1 ? 'operation' : 'operations'}
+            {selection ? ' here' : ' this session'}
+          </p>
+
+          {operations.length === 0 ? (
+            <p className="bridge-log-empty">
+              Nothing here yet. Operations appear as your session performs them.
+            </p>
+          ) : (
+            <ol className="bridge-log-list">
+              {operations.map((event) => (
+                <li key={event.id} className={`is-${event.type.split('.')[1] ?? event.type}`}>
+                  <span className="bridge-op-meta">
+                    {'station' in event && event.station ? String(event.station) : '—'}
+                    {' · '}
+                    {new Date(event.occurredAt).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                    })}
+                  </span>
+                  {/* The producer's own words. Never re-phrased, never summarised. */}
+                  <span className="bridge-op-label">{event.label}</span>
+                  {event.detail ? <span className="bridge-op-detail">{event.detail}</span> : null}
+                </li>
+              ))}
+            </ol>
+          )}
+        </aside>
       </div>
 
       <footer className="bridge-foot">

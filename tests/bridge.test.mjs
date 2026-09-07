@@ -529,3 +529,23 @@ test('the direct endpoint refuses an unauthenticated caller like every other one
     assert.equal(res.status, 401);
   });
 });
+
+test('the office UI is never served from a stale cache', async () => {
+  // index.html exists to name the current hashed bundle. A cached copy pins the browser to
+  // a client build that no longer exists on disk: you rebuild, reload, and quietly get the
+  // old UI with nothing to explain it. Cost an hour once; now it is pinned.
+  await withBridge(async ({ url }) => {
+    const res = await fetch(url('/'));
+    // The UI may not be built in a clean checkout, and that is fine — the header is what
+    // matters, and the 404 body says how to build it.
+    if (res.status === 200) {
+      assert.match(
+        res.headers.get('cache-control') ?? '',
+        /no-store/,
+        'the shell must not be cached',
+      );
+    } else {
+      assert.equal(res.status, 404);
+    }
+  });
+});
