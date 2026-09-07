@@ -355,6 +355,40 @@ export function OfficeView({
     [focusOn],
   );
 
+  /**
+   * Drill into a department: select it and frame the room rather than a point.
+   *
+   * The zoom is derived from how much smaller the room is than the whole floor, so a
+   * cramped department fills the frame and a sprawling one does not get magnified past
+   * usefulness. No new projection maths — the room's own corners, through the same
+   * worldToScreen every other thing on this floor goes through.
+   */
+  const selectRoom = useCallback(
+    (room: FloorPlan['rooms'][number]) => {
+      const corners = [
+        { x: room.origin.x, y: room.origin.y },
+        { x: room.origin.x + room.size.w, y: room.origin.y },
+        { x: room.origin.x + room.size.w, y: room.origin.y + room.size.h },
+        { x: room.origin.x, y: room.origin.y + room.size.h },
+      ].map((corner) => worldToScreen(corner, plan.tile));
+      const width = Math.max(...corners.map((c) => c.sx)) - Math.min(...corners.map((c) => c.sx));
+      const height = Math.max(...corners.map((c) => c.sy)) - Math.min(...corners.map((c) => c.sy));
+      const zoom = Math.min(
+        3,
+        Math.max(1, Math.min(fullBounds.width / (width || 1), fullBounds.height / (height || 1))),
+      );
+      onSelectRef.current?.({ kind: 'department', id: room.id });
+      setCamera(
+        focusBounds(
+          plan,
+          { x: room.origin.x + room.size.w / 2, y: room.origin.y + room.size.h / 2 },
+          zoom,
+        ),
+      );
+    },
+    [plan, fullBounds],
+  );
+
   // --- Overlay geometry -----------------------------------------------------
   // Project world -> screen -> container pixels, mirroring how the browser fits the
   // viewBox under preserveAspectRatio="xMidYMid meet". Doing the same arithmetic here
@@ -433,19 +467,73 @@ export function OfficeView({
           }}
         />
 
-        {/* Room pads first: the ground everything else sits on. */}
-        <g aria-hidden="true">
+        {/* Room pads first: the ground everything else sits on. A department can be
+            drilled into; the entrance and the waiting area are scenery. Desks paint after
+            these, so a click on a desk still wins over the department it sits in. */}
+        <g>
           {plan.rooms.map((room) => {
-            const station = plan.stations.find((s) => s.room === room.id);
-            const active = Boolean(station && readable.stationStatus[station.id]);
-            return (
+            const stationIds = compiled.roomStations.get(room.id) ?? [];
+            // Lit when ANY of its desks is working, not just whichever happens to be first.
+            const active = stationIds.some((id) => readable.stationStatus[id]);
+            const pad = (
               <RoomPad
-                key={room.id}
                 origin={room.origin}
                 size={room.size}
                 tile={plan.tile}
                 active={active}
               />
+            );
+
+            if ((room.kind ?? 'department') !== 'department') {
+              return (
+                <g key={room.id} aria-hidden="true">
+                  {pad}
+                </g>
+              );
+            }
+
+            const chosen = selection?.kind === 'department' && selection.id === room.id;
+            const corners = [
+              { x: room.origin.x, y: room.origin.y },
+              { x: room.origin.x + room.size.w, y: room.origin.y },
+              { x: room.origin.x + room.size.w, y: room.origin.y + room.size.h },
+              { x: room.origin.x, y: room.origin.y + room.size.h },
+            ]
+              .map((corner) => worldToScreen(corner, plan.tile))
+              .map((point) => `${point.sx},${point.sy}`)
+              .join(' ');
+
+            return (
+              <g
+                key={room.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`${room.label} department. ${stationIds.length} ${
+                  stationIds.length === 1 ? 'desk' : 'desks'
+                }.`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => selectRoom(room)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    selectRoom(room);
+                  }
+                }}
+              >
+                {pad}
+                {chosen ? (
+                  /* Graphite, deliberately not violet: violet is only ever allowed to mean
+                     "happening right now", and outlining the largest object on screen with
+                     it would drown the one signal that matters. */
+                  <polygon
+                    points={corners}
+                    fill="none"
+                    stroke={palette.graphite}
+                    strokeWidth={1.5}
+                    strokeDasharray="6 4"
+                  />
+                ) : null}
+              </g>
             );
           })}
           {plan.doors.map((door) => (
@@ -621,11 +709,18 @@ export function OfficeView({
           walk through IS the product. */}
       <OfficeOutline
         plan={plan}
+        compiled={compiled}
         stationStatus={readable.stationStatus}
         presentWorkers={readable.presentWorkers}
         workers={timeline.workers}
         outbox={readable.outbox}
         anyActive={anyActive}
+        selection={selection ?? null}
+        onSelectStation={(id) => {
+          const seat = plan.stations.find((station) => station.id === id)?.seat ?? null;
+          select({ kind: 'station', id }, seat);
+        }}
+        onSelectRoom={selectRoom}
       />
     </div>
   );
@@ -710,17 +805,25 @@ function splitKey(key: string): [string, string] {
  */
 function OfficeOutline({
   plan,
+  compiled,
   stationStatus,
   presentWorkers,
   workers,
   outbox,
   anyActive,
+  selection,
+  onSelectStation,
+  onSelectRoom,
 }: {
   plan: FloorPlan;
+  compiled: CompiledPlan;
   stationStatus: Record<string, string | null>;
   presentWorkers: string[];
   workers: ScheduleResult['workers'];
   outbox: number;
+  selection: Selection;
+  onSelectStation: (id: StationId) => void;
+  onSelectRoom: (room: FloorPlan['rooms'][number]) => void;
   anyActive: boolean;
 }) {
   return (
@@ -730,14 +833,50 @@ function OfficeOutline({
         {anyActive ? 'Work is in progress.' : 'The office is idle.'} {outbox} finished
         {outbox === 1 ? ' item' : ' items'} in the outbox.
       </p>
+      {/* Grouped by department, every node a real button, so the drill-down the mouse
+          gets is reachable by keyboard and announced. Statuses are the same strings the
+          desks show — a second view of the same facts, never a summary of them. */}
       <ul>
-        {plan.stations
-          .filter((station) => !station.hotDesk)
-          .map((station) => (
-            <li key={station.id}>
-              <strong>{station.role}</strong>: {stationStatus[station.id] ?? 'Standing by'}
-            </li>
-          ))}
+        {plan.rooms
+          .filter((room) => (room.kind ?? 'department') === 'department')
+          .map((room) => {
+            const desks = (compiled.roomStations.get(room.id) ?? [])
+              .map((id) => plan.stations.find((station) => station.id === id))
+              .filter((station): station is Station => Boolean(station) && !station!.hotDesk);
+            if (desks.length === 0) return null;
+            const live = desks.filter((desk) => stationStatus[desk.id]).length;
+            return (
+              <li key={room.id}>
+                <button
+                  type="button"
+                  aria-current={
+                    selection?.kind === 'department' && selection.id === room.id ? 'true' : undefined
+                  }
+                  onClick={() => onSelectRoom(room)}
+                >
+                  {room.label} department, {desks.length} {desks.length === 1 ? 'desk' : 'desks'},{' '}
+                  {live > 0 ? `${live} working` : 'standing by'}
+                </button>
+                <ul>
+                  {desks.map((desk) => (
+                    <li key={desk.id}>
+                      <button
+                        type="button"
+                        aria-current={
+                          selection?.kind === 'station' && selection.id === desk.id
+                            ? 'true'
+                            : undefined
+                        }
+                        onClick={() => onSelectStation(desk.id)}
+                      >
+                        <strong>{desk.role}</strong>: {stationStatus[desk.id] ?? 'Standing by'}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
       </ul>
       {presentWorkers.length > 0 ? (
         <>
