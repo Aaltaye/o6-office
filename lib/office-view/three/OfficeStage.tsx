@@ -29,6 +29,7 @@ import { compileFloorPlan, type CompiledPlan } from '../core/plan.ts';
 import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { PROP_SHAPES } from '../art/theme.ts';
+import { frameOffice } from '../core/framing.ts';
 import { setWorkerDormant } from './stage-scene.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
 import type { Selection } from '../react/OfficeView.tsx';
@@ -158,13 +159,14 @@ export function OfficeStage({
     centre: THREE.Vector3;
     radius: number;
     /**
-     * How far the people reach, as opposed to how far the furniture reaches.
+     * Where the people actually are, as a world-space box, or null when the floor is empty.
      *
      * Measured every frame in applyTime and read by the camera, so a burst of concurrent
-     * agents standing outside their department widens the shot rather than working
-     * off-screen. Only ever widens; the plan's own extent is the floor.
+     * agents standing beyond their department is both included in the shot and centred in
+     * it. A box rather than a radius: a radius says how far the crowd reaches but not
+     * which side it is on, which is exactly what framing a lopsided crowd needs to know.
      */
-    crowdRadius: number;
+    crowdBox: { minX: number; maxX: number; minZ: number; maxZ: number } | null;
   } | null>(null);
 
   /** Text the viewer reads. Updated a few times a second, never per frame. */
@@ -223,8 +225,7 @@ export function OfficeStage({
       pickables: [...liveMeshes.values()].flat(),
       centre,
       radius,
-      /** Updated every frame from where people actually are; see applyTime. */
-      crowdRadius: 0,
+      crowdBox: null,
     };
 
     return () => {
@@ -303,8 +304,16 @@ export function OfficeStage({
       const current = stage.current;
       if (!current) return;
       const { scene, workers, folders, materials } = current;
-      /** The furthest anyone stands from the middle of the office, this frame. */
-      let crowd = 0;
+      /**
+       * Where the people are, as a box.
+       *
+       * A radius was the first attempt and it cannot work: it says how FAR the crowd
+       * reaches but not which side it is on, so a lopsided crowd — fifty agents all in
+       * Operations, which is the case that prompted this — pushed the camera back while
+       * leaving it pointed at the middle of an empty office, and the crowd hung off the
+       * edge of the frame. A box can be centred on.
+       */
+      let crowdBox: { minX: number; maxX: number; minZ: number; maxZ: number } | null = null;
 
       // --- the cast, which changes only when someone joins or leaves ---
       for (const [id, state] of timeline.workers) {
@@ -361,11 +370,17 @@ export function OfficeStage({
          * while a dozen agents worked just outside the shot.
          */
         if (at && onFloor) {
-          crowd = Math.max(crowd, Math.hypot(at.x - current.centre.x, at.y - current.centre.z));
+          crowdBox = crowdBox
+            ? {
+                minX: Math.min(crowdBox.minX, at.x),
+                maxX: Math.max(crowdBox.maxX, at.x),
+                minZ: Math.min(crowdBox.minZ, at.y),
+                maxZ: Math.max(crowdBox.maxZ, at.y),
+              }
+            : { minX: at.x, maxX: at.x, minZ: at.y, maxZ: at.y };
         }
       }
-      // Only widens the shot; it never crops one. The plan's own extent is the floor.
-      current.crowdRadius = crowd;
+      current.crowdBox = crowdBox;
 
       for (const [id, state] of timeline.work) {
         const at = state.motion.sampleAt(t);
@@ -501,25 +516,34 @@ export function OfficeStage({
           cam.distance = current.radius * 2.15;
           cam.target.copy(current.centre);
         }
+        /*
+         * The shot is the union of the office and its crowd, centred on that union rather
+         * than on the building. The maths lives in core/framing.ts, where it can be tested
+         * — it has been wrong twice, and both times the only way to see it was to squint at
+         * a screenshot.
+         */
+        const box = current.crowdBox;
+        const frame = frameOffice(
+          { x: current.centre.x, y: current.centre.z },
+          current.radius,
+          box ? { minX: box.minX, maxX: box.maxX, minY: box.minZ, maxY: box.maxZ } : null,
+        );
+        const viewCentre = new THREE.Vector3(frame.at.x, current.centre.y, frame.at.y);
+        const viewRadius = frame.radius;
+
         const wantTarget = focus
           ? new THREE.Vector3(focus.at.x, 0.6, focus.at.y)
-          : current.centre.clone();
+          : viewCentre;
         // A department carries its own framing distance; a desk keeps the close-in one.
         /*
-         * The office expands and contracts with the crowd.
-         *
-         * `radius` is the furniture; `crowdRadius` is where people have actually got to.
-         * Twenty agents in one department stand well outside its room, and the shot has to
-         * grow to include them or the office is quietly under-reporting how much is going
-         * on. It shrinks back the same way as they finish and are cleared — through the
-         * same 0.06 lerp below, so it reads as the room breathing rather than a cut.
+         * The office expands and contracts with the crowd, through the same 0.06 lerp
+         * below, so it reads as the room breathing rather than as a cut.
          */
-        const occupied = Math.max(current.radius, current.crowdRadius + 1.5);
         const wantDistance = focus
           ? focus.distance > 0
             ? focus.distance
             : current.radius * 1.1
-          : occupied * 2.15;
+          : viewRadius * 2.15;
 
         if (!reducedMotion) cam.angle += deltaMs * 0.000018;
         cam.target.lerp(wantTarget, 0.06);

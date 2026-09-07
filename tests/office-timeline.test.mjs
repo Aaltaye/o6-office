@@ -26,6 +26,7 @@ import {
 } from '../lib/office-view/core/timeline.ts';
 import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
+import { frameOffice } from '../lib/office-view/core/framing.ts';
 // A worker's drawn footprint, shared with the renderer so seating and drawing cannot drift.
 import { WORKER_DIAMETER } from '../lib/office-view/core/figure.ts';
 import { createEmitter } from '../lib/office-view/core/events.ts';
@@ -1390,4 +1391,49 @@ test('a burst into any single department never stacks anyone', () => {
       `60 agents into ${department}: closest pair ${closest.toFixed(2)}, need ${WORKER_DIAMETER}`,
     );
   }
+});
+
+/* --- framing the office, and everyone standing in it -------------------------- */
+
+test('an office with nobody outside it is framed exactly as before', () => {
+  // The no-crowd case has to be untouched, or every existing shot changes.
+  const frame = frameOffice({ x: 6.5, y: 5.25 }, 8, null);
+  assert.deepEqual(frame.at, { x: 6.5, y: 5.25 });
+  assert.equal(frame.radius, 8);
+
+  // A crowd entirely inside the building must not move the camera either.
+  const inside = frameOffice({ x: 0, y: 0 }, 10, { minX: -2, maxX: 2, minY: -2, maxY: 2 });
+  assert.deepEqual(inside.at, { x: 0, y: 0 }, 'nobody is outside, so nothing moves');
+  assert.equal(inside.radius, 10);
+});
+
+test('a crowd gathered on one side pulls the camera towards it, and fits', () => {
+  /*
+   * The case that prompted this: fifty agents all in one department. Widening a frame
+   * still centred on the building left them against its edge — twice, in two different
+   * ways — so this asserts the property that actually matters: everybody is inside.
+   */
+  const planCentre = { x: 0, y: 0 };
+  const planRadius = 8;
+  const crowd = { minX: -26, maxX: -10, minY: -4, maxY: 4 };
+  const frame = frameOffice(planCentre, planRadius, crowd);
+
+  assert.ok(frame.at.x < planCentre.x, 'the camera moved towards the crowd');
+
+  // Every corner of the crowd, and the whole building, must be within the radius.
+  for (const x of [crowd.minX, crowd.maxX]) {
+    for (const y of [crowd.minY, crowd.maxY]) {
+      const d = Math.hypot(x - frame.at.x, y - frame.at.y);
+      assert.ok(d <= frame.radius, `crowd corner (${x}, ${y}) is ${d.toFixed(2)} out of ${frame.radius.toFixed(2)}`);
+    }
+  }
+  const toPlan = Math.hypot(planCentre.x - frame.at.x, planCentre.y - frame.at.y) + planRadius;
+  assert.ok(toPlan <= frame.radius + 1e-9, 'the office itself is still fully in shot');
+});
+
+test('the frame grows with the crowd and shrinks back when it clears', () => {
+  const big = frameOffice({ x: 0, y: 0 }, 8, { minX: -30, maxX: 30, minY: -30, maxY: 30 });
+  const small = frameOffice({ x: 0, y: 0 }, 8, { minX: -2, maxX: 2, minY: -2, maxY: 2 });
+  assert.ok(big.radius > small.radius, 'a bigger crowd needs a wider shot');
+  assert.equal(small.radius, 8, 'and it comes all the way back to the plan when they go');
 });

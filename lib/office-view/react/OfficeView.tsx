@@ -396,28 +396,36 @@ export function OfficeView({
    */
   const fullBounds = useMemo(() => {
     const base = planBounds(plan);
-    let widest = 0;
+    let box: { minX: number; maxX: number; minY: number; maxY: number } | null = null;
     for (const worker of timeline.workers.values()) {
       for (const point of worker.motion.extent()) {
         const { sx, sy } = worldToScreen(point, plan.tile);
-        widest = Math.max(
-          widest,
-          base.minX - sx,
-          sx - (base.minX + base.width),
-          base.minY - sy,
-          sy - (base.minY + base.height),
-        );
+        box = box
+          ? {
+              minX: Math.min(box.minX, sx),
+              maxX: Math.max(box.maxX, sx),
+              minY: Math.min(box.minY, sy),
+              maxY: Math.max(box.maxY, sy),
+            }
+          : { minX: sx, maxX: sx, minY: sy, maxY: sy };
       }
     }
-    if (widest <= 0) return base;
-    // Plus a little air, so the outermost person is inside the frame rather than on it.
-    const pad = widest + plan.tile.w / 2;
-    return {
-      minX: base.minX - pad,
-      minY: base.minY - pad,
-      width: base.width + pad * 2,
-      height: base.height + pad * 2,
-    };
+    if (!box) return base;
+
+    /*
+     * The union of the office and everyone in it, not the office padded evenly.
+     *
+     * Padding symmetrically keeps the frame centred on the building, so a crowd gathered
+     * entirely on one side — fifty agents in one department — is "included" by a frame
+     * that has grown in every direction and still has them against its edge. Taking the
+     * union moves the frame to where the people are.
+     */
+    const air = plan.tile.w / 2;
+    const minX = Math.min(base.minX, box.minX - air);
+    const minY = Math.min(base.minY, box.minY - air);
+    const maxX = Math.max(base.minX + base.width, box.maxX + air);
+    const maxY = Math.max(base.minY + base.height, box.maxY + air);
+    return { minX, minY, width: maxX - minX, height: maxY - minY };
   }, [plan, timeline.workers]);
   const [camera, setCamera] = useState<Bounds>(fullBounds);
   // Reset the camera when the plan changes (switching to the compact mobile layout, say).
