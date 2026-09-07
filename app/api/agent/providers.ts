@@ -68,33 +68,59 @@ const SUPPORTS_EFFORT = new Set([
  * published rates. Update the date when you update the numbers — a stale price quoted
  * confidently is worse than no price.
  */
-const PRICING: Record<string, { input: number; output: number; cachedInput?: number }> = {
-  'claude-opus-5': { input: 5, output: 25 },
-  'claude-sonnet-5': { input: 2, output: 10 },
-  'claude-haiku-4-5': { input: 1, output: 5 },
+const PRICING: Record<
+  string,
+  { input: number; output: number; cachedInput?: number; cacheWrite?: number }
+> = {
+  // Anthropic bills cache reads at a tenth of input and cache writes at a 1.25x premium
+  // (five-minute TTL, which is the default). Both are written out per model rather than
+  // derived from a multiplier: the ratio is vendor policy and can differ per model, and a
+  // number you can read is worth more here than a number you have to compute.
+  'claude-opus-5': { input: 5, output: 25, cachedInput: 0.5, cacheWrite: 6.25 },
+  'claude-sonnet-5': { input: 2, output: 10, cachedInput: 0.2, cacheWrite: 2.5 },
+  'claude-haiku-4-5': { input: 1, output: 5, cachedInput: 0.1, cacheWrite: 1.25 },
   'gpt-4.1-mini': { input: 0.4, output: 1.6, cachedInput: 0.1 },
 };
 
 /**
  * Estimated cost for one completed call.
  *
- * Where a cached-input rate is not pinned for a model, cached tokens are priced at the
- * full input rate. That makes the figure an upper bound rather than an optimistic guess,
- * which is the right direction to be wrong in when the number is shown next to somebody's
- * API bill. Unknown models return null — the office renders that as unavailable rather
- * than as zero.
+ * `input` is every input-ish token, which is what the office displays; `cached` and
+ * `cacheWrite` are the two slices of it that are billed at their own rates, and the
+ * remainder is charged at the base rate.
+ *
+ * Where a rate is not pinned for a model, those tokens fall back to the full input rate.
+ * Falling back is deliberately the expensive direction: cache reads are cheaper than
+ * input, so an unpinned read over-states, and that is the right way to be wrong when the
+ * number sits next to somebody's API bill. A cache *write* is dearer than input, so
+ * pinning it matters more — an unpinned write is the one case where the fallback
+ * under-states, and every model that can produce one has its rate on file below.
+ *
+ * Unknown models return null. The office renders that as unavailable rather than as zero,
+ * because a confident $0.00 is a claim that the run was free.
  */
 export function estimateCost(
   model: string,
   input: number,
   output: number,
   cached: number,
+  cacheWrite = 0,
 ): number | null {
   const price = PRICING[model];
   if (!price) return null;
-  const uncached = Math.max(0, input - cached);
+  // Clamped rather than trusted: a provider that reports more cached tokens than input
+  // ones should not be able to drive a bill negative.
+  const metered = Math.min(cached + cacheWrite, input);
+  const uncached = Math.max(0, input - metered);
   const cachedRate = price.cachedInput ?? price.input;
-  return (uncached * price.input + cached * cachedRate + output * price.output) / 1e6;
+  const writeRate = price.cacheWrite ?? price.input;
+  return (
+    (uncached * price.input +
+      cached * cachedRate +
+      cacheWrite * writeRate +
+      output * price.output) /
+    1e6
+  );
 }
 
 /** Anthropic keys are unmistakable; everything else goes to OpenAI. */
@@ -196,8 +222,12 @@ async function callAnthropic(request: ProviderRequest): Promise<ProviderResult> 
 
   const usage = body.usage ?? {};
   const cached = usage.cache_read_input_tokens ?? 0;
-  // Cache *creation* is billed as input, so it is counted as input rather than dropped.
-  const input = (usage.input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0) + cached;
+  const cacheWrite = usage.cache_creation_input_tokens ?? 0;
+  // Every input-ish token, which is the figure the office shows. The three slices are
+  // billed at three different rates, so they are kept apart for the price math below
+  // rather than collapsed here — folding cache creation into plain input charged a 1.25x
+  // line item at 1x, and quietly under-stated the bill.
+  const input = (usage.input_tokens ?? 0) + cacheWrite + cached;
   const output = usage.output_tokens ?? 0;
 
   return {
@@ -206,7 +236,7 @@ async function callAnthropic(request: ProviderRequest): Promise<ProviderResult> 
       input,
       output,
       cached,
-      estimatedCost: estimateCost(request.model, input, output, cached),
+      estimatedCost: estimateCost(request.model, input, output, cached, cacheWrite),
     },
     model: request.model,
   };

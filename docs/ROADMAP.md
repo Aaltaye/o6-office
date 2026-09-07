@@ -146,3 +146,38 @@ from any of them. `npm run check` is the whole gate.
 Dark mode covers the chrome only. The renderer keeps its palette on purpose: the office is a
 lit room, and a room does not invert when you darken the page. `/office/leads` is older
 markup with `#fff` written into it in dozens of places and stays light until that is unpicked.
+
+---
+
+## Vendoring from the sibling library — audited, and declined
+
+`bridge/office-config.mjs` credits "the pattern this codebase's sibling library settles
+on", which raised a fair question: if a real, tested implementation of that already exists,
+why is there a hand-rolled one here? Six candidates from that library were audited against
+this repo — a config loader, a screenshot helper, a cost tracker, an SSE helper, a PII
+redactor and a command parser — for whether they are safe to publish under MIT, what they
+would drag in, and whether o6-office would actually use them.
+
+**All six came back "do not vendor", and none of them for licensing reasons.** The code is
+clean; it simply does not fit, and four of the six would have made this repo worse:
+
+- The config loader cannot express nested environment overrides (`O6_BRIDGE_PORT` →
+  `bridge.port`), and it turns two deliberately-silent fallbacks into crashes on the hook
+  path — a typo in a shell profile would kill the bridge instead of being ignored. It also
+  needs a schema library, on a path that is dependency-free on purpose.
+- The SSE helper models one subscriber with no history; the bridge is a broadcast hub with
+  replay, on `node:http` rather than the fetch API. It would displace about twelve lines.
+- The PII redactor finds nothing here — measured, not assumed: it detects zero matches
+  across every committed fixture. The capture script already redacts by structural
+  allowlist, which is stronger than pattern-matching for the thing that actually leaks out
+  of a transcript.
+- The screenshot helper takes a URL and returns a PNG, and the frame worth photographing
+  here is not reachable from a URL.
+
+The rule this settles on: **a public repo carrying unused code is worse than a public repo
+without it.** Vendoring is not free even when the code is good and the licence is yours.
+
+One genuine defect came out of the audit and was fixed rather than vendored: the cost
+estimate priced Anthropic cache tokens at the plain input rate, which under-stated a cache
+write's 1.25x premium and so quietly broke the "upper bound" the docstring promises. Four
+numbers and a parameter, with a regression test — not 355 lines and a tokenizer.

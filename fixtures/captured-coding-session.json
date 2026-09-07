@@ -84,7 +84,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017hPZMftgP9q7aiTVBsDpFr",
-      "tool_response": "<redacted 3730 chars>"
+      "tool_response": "<redacted 3730 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "List project files"
+      }
     },
     {
       "hook_event_name": null,
@@ -131,7 +135,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0154j3fQXNT5JtZ9ySzAFPyB",
-      "tool_response": "<redacted 7350 chars>"
+      "tool_response": "<redacted 7350 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read README, package.json, git state"
+      }
     },
     {
       "hook_event_name": null,
@@ -178,7 +186,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01JAr5aUtzft5zZCMLtdSQbe",
-      "tool_response": "<redacted 775 chars>"
+      "tool_response": "<redacted 775 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check file sizes"
+      }
     },
     {
       "hook_event_name": null,
@@ -225,7 +237,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_019vyD4FaHSJSzo472myRggR",
-      "tool_response": "<redacted 3700 chars>"
+      "tool_response": "<redacted 3700 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect app source"
+      }
     },
     {
       "hook_event_name": null,
@@ -272,7 +288,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0165hXZhUdTb1UimKx2fr7Q7",
-      "tool_response": "<redacted 1756 chars>"
+      "tool_response": "<redacted 1756 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check for launch config and deps"
+      }
     },
     {
       "hook_event_name": null,
@@ -319,7 +339,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01XV4P6BzvzZ4gfAm17RBiKU",
-      "tool_response": "<redacted 5 chars>"
+      "tool_response": "<redacted 5 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add o6-office launch config"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -350,7 +374,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_01NYA1uFpN2YBzY7aa53jL77",
-      "tool_error": "<redacted 521 chars>"
+      "tool_error": "<redacted 521 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -396,7 +421,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_01LEK9HMq8wDEoB3SXVud3fZ",
-      "tool_response": "<redacted 271 chars>"
+      "tool_response": "<redacted 271 chars>",
+      "tool_input": {
+        "url": "<redacted>"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -427,7 +455,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__computer",
       "tool_use_id": "toolu_018axwup8XTRGKDc8BLeZu9N",
-      "tool_response": "<redacted 164 chars>"
+      "tool_response": "<redacted 164 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -471,7 +500,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01YHhyNtLoB3gMcaWKxwAWTV",
-      "tool_response": "<redacted 560 chars>"
+      "tool_response": "<redacted 560 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -515,7 +545,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_0163QJMnCKWLZ8YmUDBDqrqw",
-      "tool_response": "<redacted 746 chars>"
+      "tool_response": "<redacted 746 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -559,7 +590,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01YBeo2ALD5V5WZYTHR8vfMZ",
-      "tool_response": "<redacted 697 chars>"
+      "tool_response": "<redacted 697 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -606,7 +638,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EF4MnUQNpYWkg44AvMKH9d",
-      "tool_response": "<redacted 9589 chars>"
+      "tool_response": "<redacted 9589 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read the office orchestration hook"
+      }
     },
     {
       "hook_event_name": null,
@@ -653,7 +689,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01CTZ3ijgJgSS6c3jtn8grox",
-      "tool_response": "<redacted 1196 chars>"
+      "tool_response": "<redacted 1196 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find office layout code"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -687,7 +727,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_015pkMtzFsDtrzo5ZBXsQj1q",
-      "tool_response": "<redacted 902 chars>"
+      "tool_response": "<redacted 902 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate desk coordinate map"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -721,7 +765,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Am82iv6aYKFwmmUhTFVjRr",
-      "tool_response": "<redacted 947 chars>"
+      "tool_response": "<redacted 947 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find office render block"
+      }
     },
     {
       "hook_event_name": null,
@@ -778,7 +826,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__ccd_session__mark_chapter",
       "tool_use_id": "toolu_01GU4abRFCc3PngUwSKxuGhX",
-      "tool_response": "<redacted 67 chars>"
+      "tool_response": "<redacted 67 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -835,7 +884,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "AskUserQuestion",
       "tool_use_id": "toolu_0189Pq67tEt4ynLoMvx864nG",
-      "tool_response": "<redacted 200 chars>"
+      "tool_response": "<redacted 200 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -895,7 +945,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01NGZSm3wbV5LWKY4dFzP3HC",
-      "tool_response": "<redacted 311 chars>"
+      "tool_response": "<redacted 311 chars>",
+      "tool_input": {
+        "command": "ls",
+        "description": "Survey Projects folder and git identity"
+      }
     },
     {
       "hook_event_name": null,
@@ -942,7 +996,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01PHWrfSiLDkGfVDEUvbGYBo",
-      "tool_response": "<redacted 305 chars>"
+      "tool_response": "<redacted 305 chars>",
+      "tool_input": {
+        "command": "if",
+        "description": "Stop dev server and relocate project"
+      }
     },
     {
       "hook_event_name": null,
@@ -989,7 +1047,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01MVbcDr19jfLLDPd6CvEPwe",
-      "tool_response": "<redacted 329 chars>"
+      "tool_response": "<redacted 329 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Relocate project after leaving directory"
+      }
     },
     {
       "hook_event_name": null,
@@ -1036,7 +1098,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "PowerShell",
       "tool_use_id": "toolu_01CSLHdrRhvrubCi3hPMB74G",
-      "tool_response": "<redacted 9727 chars>"
+      "tool_response": "<redacted 9727 chars>",
+      "tool_input": {
+        "command": "Get-CimInstance",
+        "description": "List node/wrangler processes"
+      }
     },
     {
       "hook_event_name": null,
@@ -1083,7 +1149,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "PowerShell",
       "tool_use_id": "toolu_01CRYAaqZxCbGG2pFqK6yMKc",
-      "tool_response": "<redacted 371 chars>"
+      "tool_response": "<redacted 371 chars>",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Check for junction/symlink on the Codex work dir"
+      }
     },
     {
       "hook_event_name": null,
@@ -1143,7 +1213,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "PowerShell",
       "tool_use_id": "toolu_01JTGH69yMESfnY3jsm3R5ar",
-      "tool_error": "<redacted 633 chars>"
+      "tool_error": "<redacted 633 chars>",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Copy project to Projects folder, excluding build artifacts"
+      }
     },
     {
       "hook_event_name": null,
@@ -1203,7 +1277,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_014JbQiJtaivNXv5iWDQzYA2",
-      "tool_response": "<redacted 9878 chars>"
+      "tool_response": "<redacted 9878 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Init git and commit baseline"
+      }
     },
     {
       "hook_event_name": null,
@@ -1263,7 +1341,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01HAFSG6fSzP95zKuajNNfzW",
-      "tool_response": "<redacted 497 chars>"
+      "tool_response": "<redacted 497 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Install dependencies in new location"
+      }
     },
     {
       "hook_event_name": null,
@@ -1307,7 +1389,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Skill",
       "tool_use_id": "toolu_01UW2Wkc3x4LywXzDv6Hzfc2",
-      "tool_response": "<redacted 33 chars>"
+      "tool_response": "<redacted 33 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -1351,7 +1434,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "ToolSearch",
       "tool_use_id": "toolu_01RWWeFmLbi73hax4cpsCFst",
-      "tool_response": "<redacted 0 chars>"
+      "tool_response": "<redacted 0 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1382,7 +1466,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "EnterPlanMode",
       "tool_use_id": "toolu_018uVzD3jcCEaYas5WwMyq2c",
-      "tool_response": "<redacted 581 chars>"
+      "tool_response": "<redacted 581 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -1441,7 +1526,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "WebFetch",
       "tool_use_id": "toolu_015nfrpXD43sepTyMQbKpX8m",
-      "tool_response": "<redacted 963 chars>"
+      "tool_response": "<redacted 963 chars>",
+      "tool_input": {
+        "url": "<redacted>"
+      }
     },
     {
       "hook_event_name": null,
@@ -1487,7 +1575,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "WebFetch",
       "tool_use_id": "toolu_014Zx6DrAdxcutwzioZtEAMe",
-      "tool_response": "<redacted 9640 chars>"
+      "tool_response": "<redacted 9640 chars>",
+      "tool_input": {
+        "url": "<redacted>"
+      }
     },
     {
       "hook_event_name": null,
@@ -1565,7 +1656,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Agent",
       "tool_use_id": "toolu_019DG4TgvnnS7FzakDiRSWxb",
-      "tool_response": "<redacted 1107 chars>"
+      "tool_response": "<redacted 1107 chars>",
+      "tool_input": {
+        "description": "Design office renderer architecture",
+        "subagent_type": "Plan"
+      }
     },
     {
       "hook_event_name": null,
@@ -1644,7 +1739,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017YVFoqSjQLxdzxheoR8bNu",
-      "tool_response": "<redacted 2775 chars>"
+      "tool_response": "<redacted 2775 chars>",
+      "tool_input": {
+        "command": "ls",
+        "description": "List candidate project directories"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1678,7 +1777,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Bkpjqx1PQc6onad13UGZ98",
-      "tool_response": "<redacted 1037 chars>"
+      "tool_response": "<redacted 1037 chars>",
+      "tool_input": {
+        "command": "-t",
+        "description": "Verify transcript carries token usage"
+      }
     },
     {
       "hook_event_name": null,
@@ -1731,7 +1834,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0117g14y9nsgSTWWhbakxVs5",
-      "tool_response": "<redacted 3360 chars>"
+      "tool_response": "<redacted 3360 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read package.json and file tree"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1769,7 +1876,10 @@
       "agent_type": "Plan",
       "tool_name": "Read",
       "tool_use_id": "toolu_01A2FzZMSn5H4aWj4K6y4tiB",
-      "tool_response": "<redacted 9763 chars>"
+      "tool_response": "<redacted 9763 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1807,7 +1917,10 @@
       "agent_type": "Plan",
       "tool_name": "Read",
       "tool_use_id": "toolu_01BFjChyE5Rjkv1ScfvT2dJJ",
-      "tool_response": "<redacted 9509 chars>"
+      "tool_response": "<redacted 9509 chars>",
+      "tool_input": {
+        "file": "lead-engine.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -1860,7 +1973,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01331zoMpvZ7Q83EsV2pVMcP",
-      "tool_response": "<redacted 165 chars>"
+      "tool_response": "<redacted 165 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Count lines of key files"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1898,7 +2015,10 @@
       "agent_type": "Plan",
       "tool_name": "Read",
       "tool_use_id": "toolu_01GyMUTAsbpJ2A9cS4hEhpHL",
-      "tool_response": "<redacted 27465 chars>"
+      "tool_response": "<redacted 27465 chars>",
+      "tool_input": {
+        "file": "page.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -1951,7 +2071,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Sg55aLeMez92RZ8TUTafn8",
-      "tool_response": "<redacted 6180 chars>"
+      "tool_response": "<redacted 6180 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read office.css and globals.css"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -1990,7 +2114,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01CjQn1ChNGCRei5WMogGLj5",
-      "tool_response": "<redacted 1388 chars>"
+      "tool_response": "<redacted 1388 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract desk-label and office-map CSS rules"
+      }
     },
     {
       "hook_event_name": null,
@@ -2043,7 +2171,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01C83FtndeCZLfJ5o3MtWW5o",
-      "tool_response": "<redacted 9293 chars>"
+      "tool_response": "<redacted 9293 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read build config, layout, api route"
+      }
     },
     {
       "hook_event_name": null,
@@ -2108,7 +2240,11 @@
       "agent_type": "Plan",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0141UY7Nvc1Xg26QSuMQXk3V",
-      "tool_response": "<redacted 8835 chars>"
+      "tool_response": "<redacted 8835 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Read README, openai config, tests, git log"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -2142,7 +2278,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01ChjLYZi88gGb1oGLaBkvRT",
-      "tool_response": "<redacted 4740 chars>"
+      "tool_response": "<redacted 4740 chars>",
+      "tool_input": {
+        "command": "echo",
+        "description": "Read O6 brand palette and design playbook memories"
+      }
     },
     {
       "hook_event_name": null,
@@ -2201,7 +2341,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01NFnvuAywC2cnV3KLoPExPC",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -2245,7 +2388,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "AskUserQuestion",
       "tool_use_id": "toolu_012oFoAnQiFGx21ERUMvsgR8",
-      "tool_response": "<redacted 340 chars>"
+      "tool_response": "<redacted 340 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -2304,7 +2448,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01XpcF39e1zuuiojnyktDgzj",
-      "tool_response": "<redacted 163 chars>"
+      "tool_response": "<redacted 163 chars>",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -2337,7 +2484,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01RqbMN62V4e6EEk3e1UR29R",
-      "tool_response": "<redacted 163 chars>"
+      "tool_response": "<redacted 163 chars>",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -2384,7 +2534,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QSXJpMoREacvPpGPrW2Sjj",
-      "tool_response": "<redacted 239 chars>"
+      "tool_response": "<redacted 239 chars>",
+      "tool_input": {
+        "command": "-t",
+        "description": "Inspect subagent transcript line structure"
+      }
     },
     {
       "hook_event_name": null,
@@ -2431,7 +2585,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KcyEzoouGpikgaxwcbTrCS",
-      "tool_error": "<redacted 28 chars>"
+      "tool_error": "<redacted 28 chars>",
+      "tool_input": {
+        "command": "-l",
+        "description": "Find and inspect a subagent transcript line"
+      }
     },
     {
       "hook_event_name": null,
@@ -2490,7 +2648,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_017YyYB1uCBk1Jy5HQb7cX86",
-      "tool_response": "<redacted 163 chars>"
+      "tool_response": "<redacted 163 chars>",
+      "tool_input": {
+        "file": "resilient-churning-spring.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -2534,7 +2695,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "ListAgents",
       "tool_use_id": "toolu_01QBVPPvaVAuC7wmydBNJKkv",
-      "tool_response": "<redacted 2387 chars>"
+      "tool_response": "<redacted 2387 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -2591,7 +2753,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "ExitPlanMode",
       "tool_use_id": "toolu_01DE2aQP7WYQAc3g3QboMd9a",
-      "tool_response": "<redacted 14789 chars>"
+      "tool_response": "<redacted 14789 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -2648,7 +2811,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__ccd_session__mark_chapter",
       "tool_use_id": "toolu_0153tGAavyhyEBrwjxG1ph3f",
-      "tool_response": "<redacted 74 chars>"
+      "tool_response": "<redacted 74 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -2696,7 +2860,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01HQXLZEqFgoWWR7iXvXLEya",
-      "tool_response": "<redacted 735 chars>"
+      "tool_response": "<redacted 735 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check gh auth and baseline test suite"
+      }
     },
     {
       "hook_event_name": null,
@@ -2756,7 +2924,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01VvZw5PAkL6u3tatxc5ZXee",
-      "tool_response": "<redacted 316 chars>"
+      "tool_response": "<redacted 316 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Copy approved plan into repo as PLAN.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -2803,7 +2975,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01M4euY1xsqjby7EyLUh2gvE",
-      "tool_error": "<redacted 85 chars>"
+      "tool_error": "<redacted 85 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Generate task files and master index"
+      }
     },
     {
       "hook_event_name": null,
@@ -2883,7 +3059,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_0129aFEAonDFhH3t9X4nzvus",
-      "tool_response": "<redacted 256 chars>"
+      "tool_response": "<redacted 256 chars>",
+      "tool_input": {
+        "file": "gen-tasks.mjs"
+      }
     },
     {
       "hook_event_name": null,
@@ -2943,7 +3122,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0163RhzHYoD31fLvwG5EL4mi",
-      "tool_response": "<redacted 319 chars>"
+      "tool_response": "<redacted 319 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Generate task files and index"
+      }
     },
     {
       "hook_event_name": null,
@@ -3002,7 +3185,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01RoBbDjBtU29MS1DrDbTf3Q",
-      "tool_response": "<redacted 260 chars>"
+      "tool_response": "<redacted 260 chars>",
+      "tool_input": {
+        "file": "plan-amendment.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3036,7 +3222,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_011MgZYBQqREzDWrPJRuQL5n",
-      "tool_response": "<redacted 498 chars>"
+      "tool_response": "<redacted 498 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Append architecture amendments to PLAN.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -3082,7 +3272,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01QXd2ojwFvwRBZm8JCiuUL1",
-      "tool_response": "<redacted 258 chars>"
+      "tool_response": "<redacted 258 chars>",
+      "tool_input": {
+        "file": "patch-tasks.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3116,7 +3309,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01CW6mtFAG557mHjyDFG1G8n",
-      "tool_response": "<redacted 276 chars>"
+      "tool_response": "<redacted 276 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Patch task files with review amendments"
+      }
     },
     {
       "hook_event_name": null,
@@ -3162,7 +3359,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01TBe7LivyBVb7wfAhSvvF5B",
-      "tool_response": "<redacted 143 chars>"
+      "tool_response": "<redacted 143 chars>",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3196,7 +3396,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017n6fMQxrxYPJRPe3WSVPou",
-      "tool_response": "<redacted 499 chars>"
+      "tool_response": "<redacted 499 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit plan, tasks, and log"
+      }
     },
     {
       "hook_event_name": null,
@@ -3256,7 +3460,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TJHigNGJqPDe6Tc1S1vHw1",
-      "tool_response": "<redacted 1944 chars>"
+      "tool_response": "<redacted 1944 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Branch for T001 and read existing types"
+      }
     },
     {
       "hook_event_name": null,
@@ -3316,7 +3524,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_019ev8fX23jNjC2CxDLEAyn6",
-      "tool_response": "<redacted 2044 chars>"
+      "tool_response": "<redacted 2044 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check test import style and tsconfig"
+      }
     },
     {
       "hook_event_name": null,
@@ -3375,7 +3587,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01FbVxdTxDjs81L8UZh9DjMD",
-      "tool_response": "<redacted 159 chars>"
+      "tool_response": "<redacted 159 chars>",
+      "tool_input": {
+        "file": "types.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -3421,7 +3636,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01WbL2zHrKjuZAxLZrGE5J4L",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "events.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -3467,7 +3685,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01R6XvDsTheUnxRSkqmhxPTn",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "file": "plan.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -3514,7 +3735,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TzkrZdPBoGwkN6Kavija7o",
-      "tool_error": "<redacted 43 chars>"
+      "tool_error": "<redacted 43 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Trim unused type imports"
+      }
     },
     {
       "hook_event_name": null,
@@ -3574,7 +3799,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01P255st1tQVE4qwNT1vmbjr",
-      "tool_response": "<redacted 183 chars>"
+      "tool_response": "<redacted 183 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check events.ts import block state"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3607,7 +3836,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Vr4yau9ZjSsUBJgqWbmsNy",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "events.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3640,7 +3872,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01S4HJGkzsU93pA148nZRUb8",
-      "tool_response": "<redacted 169 chars>"
+      "tool_response": "<redacted 169 chars>",
+      "tool_input": {
+        "file": "types.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -3699,7 +3934,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_017fG1em64RRDzM5mDwnu7pi",
-      "tool_response": "<redacted 168 chars>"
+      "tool_response": "<redacted 168 chars>",
+      "tool_input": {
+        "file": "plan.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3732,7 +3970,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01Xmy2v4Piw2E1zB6DQhDRuN",
-      "tool_response": "<redacted 165 chars>"
+      "tool_response": "<redacted 165 chars>",
+      "tool_input": {
+        "file": "lead-reactivation.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -3791,7 +4032,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01DhPKFxmUYsmxhrhsFtJT1a",
-      "tool_error": "<redacted 96 chars>"
+      "tool_error": "<redacted 96 chars>",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3824,7 +4068,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Read",
       "tool_use_id": "toolu_01LssmMpt8uwPyZ4BN3HJbcx",
-      "tool_response": "<redacted 755 chars>"
+      "tool_response": "<redacted 755 chars>",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3857,7 +4104,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Frcsr4CCHzFPFA79R9Ln3i",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "tsconfig.json"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3890,7 +4140,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01WY8Pyd4zD4uGL7SHT9UGmC",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -3924,7 +4177,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_015a26UXcmR2jNRVSexnvK3U",
-      "tool_response": "<redacted 1734 chars>"
+      "tool_response": "<redacted 1734 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run the new contract tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -3983,7 +4240,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01F2pbqQxRiZ8sUZNBZkvUW5",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
     },
     {
       "hook_event_name": null,
@@ -4030,7 +4290,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01AVRZbSuWbKpnfSRXoEZmpg",
-      "tool_response": "<redacted 2188 chars>"
+      "tool_response": "<redacted 2188 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run tests, typecheck and lint"
+      }
     },
     {
       "hook_event_name": null,
@@ -4089,7 +4353,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011YQdmwfvTKmkkwaHh5ejTY",
-      "tool_response": "<redacted 175 chars>"
+      "tool_response": "<redacted 175 chars>",
+      "tool_input": {
+        "file": "lead-reactivation.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -4123,7 +4390,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01WmGdCe8V6DjDyvAhBY5obx",
-      "tool_response": "<redacted 867 chars>"
+      "tool_response": "<redacted 867 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify typecheck and test whether lint failure predates my changes"
+      }
     },
     {
       "hook_event_name": null,
@@ -4183,7 +4454,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01D6vPEPtj33kFjJ7rvpEkSP",
-      "tool_response": "<redacted 1925 chars>"
+      "tool_response": "<redacted 1925 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Diagnose the tsgolint binary failure"
+      }
     },
     {
       "hook_event_name": null,
@@ -4230,7 +4505,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "PowerShell",
       "tool_use_id": "toolu_01VNYhd9sdYuDAUcshL43KM1",
-      "tool_response": "<redacted 294 chars>"
+      "tool_response": "<redacted 294 chars>",
+      "tool_input": {
+        "command": "<redacted>",
+        "description": "Test tsgolint execution and check mark-of-the-web"
+      }
     },
     {
       "hook_event_name": null,
@@ -4290,7 +4569,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01AekDFt9dkhpLAsBixkUzru",
-      "tool_response": "<redacted 247 chars>"
+      "tool_response": "<redacted 247 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find oxlint flag to disable type-aware linting"
+      }
     },
     {
       "hook_event_name": null,
@@ -4337,7 +4620,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Ku3hTUFsp9CvRN6GzkbWKD",
-      "tool_response": "<redacted 435 chars>"
+      "tool_response": "<redacted 435 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Try running oxlint without type-aware rules"
+      }
     },
     {
       "hook_event_name": null,
@@ -4384,7 +4671,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017NaXwuLYHDjo8UKzGjCHPG",
-      "tool_response": "<redacted 7749 chars>"
+      "tool_response": "<redacted 7749 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run oxlint without type-aware rules"
+      }
     },
     {
       "hook_event_name": null,
@@ -4444,7 +4735,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01RetRFkBDMwDH3iFjrKZ3t9",
-      "tool_response": "<redacted 1218 chars>"
+      "tool_response": "<redacted 1218 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Confirm new files lint clean and quantify pre-existing debt"
+      }
     },
     {
       "hook_event_name": null,
@@ -4503,7 +4798,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_017mPz8vfjUDpd8Z29dNYwyh",
-      "tool_response": "<redacted 168 chars>"
+      "tool_response": "<redacted 168 chars>",
+      "tool_input": {
+        "file": "plan.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -4536,7 +4834,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011x5UbG8KKsdiiiBdAxQXXE",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-contract.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -4570,7 +4871,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01SriekMfF9M4PAXQSRTjQNZ",
-      "tool_response": "<redacted 486 chars>"
+      "tool_response": "<redacted 486 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Full verification gate for T001"
+      }
     },
     {
       "hook_event_name": null,
@@ -4629,7 +4934,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01BBREEZM318iN2qnLgqaRmP",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -4663,7 +4971,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01LF2bc3TfqcmjsHfNms5QeZ",
-      "tool_response": "<redacted 271 chars>"
+      "tool_response": "<redacted 271 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit T001"
+      }
     },
     {
       "hook_event_name": null,
@@ -4723,7 +5035,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_018NQcQJAY8yhoCSCgnBHq4w",
-      "tool_response": "<redacted 77 chars>"
+      "tool_response": "<redacted 77 chars>",
+      "tool_input": {
+        "command": "echo",
+        "description": "Check whether subagent lines now exist in this transcript"
+      }
     },
     {
       "hook_event_name": null,
@@ -4783,7 +5099,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01N97rDfX9KH8wtDxN6G6bjJ",
-      "tool_error": "<redacted 1323 chars>"
+      "tool_error": "<redacted 1323 chars>",
+      "tool_input": {
+        "command": "ls",
+        "description": "Inspect subagent transcript structure and token totals"
+      }
     },
     {
       "hook_event_name": null,
@@ -4830,7 +5150,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_014VVTLhqkbfnkEHtNmJr6PJ",
-      "tool_response": "<redacted 2330 chars>"
+      "tool_response": "<redacted 2330 chars>",
+      "tool_input": {
+        "command": "echo",
+        "description": "Search for subagent transcript data anywhere on disk"
+      }
     },
     {
       "hook_event_name": null,
@@ -4890,7 +5214,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013zRAw2giB6jyXKyZUxur69",
-      "tool_response": "<redacted 587 chars>"
+      "tool_response": "<redacted 587 chars>",
+      "tool_input": {
+        "command": "echo",
+        "description": "Locate this session's subagent transcript"
+      }
     },
     {
       "hook_event_name": null,
@@ -4937,7 +5265,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EMbw3D2B4BMQvMLc82onp3",
-      "tool_response": "<redacted 456 chars>"
+      "tool_response": "<redacted 456 chars>",
+      "tool_input": {
+        "command": "echo",
+        "description": "Verify per-subagent usage attribution"
+      }
     },
     {
       "hook_event_name": null,
@@ -4996,7 +5328,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01JhkehtYTbh85Z6FFkBoWh3",
-      "tool_error": "<redacted 96 chars>"
+      "tool_error": "<redacted 96 chars>",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5029,7 +5364,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Read",
       "tool_use_id": "toolu_013bF5cTUyyCAEpz5wZ5Eiij",
-      "tool_response": "<redacted 535 chars>"
+      "tool_response": "<redacted 535 chars>",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5062,7 +5400,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Read",
       "tool_use_id": "toolu_01YPTiGjscmLyWsbE8PKPok8",
-      "tool_response": "<redacted 1636 chars>"
+      "tool_response": "<redacted 1636 chars>",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5095,7 +5436,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01PGEnGTAokPjmTeXt6uyN7h",
-      "tool_response": "<redacted 147 chars>"
+      "tool_response": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "PLAN.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -5141,7 +5485,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01AQJrVjbXvY8XkBK7WAhh6J",
-      "tool_error": "<redacted 96 chars>"
+      "tool_error": "<redacted 96 chars>",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5174,7 +5521,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Read",
       "tool_use_id": "toolu_016NRr5FER6rWNydACsaieDZ",
-      "tool_response": "<redacted 631 chars>"
+      "tool_response": "<redacted 631 chars>",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5207,7 +5557,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01JZF8Abj7wAtRKwC9pt8f3d",
-      "tool_response": "<redacted 165 chars>"
+      "tool_response": "<redacted 165 chars>",
+      "tool_input": {
+        "file": "005-local-bridge.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5240,7 +5593,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01JX721pncR3KryU1ptnhVrD",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
     },
     {
       "hook_event_name": null,
@@ -5299,7 +5655,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01NLM9c5YdRY5MUqXYy9nMxU",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5333,7 +5692,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_011Fez1HRriQPZfdKGm8KKa6",
-      "tool_response": "<redacted 443 chars>"
+      "tool_response": "<redacted 443 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Capture a real session to a fixture"
+      }
     },
     {
       "hook_event_name": null,
@@ -5380,7 +5743,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Ky5zoDwGRo1eUCnXyXJmYF",
-      "tool_response": "<redacted 950 chars>"
+      "tool_response": "<redacted 950 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify redaction and look for real parallel batches"
+      }
     },
     {
       "hook_event_name": null,
@@ -5440,7 +5807,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01AXwN9fH7j8pdArpbAtHkKp",
-      "tool_response": "<redacted 914 chars>"
+      "tool_response": "<redacted 914 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate leaked paths in fixture"
+      }
     },
     {
       "hook_event_name": null,
@@ -5499,7 +5870,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01HCWeJx615YU8dzm9Gt8XSc",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5532,7 +5906,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01H9x2x17GUZco5rDZiYP1TK",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5566,7 +5943,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Xia1Y8LvsiGWnUBMGaoG3u",
-      "tool_response": "<redacted 613 chars>"
+      "tool_response": "<redacted 613 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Regenerate fixture and recheck for leaks"
+      }
     },
     {
       "hook_event_name": null,
@@ -5626,7 +6007,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_015Yv5VjVe4xTY4Zhs3UgAv5",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Record fixture limitation and re-run gate"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5660,7 +6045,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01NAxKqw3ve67odwTCRpzJok",
-      "tool_response": "<redacted 435 chars>"
+      "tool_response": "<redacted 435 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit fixture and merge T001"
+      }
     },
     {
       "hook_event_name": null,
@@ -5719,7 +6108,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01V1AwFJ1NrJG37iNAcT1vJC",
-      "tool_response": "<redacted 162 chars>"
+      "tool_response": "<redacted 162 chars>",
+      "tool_input": {
+        "file": "claude-code-subagent-transcripts.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5752,7 +6144,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01TGC97zbuZ2ZnMqgmo4KadK",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "o6-office-invention-lab.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5786,7 +6181,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Eg2GqrJxT7s77xY4XN3qgH",
-      "tool_response": "<redacted 948 chars>"
+      "tool_response": "<redacted 948 chars>",
+      "tool_input": {
+        "command": "#",
+        "description": "Update memory index and Windows traps memory"
+      }
     },
     {
       "hook_event_name": null,
@@ -5846,7 +6245,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01GpqdHJQsa76BpMWn6Brqbd",
-      "tool_response": "<redacted 108 chars>"
+      "tool_response": "<redacted 108 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Branch for T002"
+      }
     },
     {
       "hook_event_name": null,
@@ -5905,7 +6308,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_013s1R5in1xpEbbN68HRnwJc",
-      "tool_response": "<redacted 164 chars>"
+      "tool_response": "<redacted 164 chars>",
+      "tool_input": {
+        "file": "projection.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -5938,7 +6344,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01Cr6ds9THMStPTqUVpwvwU7",
-      "tool_response": "<redacted 162 chars>"
+      "tool_response": "<redacted 162 chars>",
+      "tool_input": {
+        "file": "timeline.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -5997,7 +6406,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01EcWBFiXvVWkPVhSZrno1Dj",
-      "tool_response": "<redacted 172 chars>"
+      "tool_response": "<redacted 172 chars>",
+      "tool_input": {
+        "file": "timeline.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6030,7 +6442,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_018en38aYa499cHSDhHhmkFB",
-      "tool_response": "<redacted 172 chars>"
+      "tool_response": "<redacted 172 chars>",
+      "tool_input": {
+        "file": "timeline.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -6089,7 +6504,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01Ngikk3QWiqYVM2ega6LUUa",
-      "tool_response": "<redacted 163 chars>"
+      "tool_response": "<redacted 163 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -6135,7 +6553,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01TZSR17XMqDx4A2rRaJcWsK",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6169,7 +6590,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KWND75ZMMkoUAWmt4WJvYX",
-      "tool_response": "<redacted 1466 chars>"
+      "tool_response": "<redacted 1466 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run timeline and scheduler tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -6228,7 +6653,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01XFJ5XzEZGMhNX1VxcLVHZb",
-      "tool_response": "<redacted 172 chars>"
+      "tool_response": "<redacted 172 chars>",
+      "tool_input": {
+        "file": "timeline.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6262,7 +6690,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01HVUHhaXv5Bdjo1ifhTpNN2",
-      "tool_response": "<redacted 2092 chars>"
+      "tool_response": "<redacted 2092 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-run timeline tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -6321,7 +6753,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Vs1ny5rhbM6tXkLeVoTxCt",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6355,7 +6790,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0186XiZKURJwTpocjxS3ucxt",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run full test suite"
+      }
     },
     {
       "hook_event_name": null,
@@ -6414,7 +6853,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_019tP3f38iQ5AZQDi7dBVDWd",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "file": "theme.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6447,7 +6889,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01FomZvPZNfYKVzSiUXkAtbJ",
-      "tool_response": "<redacted 161 chars>"
+      "tool_response": "<redacted 161 chars>",
+      "tool_input": {
+        "file": "sprites.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -6506,7 +6951,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01Tj18L3RvSLLdPJJWyqetTb",
-      "tool_response": "<redacted 171 chars>"
+      "tool_response": "<redacted 171 chars>",
+      "tool_input": {
+        "file": "useAnimationLoop.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -6565,7 +7013,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01KsFBHRME6gmXZrf9rzETgd",
-      "tool_response": "<redacted 181 chars>"
+      "tool_response": "<redacted 181 chars>",
+      "tool_input": {
+        "file": "useAnimationLoop.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -6611,7 +7062,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01JZ6KTsgo9Zgr2KHX6fMNW4",
-      "tool_response": "<redacted 166 chars>"
+      "tool_response": "<redacted 166 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -6670,7 +7124,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01YEsyM7bVWoKcDtDCpLvv4x",
-      "tool_response": "<redacted 164 chars>"
+      "tool_response": "<redacted 164 chars>",
+      "tool_input": {
+        "file": "demo-stream.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6703,7 +7160,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01C51TxbpsRH52655TMoYtsw",
-      "tool_response": "<redacted 154 chars>"
+      "tool_response": "<redacted 154 chars>",
+      "tool_input": {
+        "file": "index.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -6750,7 +7210,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Lp6r8rB7N5shfkdKCE6jR4",
-      "tool_response": "<redacted 1621 chars>"
+      "tool_response": "<redacted 1621 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check layout and CSS wiring"
+      }
     },
     {
       "hook_event_name": null,
@@ -6797,7 +7261,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TMnGrpUJG1gABgmtYdbLcL",
-      "tool_response": "<redacted 118 chars>"
+      "tool_response": "<redacted 118 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Append renderer styles to office.css"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6830,7 +7298,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Write",
       "tool_use_id": "toolu_01Ka4xHeueZDXHYYSMf1Xs8Q",
-      "tool_response": "<redacted 146 chars>"
+      "tool_response": "<redacted 146 chars>",
+      "tool_input": {
+        "file": "page.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6864,7 +7335,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_011ErmNcrmD3rqfGfABkNJYu",
-      "tool_response": "<redacted 3883 chars>"
+      "tool_response": "<redacted 3883 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Typecheck the renderer"
+      }
     },
     {
       "hook_event_name": null,
@@ -6923,7 +7398,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_016c7hxJJXVphzf76rJ2dm6L",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "events.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6956,7 +7434,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_013QUT1EQ43892kXKAYr6GuZ",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -6990,7 +7471,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TLNgyS3FX67T4XBh8GeAd5",
-      "tool_response": "<redacted 80 chars>"
+      "tool_response": "<redacted 80 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-typecheck"
+      }
     },
     {
       "hook_event_name": null,
@@ -7050,7 +7535,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01CDnphu87gsA9Dj1EkuNf6W",
-      "tool_response": "<redacted 154 chars>"
+      "tool_response": "<redacted 154 chars>",
+      "tool_input": {
+        "command": "node",
+        "description": "Point launch config at relocated project"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7081,7 +7570,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_01XXjyhio14zG6J2ZqCvY3Ss",
-      "tool_response": "<redacted 398 chars>"
+      "tool_response": "<redacted 398 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7112,7 +7602,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01FMWkwCTQEG4NvB5vSQVuyw",
-      "tool_response": "<redacted 881 chars>"
+      "tool_response": "<redacted 881 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7169,7 +7660,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01TsXsKmRSNUd2GT9we7oDJ9",
-      "tool_response": "<redacted 540 chars>"
+      "tool_response": "<redacted 540 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7228,7 +7720,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01VHviz3teFz5suo17nAXDG1",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7262,7 +7757,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01G1FXtNEN3JpUQtcNwGPd8d",
-      "tool_response": "<redacted 275 chars>"
+      "tool_response": "<redacted 275 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Mirror desk activity onto seated workers"
+      }
     },
     {
       "hook_event_name": null,
@@ -7309,7 +7808,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FFXvHyVLsFqjLhEmSF85tq",
-      "tool_response": "<redacted 682 chars>"
+      "tool_response": "<redacted 682 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify setDeskStatus wiring"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7342,7 +7845,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011FEBwkrKieXq4qK3tL6ZjZ",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -7401,7 +7907,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01JdVr6DzQNi7BeeprurbVbF",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7434,7 +7943,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_015rGU5GmT1fbcgXDsMA3Rhg",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7467,7 +7979,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01AamAyWzka7ySc9bGeLjsKq",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7501,7 +8016,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01LepR7C7F8SEi9D1kxR1ki8",
-      "tool_response": "<redacted 123 chars>"
+      "tool_response": "<redacted 123 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Typecheck and test after fixes"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7535,7 +8054,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01D1jrpH3PMA6cWop6qNKVT7",
-      "tool_response": "<redacted 710 chars>"
+      "tool_response": "<redacted 710 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect the failing test"
+      }
     },
     {
       "hook_event_name": null,
@@ -7594,7 +8117,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01UdX6SHUMEub2YQEx9dZ8uL",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7628,7 +8154,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EStx49B7nMcKPj2gtC6fSG",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-run tests"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7659,7 +8189,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01G3v6QY7k4vuqs3Bqwh2BbY",
-      "tool_response": "<redacted 545 chars>"
+      "tool_response": "<redacted 545 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7716,7 +8247,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01RNGtvUPxo2ZBNLvReAxZ1N",
-      "tool_response": "<redacted 1291 chars>"
+      "tool_response": "<redacted 1291 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7773,7 +8305,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01VUy5mPB2cXkw15JZKMP7My",
-      "tool_response": "<redacted 545 chars>"
+      "tool_response": "<redacted 545 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7830,7 +8363,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01Wmfe7qXZLK8WbyG5hcVq4E",
-      "tool_response": "<redacted 198 chars>"
+      "tool_response": "<redacted 198 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7887,7 +8421,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__tabs_context",
       "tool_use_id": "toolu_01SXqUXMTRSEnG8oZADuKART",
-      "tool_response": "<redacted 281 chars>"
+      "tool_response": "<redacted 281 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -7931,7 +8466,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__tabs_select",
       "tool_use_id": "toolu_01VQNejQmGtCLUUHwvxrLX1v",
-      "tool_response": "<redacted 18 chars>"
+      "tool_response": "<redacted 18 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -7962,7 +8498,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01P6gtSJjgCa8gUrfg1hYgnm",
-      "tool_response": "<redacted 545 chars>"
+      "tool_response": "<redacted 545 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8006,7 +8543,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01BHrvfFHAJppPgePmCvJKZ9",
-      "tool_response": "<redacted 190 chars>"
+      "tool_response": "<redacted 190 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8063,7 +8601,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01AkbyPRCdQt7RUNe6g31YuV",
-      "tool_response": "<redacted 219 chars>"
+      "tool_response": "<redacted 219 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8122,7 +8661,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01UcB7qYZoR5Zh28LhGjVBhC",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8155,7 +8697,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_014VpLDAcGtM88QG5PRUEzc7",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8188,7 +8733,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01KVjU8QPw2hk8S641cQos3s",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -8234,7 +8782,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01R6VCN6887Bwg9JxBxTTURt",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8267,7 +8818,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01DpGY9icaEqMSCZkC9LmWbQ",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8301,7 +8855,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0195bQr6sxDyWER5hC3BzdnE",
-      "tool_response": "<redacted 93 chars>"
+      "tool_response": "<redacted 93 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Typecheck after applyTime refactor"
+      }
     },
     {
       "hook_event_name": null,
@@ -8345,7 +8903,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_013BKKVDzx1EgWiR2AoJWxF9",
-      "tool_response": "<redacted 585 chars>"
+      "tool_response": "<redacted 585 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8389,7 +8948,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_0192UZyEmQXXA45GCYqEimg7",
-      "tool_response": "<redacted 510 chars>"
+      "tool_response": "<redacted 510 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8449,7 +9009,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_014raeRbpdoqKL1hhUGYTeBe",
-      "tool_response": "<redacted 213 chars>"
+      "tool_response": "<redacted 213 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Make idle status null so violet means only live activity"
+      }
     },
     {
       "hook_event_name": null,
@@ -8495,7 +9059,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01XX1bdgHUxQ8VAzTQGcuzar",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8528,7 +9095,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01ENTjNyAh4mr8PagDiJDvQW",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8562,7 +9132,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_015gn4ke6TdcdRHfqMMha2KQ",
-      "tool_response": "<redacted 123 chars>"
+      "tool_response": "<redacted 123 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify after violet fix"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8596,7 +9170,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01NAt4ez32ttLPQUGwLzjxrk",
-      "tool_response": "<redacted 1044 chars>"
+      "tool_response": "<redacted 1044 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect failures"
+      }
     },
     {
       "hook_event_name": null,
@@ -8656,7 +9234,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TGBEbSvzt8iNBGpcsSRo27",
-      "tool_response": "<redacted 429 chars>"
+      "tool_response": "<redacted 429 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate remaining Standing by push"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8689,7 +9271,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01HEVCxuTYVgwM1vm3BzTgCq",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8722,7 +9307,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01MbxmvyGNcPKdfTWzdeNkqt",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8756,7 +9344,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01UTdXni9S3TExELjMRdTCnw",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-verify tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -8813,7 +9405,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01XG58WiDeqFfb396c5w9afL",
-      "tool_error": "<redacted 206 chars>"
+      "tool_error": "<redacted 206 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -8844,7 +9437,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01YFzkPKpvzsPWeK7qRpgJaR",
-      "tool_response": "<redacted 204 chars>"
+      "tool_response": "<redacted 204 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8888,7 +9482,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__computer",
       "tool_use_id": "toolu_01UFLarFvLiktDTZWT2nWQK7",
-      "tool_response": "<redacted 166 chars>"
+      "tool_response": "<redacted 166 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -8945,7 +9540,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_019bhwGR2e8QxE41haRWWrXQ",
-      "tool_response": "<redacted 381 chars>"
+      "tool_response": "<redacted 381 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -9004,7 +9600,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_016bA6ugQnFFRtGp9tqDwwDr",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9037,7 +9636,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01JGgyXLGw2vnQ62L7aR3kLB",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9071,7 +9673,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01AyaVHhbR7ENig1miy8Rdes",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify artifact-clear fix"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9102,7 +9708,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01B4q1Sq2KvmngkWzD1JdLJu",
-      "tool_response": "<redacted 725 chars>"
+      "tool_response": "<redacted 725 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -9159,7 +9766,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01Aj29Rn8PtcrwthLZJpYrMp",
-      "tool_response": "<redacted 422 chars>"
+      "tool_response": "<redacted 422 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -9218,7 +9826,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011r1DktVNobHPZeCNUMZ7oD",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9251,7 +9862,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_016BM6yFaidQFSjqJSgjnscS",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9285,7 +9899,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013aAyufAKynzBXSS5Eyox5y",
-      "tool_response": "<redacted 250 chars>"
+      "tool_response": "<redacted 250 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find remaining inTransit references"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9319,7 +9937,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01VfyRHmvE7wyu8wytg8YChR",
-      "tool_response": "<redacted 442 chars>"
+      "tool_response": "<redacted 442 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Remove the broken in-transit counter"
+      }
     },
     {
       "hook_event_name": null,
@@ -9365,7 +9987,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01TY5xV9oh32oABFucKEiqxp",
-      "tool_response": "<redacted 173 chars>"
+      "tool_response": "<redacted 173 chars>",
+      "tool_input": {
+        "file": "scheduler.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9398,7 +10023,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01KxHTQBmV26a9W5hrAvrBb7",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "office-timeline.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9432,7 +10060,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_012j2MyTQofFJUdg14pGDdhA",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify lane and batching fixes"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9463,7 +10095,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_013xUgSVRJ6D7Mi6azECcPtL",
-      "tool_response": "<redacted 744 chars>"
+      "tool_response": "<redacted 744 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -9522,7 +10155,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Kig1bnu8dj8mdWRWatanmr",
-      "tool_response": "<redacted 171 chars>"
+      "tool_response": "<redacted 171 chars>",
+      "tool_input": {
+        "file": "sprites.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9555,7 +10191,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01XA7GoNz5bhe4dL9oTTdKDw",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9589,7 +10228,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0185PJyeEUMxTfTbLtpke1Tu",
-      "tool_response": "<redacted 123 chars>"
+      "tool_response": "<redacted 123 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify after folder batch change"
+      }
     },
     {
       "hook_event_name": null,
@@ -9636,7 +10279,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Nm5WRzi65ZUKqaKAaKVofm",
-      "tool_response": "<redacted 3786 chars>"
+      "tool_response": "<redacted 3786 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Lint the new renderer code"
+      }
     },
     {
       "hook_event_name": null,
@@ -9695,7 +10342,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01XZrEyRHVadvyGnCKnGYKYC",
-      "tool_response": "<redacted 181 chars>"
+      "tool_response": "<redacted 181 chars>",
+      "tool_input": {
+        "file": "useAnimationLoop.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9728,7 +10378,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01QaQSyntynsS5ZgLyvfkJmY",
-      "tool_response": "<redacted 181 chars>"
+      "tool_response": "<redacted 181 chars>",
+      "tool_input": {
+        "file": "useAnimationLoop.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9761,7 +10414,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011M6t4cMFrfDgD6oQ2CmZm7",
-      "tool_response": "<redacted 181 chars>"
+      "tool_response": "<redacted 181 chars>",
+      "tool_input": {
+        "file": "useAnimationLoop.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -9807,7 +10463,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_0163K9SbMFvNpyDSr9jTVZK5",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9841,7 +10500,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01GGm8sqwKFtcSqbQ2VqAgZB",
-      "tool_response": "<redacted 478 chars>"
+      "tool_response": "<redacted 478 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Suppress SVG role false positives and re-lint"
+      }
     },
     {
       "hook_event_name": null,
@@ -9901,7 +10564,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013sPMmQ2o5uaDG5CK48mrxn",
-      "tool_response": "<redacted 101 chars>"
+      "tool_response": "<redacted 101 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix JSX comment syntax"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -9935,7 +10602,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FiBX36oUxYMwAB531q23qm",
-      "tool_response": "<redacted 2252 chars>"
+      "tool_response": "<redacted 2252 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-lint renderer"
+      }
     },
     {
       "hook_event_name": null,
@@ -9995,7 +10666,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KaWq7LhS8MJFBfExe9p4jt",
-      "tool_response": "<redacted 135 chars>"
+      "tool_response": "<redacted 135 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add documented file-level disable and fix the status element"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10029,7 +10704,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_011NPBneCDaRXPStxLiePsN3",
-      "tool_response": "<redacted 576 chars>"
+      "tool_response": "<redacted 576 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check the output element closing tag"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10063,7 +10742,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Ntz6qo96rZwavtpiZvZWqd",
-      "tool_response": "<redacted 472 chars>"
+      "tool_response": "<redacted 472 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate the mount-paint effect"
+      }
     },
     {
       "hook_event_name": null,
@@ -10109,7 +10792,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Bw13jd3LQwMcSQ5Co8BYGS",
-      "tool_error": "<redacted 147 chars>"
+      "tool_error": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10142,7 +10828,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Read",
       "tool_use_id": "toolu_01TBNoUYtzTZWLJt1SJcE6RR",
-      "tool_response": "<redacted 891 chars>"
+      "tool_response": "<redacted 891 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10175,7 +10864,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01NHA1zccwu6WDeFh7WVRgST",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10209,7 +10901,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01MNsYm9PPyuo4zP4SchjYSm",
-      "tool_response": "<redacted 150 chars>"
+      "tool_response": "<redacted 150 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Full gate for T002"
+      }
     },
     {
       "hook_event_name": null,
@@ -10269,7 +10965,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01RTdWT2WXNDJK377V8rbcCN",
-      "tool_response": "<redacted 217 chars>"
+      "tool_response": "<redacted 217 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Build"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10300,7 +11000,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01MMuMqTviNB9siASJXaamni",
-      "tool_response": "<redacted 1226 chars>"
+      "tool_response": "<redacted 1226 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -10359,7 +11060,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01LLmhctmjTQawhGCsVVTnx6",
-      "tool_response": "<redacted 175 chars>"
+      "tool_response": "<redacted 175 chars>",
+      "tool_input": {
+        "file": "lead-reactivation.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10393,7 +11097,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_014JpH8PkfEfEFheKcw8FYEp",
-      "tool_response": "<redacted 370 chars>"
+      "tool_response": "<redacted 370 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate compact plan block"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10427,7 +11135,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KXrEaTu7QrBdPiW6n8Sesh",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Rewrite compact plan for vertical screen layout"
+      }
     },
     {
       "hook_event_name": null,
@@ -10486,7 +11198,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01114uk8Ari2N2NzQSPNeBqY",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10519,7 +11234,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_015nr54HJ6JqFE8hRuJCMeLt",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10553,7 +11271,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01N3kyStw4SBDUbGSRDm2YfC",
-      "tool_response": "<redacted 93 chars>"
+      "tool_response": "<redacted 93 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add dot style and typecheck"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10584,7 +11306,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01Goh5RTERsznBEuprLSfhzm",
-      "tool_response": "<redacted 746 chars>"
+      "tool_response": "<redacted 746 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -10641,7 +11364,8 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01Htf4A4ARWmQVraWaiNj8D8",
-      "tool_response": "<redacted 625 chars>"
+      "tool_response": "<redacted 625 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -10701,7 +11425,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FtNFGYcLLdoLTka89QkGud",
-      "tool_response": "<redacted 215 chars>"
+      "tool_response": "<redacted 215 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Record T002 notes and run final gate"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10735,7 +11463,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01ATppvpCPwDbnscKyZF8vQ4",
-      "tool_response": "<redacted 433 chars>"
+      "tool_response": "<redacted 433 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit and merge T002"
+      }
     },
     {
       "hook_event_name": null,
@@ -10794,7 +11526,10 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01FoAcH1T3ZjSgoBE3aJPdjP",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -10828,7 +11563,11 @@
       "prompt_id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01BZgwTh25eKdNoyuP7HSpSP",
-      "tool_response": "<redacted 1070 chars>"
+      "tool_response": "<redacted 1070 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit docs and show task status"
+      }
     },
     {
       "hook_event_name": null,
@@ -10908,7 +11647,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Fwn2qb2nWpCN7ty1vA1RCG",
-      "tool_response": "<redacted 9723 chars>"
+      "tool_response": "<redacted 9723 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Branch T003 and read the workflow hook"
+      }
     },
     {
       "hook_event_name": null,
@@ -10955,7 +11698,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QoiuytzsEGRpybuBYAZPB4",
-      "tool_response": "<redacted 652 chars>"
+      "tool_response": "<redacted 652 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find page.tsx dependencies on the hook"
+      }
     },
     {
       "hook_event_name": null,
@@ -11002,7 +11749,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FpxZkgSoKpbAYydShPpDfg",
-      "tool_response": "<redacted 1432 chars>"
+      "tool_response": "<redacted 1432 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find event-consuming expressions in page.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -11061,7 +11812,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01LWHN8aoBnixFrcJdkdyjE2",
-      "tool_response": "<redacted 148 chars>"
+      "tool_response": "<redacted 148 chars>",
+      "tool_input": {
+        "file": "lead-review.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -11120,7 +11874,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011tnFqCKB6iNKvZLv44VK9H",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "file": "lead-review.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -11166,7 +11923,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_018YW4UzQcWkqowja7GHvCe7",
-      "tool_error": "<redacted 96 chars>"
+      "tool_error": "<redacted 96 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11199,7 +11959,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Read",
       "tool_use_id": "toolu_01CDnQ16PJSCXjinrpFNERkA",
-      "tool_response": "<redacted 230 chars>"
+      "tool_response": "<redacted 230 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11232,7 +11995,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_019dxk3FATGmjhehgHzxcevL",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11266,7 +12032,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Gk6vy2pdRza3BLgYpxuFg9",
-      "tool_response": "<redacted 1945 chars>"
+      "tool_response": "<redacted 1945 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Typecheck the ported hook"
+      }
     },
     {
       "hook_event_name": null,
@@ -11326,7 +12096,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Cmq3Ka2o4fg1AH3BBfcVGL",
-      "tool_response": "<redacted 169 chars>"
+      "tool_response": "<redacted 169 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect page.tsx event call sites"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11360,7 +12134,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01G4ddYhqzv5LQJT5bvgTUaZ",
-      "tool_response": "<redacted 880 chars>"
+      "tool_response": "<redacted 880 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate log usage and activityList definition"
+      }
     },
     {
       "hook_event_name": null,
@@ -11419,7 +12197,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01SzM8qxBLjcncRKHGe2LsBK",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11452,7 +12233,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_0182Xa57KuFLLLbLoMn6GKyH",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11485,7 +12269,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_014WM4HZhMGczixA9f4inRNQ",
-      "tool_response": "<redacted 257 chars>"
+      "tool_response": "<redacted 257 chars>",
+      "tool_input": {
+        "file": "patch-page.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11519,7 +12306,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01RCz7wPZbf8bXWekqQVEHrg",
-      "tool_response": "<redacted 363 chars>"
+      "tool_response": "<redacted 363 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Patch page.tsx to the new contract"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11553,7 +12344,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01ArKVRqoCgx26kTikQmec4D",
-      "tool_response": "<redacted 1712 chars>"
+      "tool_response": "<redacted 1712 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Typecheck after page patch"
+      }
     },
     {
       "hook_event_name": null,
@@ -11612,7 +12407,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01DsFe2ua7SraDuHPVwhZvLn",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11645,7 +12443,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Hi6cPtRGuEqamETiTTVbZm",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11678,7 +12479,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01YEk1kza433WbZu2FJHkb1S",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11712,7 +12516,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01DtqchWR7R7KP81P4VH38cD",
-      "tool_response": "<redacted 535 chars>"
+      "tool_response": "<redacted 535 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find remaining page.tsx problems"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11746,7 +12554,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01W9X9uVsCoxpiYKQGxZK6L3",
-      "tool_response": "<redacted 1220 chars>"
+      "tool_response": "<redacted 1220 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix latest and desk-null issues"
+      }
     },
     {
       "hook_event_name": null,
@@ -11805,7 +12617,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01YDdvDmY9RQvuUsX2axSngA",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -11839,7 +12654,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0113JamBoswCUj4iKyXFabTn",
-      "tool_response": "<redacted 564 chars>"
+      "tool_response": "<redacted 564 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find latest definition and recheck types"
+      }
     },
     {
       "hook_event_name": null,
@@ -11886,7 +12705,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_018ckLETAuwik9cSmsgV3bmt",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix latest and verify"
+      }
     },
     {
       "hook_event_name": null,
@@ -11945,7 +12768,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01J6ApqEgWVcAnhxupn1QqLk",
-      "tool_response": "<redacted 150 chars>"
+      "tool_response": "<redacted 150 chars>",
+      "tool_input": {
+        "file": "lead-workflow.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -11992,7 +12818,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01UYQp4Na5SNg3dd4MUcP8dB",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Replace inline workflow with the extracted call"
+      }
     },
     {
       "hook_event_name": null,
@@ -12039,7 +12869,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FPTY55Dxji42nZdMTw4NVi",
-      "tool_response": "<redacted 713 chars>"
+      "tool_response": "<redacted 713 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Clean up hook imports"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12073,7 +12907,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01J1cfegCTnXvSodXsvPSNwu",
-      "tool_response": "<redacted 1079 chars>"
+      "tool_response": "<redacted 1079 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect remaining holder usage"
+      }
     },
     {
       "hook_event_name": null,
@@ -12119,7 +12957,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01V83b2ekWnqZuzm62Z4mSs1",
-      "tool_response": "<redacted 170 chars>"
+      "tool_response": "<redacted 170 chars>",
+      "tool_input": {
+        "file": "events.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12152,7 +12993,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01FqAFEycJS7YxxLqh16b71E",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "lead-workflow.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12186,7 +13030,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01GxBd5jad2qmwDENfUdKgZA",
-      "tool_response": "<redacted 182 chars>"
+      "tool_response": "<redacted 182 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Type the workflow against the contract and dedupe emissions"
+      }
     },
     {
       "hook_event_name": null,
@@ -12232,7 +13080,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01RJipoCQg6CFW3oRdRBLqtR",
-      "tool_error": "<redacted 147 chars>"
+      "tool_error": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12266,7 +13117,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QW7oUHdbk3uhdqYHnu7E2D",
-      "tool_response": "<redacted 616 chars>"
+      "tool_response": "<redacted 616 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate insertion point and call site"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12300,7 +13155,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01T2K9H6gLwUnDkLm8EKbvbF",
-      "tool_response": "<redacted 99 chars>"
+      "tool_response": "<redacted 99 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add the proxy caller and wire it"
+      }
     },
     {
       "hook_event_name": null,
@@ -12347,7 +13206,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01VV2Tf6PRJyQHU93uArRXim",
-      "tool_response": "<redacted 238 chars>"
+      "tool_response": "<redacted 238 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check for orphaned usage state"
+      }
     },
     {
       "hook_event_name": null,
@@ -12407,7 +13270,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Us645scydtR1uXA99SuGrZ",
-      "tool_response": "<redacted 88 chars>"
+      "tool_response": "<redacted 88 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Derive usage from the event stream"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12441,7 +13308,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Ly4AM5Qv1YcUVDkN9azqEz",
-      "tool_response": "<redacted 430 chars>"
+      "tool_response": "<redacted 430 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check the comment survived the shell mangling"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12474,7 +13345,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01GqT6ubLLEPZiqbKUPqQ4ku",
-      "tool_error": "<redacted 147 chars>"
+      "tool_error": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "use-office.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12508,7 +13382,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QY4agFe4KR9ssfGB9CXmYX",
-      "tool_response": "<redacted 338 chars>"
+      "tool_response": "<redacted 338 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Repair the mangled comment"
+      }
     },
     {
       "hook_event_name": null,
@@ -12554,7 +13432,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01T1u28f8nKUzA84edoXfcno",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "file": "lead-workflow.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12588,7 +13469,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EMeFbek5hopg2wCMjdrQnt",
-      "tool_response": "<redacted 1657 chars>"
+      "tool_response": "<redacted 1657 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run the workflow honesty tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -12647,7 +13532,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01AoqN8taA6LoVN545Dxg9UD",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "lead-workflow.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12681,7 +13569,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Ht9JebgE92UFfn43FDWUm8",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify the no-op handoff fix"
+      }
     },
     {
       "hook_event_name": null,
@@ -12741,7 +13633,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TiHSrALS1hBkBZ7H56GwDr",
-      "tool_response": "<redacted 458 chars>"
+      "tool_response": "<redacted 458 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Lint and build for T003"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12775,7 +13671,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_012FGhK3i6AShopZxkq25Tj2",
-      "tool_response": "<redacted 1147 chars>"
+      "tool_response": "<redacted 1147 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix lint nit and re-verify"
+      }
     },
     {
       "hook_event_name": null,
@@ -12835,7 +13735,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01C1ZffVcbcN8yN7RviXbMzR",
-      "tool_response": "<redacted 541 chars>"
+      "tool_response": "<redacted 541 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit and merge T003"
+      }
     },
     {
       "hook_event_name": null,
@@ -12895,7 +13799,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01NMmELdrSNPAFbEJ7AewNSn",
-      "tool_response": "<redacted 464 chars>"
+      "tool_response": "<redacted 464 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect commit message for mangling"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -12929,7 +13837,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017ujettScb4EEAye5WUYv5X",
-      "tool_response": "<redacted 338 chars>"
+      "tool_response": "<redacted 338 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Amend the mangled commit message and re-merge"
+      }
     },
     {
       "hook_event_name": null,
@@ -12989,7 +13901,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01BY45GCeEBAfDj6rf3rS3Wz",
-      "tool_response": "<redacted 1226 chars>"
+      "tool_response": "<redacted 1226 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract the office-map block to replace"
+      }
     },
     {
       "hook_event_name": null,
@@ -13048,7 +13964,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01B55dLg1CMvvJmDjQSQFbQy",
-      "tool_response": "<redacted 157 chars>"
+      "tool_response": "<redacted 157 chars>",
+      "tool_input": {
+        "file": "record-demo-run.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13082,7 +14001,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01MdeyEQRUgzEZ1UQBChzsaM",
-      "tool_response": "<redacted 417 chars>"
+      "tool_response": "<redacted 417 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Record the demo run"
+      }
     },
     {
       "hook_event_name": null,
@@ -13142,7 +14065,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_018uUPrmV8y1zUMqRj1x8VW1",
-      "tool_response": "<redacted 690 chars>"
+      "tool_response": "<redacted 690 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check mobile hook and page state"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13176,7 +14103,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QnzCLwc8eBu7z5cmzukT3x",
-      "tool_response": "<redacted 453 chars>"
+      "tool_response": "<redacted 453 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find page state and inspect helper"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13210,7 +14141,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013MhLciP3GEQ2cf32TMuQvr",
-      "tool_response": "<redacted 108 chars>"
+      "tool_response": "<redacted 108 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find inspect and selection state"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13243,7 +14178,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01SFQGePyUR9vHCeszjypdaE",
-      "tool_response": "<redacted 259 chars>"
+      "tool_response": "<redacted 259 chars>",
+      "tool_input": {
+        "file": "mount-office.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13277,7 +14215,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_014NemcetVQrmmmsyXUP9j6e",
-      "tool_error": "<redacted 944 chars>"
+      "tool_error": "<redacted 944 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Mount the office and typecheck"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13311,7 +14253,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01CnFgoNLf1gD3GUnUwibvtF",
-      "tool_response": "<redacted 110 chars>"
+      "tool_response": "<redacted 110 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find exact state declaration ending"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13345,7 +14291,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01XwRKBFy4ckZHxjXWzptas4",
-      "tool_response": "<redacted 756 chars>"
+      "tool_response": "<redacted 756 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect the patch script state block"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13379,7 +14329,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01JhoXddYGkuveqRGEJPjuUE",
-      "tool_error": "<redacted 944 chars>"
+      "tool_error": "<redacted 944 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Mount office and typecheck"
+      }
     },
     {
       "hook_event_name": null,
@@ -13439,7 +14393,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Pj5msMXjCNN2kVzWyPXPP3",
-      "tool_response": "<redacted 119 chars>"
+      "tool_response": "<redacted 119 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Make patch idempotent and fix anchor"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13473,7 +14431,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01QABv4f8dVFXUq16nHLBLa7",
-      "tool_response": "<redacted 539 chars>"
+      "tool_response": "<redacted 539 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Mount the office"
+      }
     },
     {
       "hook_event_name": null,
@@ -13520,7 +14482,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013cCvKNSrDoPddY4nkGXHh8",
-      "tool_response": "<redacted 80 chars>"
+      "tool_response": "<redacted 80 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix the declaration chain"
+      }
     },
     {
       "hook_event_name": null,
@@ -13580,7 +14546,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01LgrSYGRC2vB9fiADxhuGkr",
-      "tool_response": "<redacted 649 chars>"
+      "tool_response": "<redacted 649 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Audit palette usage"
+      }
     },
     {
       "hook_event_name": null,
@@ -13627,7 +14597,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01JfeDVNH6hDcZ9yef27AnSe",
-      "tool_response": "<redacted 235 chars>"
+      "tool_response": "<redacted 235 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find which rules use the blue"
+      }
     },
     {
       "hook_event_name": null,
@@ -13674,7 +14648,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01XhMfJm22egUQjztKp74fk7",
-      "tool_response": "<redacted 142 chars>"
+      "tool_response": "<redacted 142 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Rebuild the palette on O6 tokens"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13708,7 +14686,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01YL1CAvZtDQemedRzP4uUUh",
-      "tool_response": "<redacted 7892 chars>"
+      "tool_response": "<redacted 7892 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify violet is confined to live signals"
+      }
     },
     {
       "hook_event_name": null,
@@ -13768,7 +14750,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EarSzmR5hdBj1gwYnLmfwd",
-      "tool_response": "<redacted 305 chars>"
+      "tool_response": "<redacted 305 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find remaining off-brand colours"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13802,7 +14788,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_018vXGnguhzkVe3yivR64pQJ",
-      "tool_response": "<redacted 278 chars>"
+      "tool_response": "<redacted 278 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Finish palette cleanup and drop dead rules"
+      }
     },
     {
       "hook_event_name": null,
@@ -13862,7 +14852,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KYK1hgbFMnymdEwi5HBBGq",
-      "tool_response": "<redacted 526 chars>"
+      "tool_response": "<redacted 526 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract the floor footer block"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13896,7 +14890,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01UYwyEgeiee259UJMVVTduP",
-      "tool_response": "<redacted 336 chars>"
+      "tool_response": "<redacted 336 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add replay controls to the floor footer"
+      }
     },
     {
       "hook_event_name": null,
@@ -13956,7 +14954,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01WifrkoPT5E8XdehbUnHrRi",
-      "tool_response": "<redacted 1415 chars>"
+      "tool_response": "<redacted 1415 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect damaged footer"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -13989,7 +14991,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Write",
       "tool_use_id": "toolu_01MSG4fVZaR89iQQms8xFdHm",
-      "tool_response": "<redacted 257 chars>"
+      "tool_response": "<redacted 257 chars>",
+      "tool_input": {
+        "file": "fix-footer.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14023,7 +15028,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01GfZLDPjjPeXJRahhpnVPNW",
-      "tool_response": "<redacted 109 chars>"
+      "tool_response": "<redacted 109 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Repair footer and typecheck"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14057,7 +15066,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01LxGT7ZyVAvzWePQJMpoiMs",
-      "tool_response": "<redacted 179 chars>"
+      "tool_response": "<redacted 179 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Style the transport controls and build"
+      }
     },
     {
       "hook_event_name": null,
@@ -14101,7 +15114,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01THQUsxzePjnDXBFKNawdNu",
-      "tool_error": "<redacted 639 chars>"
+      "tool_error": "<redacted 639 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14132,7 +15146,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01NYJNXvCQY7DxGyMh5wkDMe",
-      "tool_error": "<redacted 302 chars>"
+      "tool_error": "<redacted 302 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14176,7 +15191,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_logs",
       "tool_use_id": "toolu_01RqCLtcGLRH5sUwge4udz2U",
-      "tool_response": "<redacted 3086 chars>"
+      "tool_response": "<redacted 3086 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14235,7 +15251,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_0144zAKHEuRjBeDa9GTQ4aYh",
-      "tool_response": "<redacted 270 chars>"
+      "tool_response": "<redacted 270 chars>",
+      "tool_input": {
+        "url": "<redacted>"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14266,7 +15285,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_0161cntkmNqPbBZmmHgQYY3W",
-      "tool_response": "<redacted 2117 chars>"
+      "tool_response": "<redacted 2117 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14326,7 +15346,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01HPbjKjA12rxomBkhuLA59Z",
-      "tool_response": "<redacted 358 chars>"
+      "tool_response": "<redacted 358 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find onTime/onSelect usage"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14359,7 +15383,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01NznacvV1g2c7ZME88atbWm",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14392,7 +15419,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_011Sdr1sYitJZu1Va6mGDNnu",
-      "tool_response": "<redacted 176 chars>"
+      "tool_response": "<redacted 176 chars>",
+      "tool_input": {
+        "file": "OfficeView.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14426,7 +15456,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01UkFWKaTVfnonhtxGNR5HBR",
-      "tool_response": "<redacted 191 chars>"
+      "tool_response": "<redacted 191 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Make select stable too"
+      }
     },
     {
       "hook_event_name": null,
@@ -14470,7 +15504,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01LFJ6JVS3DCDn2U6pyqXVqH",
-      "tool_response": "<redacted 5793 chars>"
+      "tool_response": "<redacted 5793 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14530,7 +15565,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01VABmjR5tn3FVKg1XdeD9ca",
-      "tool_response": "<redacted 209 chars>"
+      "tool_response": "<redacted 209 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Confirm ref exists on disk"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14561,7 +15600,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_stop",
       "tool_use_id": "toolu_0163uEG5bgLDJn79Xwumm1sr",
-      "tool_response": "<redacted 51 chars>"
+      "tool_response": "<redacted 51 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14592,7 +15632,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_01VC2BEr7GYJek1kSFRoiduy",
-      "tool_response": "<redacted 395 chars>"
+      "tool_response": "<redacted 395 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14623,7 +15664,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01QzQYFPKLbnWGEVWvy9Mt5V",
-      "tool_response": "<redacted 5737 chars>"
+      "tool_response": "<redacted 5737 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14680,7 +15722,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01K77rsmqoCnygA1sxmkksCu",
-      "tool_response": "<redacted 313 chars>"
+      "tool_response": "<redacted 313 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14737,7 +15780,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_015ZWp8hxuEYgBa5ANtirGfE",
-      "tool_response": "<redacted 460 chars>"
+      "tool_response": "<redacted 460 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14794,7 +15838,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01DDxzKH1CtqYurbxHisvBb8",
-      "tool_response": "<redacted 408 chars>"
+      "tool_response": "<redacted 408 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -14854,7 +15899,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017dESrMc1XivyFX76Au5WJ3",
-      "tool_response": "<redacted 101 chars>"
+      "tool_response": "<redacted 101 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract a pure activity projection"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14888,7 +15937,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01HTy1P9XQKHpSNDJkXrxg3U",
-      "tool_response": "<redacted 536 chars>"
+      "tool_response": "<redacted 536 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Make panels read the same stream the floor renders"
+      }
     },
     {
       "hook_event_name": null,
@@ -14935,7 +15988,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013CzP35fCxkMmx4J4HfsZuA",
-      "tool_response": "<redacted 338 chars>"
+      "tool_response": "<redacted 338 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find the early activity use"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -14969,7 +16026,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01EDoEsbwVmg3iPReotX7XVU",
-      "tool_response": "<redacted 131 chars>"
+      "tool_response": "<redacted 131 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Hoist the derivations above first use"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15000,7 +16061,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01AfUxoNN8iRqGWKVdCYXJvM",
-      "tool_response": "<redacted 901 chars>"
+      "tool_response": "<redacted 901 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15057,7 +16119,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01D6e9ns4nMD7sXncUrqn6Z3",
-      "tool_response": "<redacted 306 chars>"
+      "tool_response": "<redacted 306 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15117,7 +16180,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_015ExWKqmMYbmYrXirgpA1fW",
-      "tool_response": "<redacted 2646 chars>"
+      "tool_response": "<redacted 2646 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Lint the changed files"
+      }
     },
     {
       "hook_event_name": null,
@@ -15177,7 +16244,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01PvCJ8r39F2dokgpq8G2vRJ",
-      "tool_response": "<redacted 365 chars>"
+      "tool_response": "<redacted 365 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect the fixable lint issues"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15211,7 +16282,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_016qt4xTva18NnmVca9BRAiU",
-      "tool_response": "<redacted 126 chars>"
+      "tool_response": "<redacted 126 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix entities and internal link"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15245,7 +16320,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Q75hpeaDhAAJ2bV6ySSgYV",
-      "tool_response": "<redacted 2119 chars>"
+      "tool_response": "<redacted 2119 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-lint page and run gate"
+      }
     },
     {
       "hook_event_name": null,
@@ -15292,7 +16371,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01UvkdaeG7gRjKzYFoD1zdz8",
-      "tool_response": "<redacted 241 chars>"
+      "tool_response": "<redacted 241 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find the role=status element"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15326,7 +16409,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01KA2HxfiH4dYfRN7DgHtw7Q",
-      "tool_response": "<redacted 1095 chars>"
+      "tool_response": "<redacted 1095 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Fix status element and count remaining lint debt"
+      }
     },
     {
       "hook_event_name": null,
@@ -15383,7 +16470,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01Htrs6Qgx3KAUs6czrUFWch",
-      "tool_error": "<redacted 506 chars>"
+      "tool_error": "<redacted 506 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15414,7 +16502,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_016EL4FieKgQ8yiZPPGo3ELS",
-      "tool_error": "<redacted 158 chars>"
+      "tool_error": "<redacted 158 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15458,7 +16547,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01FgoZyoorsKdX4wjLSmDuCf",
-      "tool_response": "<redacted 4529 chars>"
+      "tool_response": "<redacted 4529 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15518,7 +16608,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01ADC16RnefdHGDYP3wUyJqK",
-      "tool_response": "<redacted 112 chars>"
+      "tool_response": "<redacted 112 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Revert the next/link change"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15549,7 +16643,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_015T2VmoxRgtotSGKtECoAig",
-      "tool_response": "<redacted 4440 chars>"
+      "tool_response": "<redacted 4440 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15596,7 +16691,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01LgaiZfE8D4Fio7Kvqcziqs",
-      "tool_response": "<redacted 1787 chars>"
+      "tool_response": "<redacted 1787 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect the top of page.tsx"
+      }
     },
     {
       "hook_event_name": null,
@@ -15653,7 +16752,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_stop",
       "tool_use_id": "toolu_01MtUiztMhqejgkWABYpLwhR",
-      "tool_response": "<redacted 51 chars>"
+      "tool_response": "<redacted 51 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15687,7 +16787,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_018Sdo6bhh66KxuPhQuAnuAh",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Clear Vite dependency cache"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15718,7 +16822,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__preview_start",
       "tool_use_id": "toolu_01SFmcNkJSkrN6BjeUkuCCST",
-      "tool_response": "<redacted 395 chars>"
+      "tool_response": "<redacted 395 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15749,7 +16854,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01PqpgZt5uTesRYxGvWrT4ua",
-      "tool_response": "<redacted 4596 chars>"
+      "tool_response": "<redacted 4596 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15806,7 +16912,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__javascript_tool",
       "tool_use_id": "toolu_01CySqrdypJc7PtBbsqfhQsa",
-      "tool_response": "<redacted 345 chars>"
+      "tool_response": "<redacted 345 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -15866,7 +16973,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_013CLBA3e8vYGzqjVrgUg9Z3",
-      "tool_response": "<redacted 208 chars>"
+      "tool_response": "<redacted 208 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Record T004 notes and run the gate"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15900,7 +17011,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_017W3cMHNS5o5NQMaGxceyzt",
-      "tool_response": "<redacted 813 chars>"
+      "tool_response": "<redacted 813 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit and merge T004"
+      }
     },
     {
       "hook_event_name": null,
@@ -15959,7 +17074,10 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Edit",
       "tool_use_id": "toolu_014ikLB8MiZrEy8DPL9k1x3n",
-      "tool_response": "<redacted 153 chars>"
+      "tool_response": "<redacted 153 chars>",
+      "tool_input": {
+        "file": "claudecode.md"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -15990,7 +17108,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_016A8SrY5Pt4adrbqgyLtSWR",
-      "tool_response": "<redacted 762 chars>"
+      "tool_response": "<redacted 762 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -16034,7 +17153,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__browser_batch",
       "tool_use_id": "toolu_01PJq4zFsRgHAn4Kwt6cFvmQ",
-      "tool_response": "<redacted 550 chars>"
+      "tool_response": "<redacted 550 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": null,
@@ -16078,7 +17198,8 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "mcp__Claude_Browser__resize_window",
       "tool_use_id": "toolu_01U5pxj2vnxZQznbVyn5JbLu",
-      "tool_response": "<redacted 224 chars>"
+      "tool_response": "<redacted 224 chars>",
+      "tool_input": {}
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16112,7 +17233,11 @@
       "prompt_id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01AkCxmWQ41iYEox8m7mUFBp",
-      "tool_response": "<redacted 793 chars>"
+      "tool_response": "<redacted 793 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit docs and summarise Phase 1"
+      }
     },
     {
       "hook_event_name": null,
@@ -16205,7 +17330,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FjQfCFrdRwFxrkX9N5p9Zf",
-      "tool_response": "<redacted 779 chars>"
+      "tool_response": "<redacted 779 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Branch T006 and inspect the captured fixture"
+      }
     },
     {
       "hook_event_name": null,
@@ -16251,7 +17380,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_014mbeZhiJSqUApocCNtbYjd",
-      "tool_response": "<redacted 162 chars>"
+      "tool_response": "<redacted 162 chars>",
+      "tool_input": {
+        "file": "coding-session.ts"
+      }
     },
     {
       "hook_event_name": null,
@@ -16297,7 +17429,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_017bkmffVMrhc82sfAmnBsLz",
-      "tool_response": "<redacted 156 chars>"
+      "tool_response": "<redacted 156 chars>",
+      "tool_input": {
+        "file": "map-claude-code.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16330,7 +17465,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_011nfZAqhWcCZdyHJJLvBSRN",
-      "tool_response": "<redacted 160 chars>"
+      "tool_response": "<redacted 160 chars>",
+      "tool_input": {
+        "file": "map-claude-code.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16364,7 +17502,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01PGdNWszzz62mwZ1Z91yUF7",
-      "tool_response": "<redacted 1459 chars>"
+      "tool_response": "<redacted 1459 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run the mapping tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -16424,7 +17566,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01YKFewF2GmRxm6kD3Aj1fAD",
-      "tool_response": "<redacted 128 chars>"
+      "tool_response": "<redacted 128 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Gate and record T006"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16458,7 +17604,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01J5rcJjvSwGEmRKxNFhJF3t",
-      "tool_response": "<redacted 215 chars>"
+      "tool_response": "<redacted 215 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Commit and merge T006"
+      }
     },
     {
       "hook_event_name": null,
@@ -16517,7 +17667,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01YHjasak7i6BUWooQZN4fjn",
-      "tool_response": "<redacted 147 chars>"
+      "tool_response": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "config.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16550,7 +17703,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_015HHNNDpzSzgARLDEBGghxR",
-      "tool_response": "<redacted 151 chars>"
+      "tool_response": "<redacted 151 chars>",
+      "tool_input": {
+        "file": "transcript.mjs"
+      }
     },
     {
       "hook_event_name": null,
@@ -16596,7 +17752,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_015MWCxsNkwZUbQZqSaj9D1b",
-      "tool_response": "<redacted 147 chars>"
+      "tool_response": "<redacted 147 chars>",
+      "tool_input": {
+        "file": "server.mjs"
+      }
     },
     {
       "hook_event_name": null,
@@ -16642,7 +17801,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_017hSHrbDsZBQApRpYRcWgH1",
-      "tool_response": "<redacted 151 chars>"
+      "tool_response": "<redacted 151 chars>",
+      "tool_input": {
+        "file": "bridge.test.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16676,7 +17838,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_0118AMSP7hsdtxRV868V2Lp4",
-      "tool_response": "<redacted 1225 chars>"
+      "tool_response": "<redacted 1225 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Run the bridge tests"
+      }
     },
     {
       "hook_event_name": null,
@@ -16735,7 +17901,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01XF1mXvomu1KGWekPoVTftX",
-      "tool_response": "<redacted 161 chars>"
+      "tool_response": "<redacted 161 chars>",
+      "tool_input": {
+        "file": "office-view.css"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16769,7 +17938,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01JBCCH48MbPRxbPSW2VZVuv",
-      "tool_response": "<redacted 360 chars>"
+      "tool_response": "<redacted 360 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Extract renderer CSS and import it"
+      }
     },
     {
       "hook_event_name": null,
@@ -16829,7 +18002,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01NrAGrL8sVtYPa99eeuu5Hu",
-      "tool_response": "<redacted 632 chars>"
+      "tool_response": "<redacted 632 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Inspect the damaged comment"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16862,7 +18039,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Edit",
       "tool_use_id": "toolu_012SWiCMb3EHac7ygW2FB3xC",
-      "tool_error": "<redacted 96 chars>"
+      "tool_error": "<redacted 96 chars>",
+      "tool_input": {
+        "file": "office.css"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16896,7 +18076,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01BXKuWsMAiuM3C1hFMyHxWv",
-      "tool_response": "<redacted 169 chars>"
+      "tool_response": "<redacted 169 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Repair the comment"
+      }
     },
     {
       "hook_event_name": null,
@@ -16942,7 +18126,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01GQ2bVC61a49bVL8LXP7VZR",
-      "tool_response": "<redacted 154 chars>"
+      "tool_response": "<redacted 154 chars>",
+      "tool_input": {
+        "file": "index.html"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -16975,7 +18162,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01XaB7FFLH5aMdxndr5X8ew4",
-      "tool_response": "<redacted 156 chars>"
+      "tool_response": "<redacted 156 chars>",
+      "tool_input": {
+        "file": "main.tsx"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17008,7 +18198,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_018WzJEYYEPg2nimYjLYXVUp",
-      "tool_response": "<redacted 158 chars>"
+      "tool_response": "<redacted 158 chars>",
+      "tool_input": {
+        "file": "bridge.css"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17041,7 +18234,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_013iV31jsPrAWGVu3L8SZuNF",
-      "tool_response": "<redacted 151 chars>"
+      "tool_response": "<redacted 151 chars>",
+      "tool_input": {
+        "file": "vite.bridge.config.ts"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17075,7 +18271,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01DiMwGFA2viJVhTJYTGcdmo",
-      "tool_response": "<redacted 395 chars>"
+      "tool_response": "<redacted 395 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Add bridge build and run scripts"
+      }
     },
     {
       "hook_event_name": null,
@@ -17121,7 +18321,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01KRLwq1AVxmRyw3shGGCAHp",
-      "tool_response": "<redacted 144 chars>"
+      "tool_response": "<redacted 144 chars>",
+      "tool_input": {
+        "file": "cli.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17155,7 +18358,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01FUoi1LesYXzwwusoE4PzXg",
-      "tool_response": "<redacted 440 chars>"
+      "tool_response": "<redacted 440 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Build the bridge client"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17189,7 +18396,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01VA6nzrwenAm8JsFDCmocYv",
-      "tool_response": "<redacted 1462 chars>"
+      "tool_response": "<redacted 1462 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Verify the CLI output and snippet"
+      }
     },
     {
       "hook_event_name": null,
@@ -17249,7 +18460,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01TLhW8C4psTyDeF7CJuKDWg",
-      "tool_response": "<redacted 501 chars>"
+      "tool_response": "<redacted 501 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Make the committed snippet use an env token"
+      }
     },
     {
       "hook_event_name": null,
@@ -17309,7 +18524,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01T3cT5ecdNkvoWTC5vZmHhi",
-      "tool_response": "<redacted 543 chars>"
+      "tool_response": "<redacted 543 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check cli.mjs current state"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17342,7 +18561,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Read",
       "tool_use_id": "toolu_01AwpiStwApeAwtNWhP33j4Z",
-      "tool_response": "<redacted 1607 chars>"
+      "tool_response": "<redacted 1607 chars>",
+      "tool_input": {
+        "file": "cli.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17375,7 +18597,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01MgR53rSsE6iUpFWSezJNkc",
-      "tool_response": "<redacted 154 chars>"
+      "tool_response": "<redacted 154 chars>",
+      "tool_input": {
+        "file": "cli.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17409,7 +18634,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01YVhWJ6w8KXSphA8WKoDZup",
-      "tool_response": "<redacted 1013 chars>"
+      "tool_response": "<redacted 1013 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Wire the ready-to-paste file and verify the reference snippet"
+      }
     },
     {
       "hook_event_name": null,
@@ -17468,7 +18697,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Write",
       "tool_use_id": "toolu_01R3rKaWFVF33rsdfoACYvGs",
-      "tool_response": "<redacted 159 chars>"
+      "tool_response": "<redacted 159 chars>",
+      "tool_input": {
+        "file": "record-coding-run.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17502,7 +18734,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Tr3L6cAMh6nga9LoKC8oo3",
-      "tool_response": "<redacted 462 chars>"
+      "tool_response": "<redacted 462 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Record the coding-session run"
+      }
     },
     {
       "hook_event_name": null,
@@ -17562,7 +18798,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_012D4SsurocDjUYVqDVWFaSw",
-      "tool_response": "<redacted 237 chars>"
+      "tool_response": "<redacted 237 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Locate the reconstruction function"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17595,7 +18835,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Read",
       "tool_use_id": "toolu_01QpfEm3HwqxNjfjzaRkaF9u",
-      "tool_response": "<redacted 1112 chars>"
+      "tool_response": "<redacted 1112 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17628,7 +18871,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01Sx6k3cWu4gcYJJrvu8BWRf",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17662,7 +18908,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01Gk5bK65UJEmQaa5iZHC2P8",
-      "tool_response": "<redacted 367 chars>"
+      "tool_response": "<redacted 367 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Find where the main reconstruction is called"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17695,7 +18945,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Edit",
       "tool_use_id": "toolu_01PDmZsNfg9NBWNQRWwCrbi8",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",
@@ -17729,7 +18982,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_011GzsjKEK31W6LdinRSuzaY",
-      "tool_response": "<redacted 920 chars>"
+      "tool_response": "<redacted 920 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Re-capture with prompt ids and re-record"
+      }
     },
     {
       "hook_event_name": null,
@@ -17776,7 +19033,11 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Bash",
       "tool_use_id": "toolu_01ESk35RiW1h7aLYNfcdyLzb",
-      "tool_response": "<redacted 288 chars>"
+      "tool_response": "<redacted 288 chars>",
+      "tool_input": {
+        "command": "cd",
+        "description": "Check fixture sizes and the missing SessionStart"
+      }
     },
     {
       "hook_event_name": null,
@@ -17822,7 +19083,10 @@
       "prompt_id": "b99225ab-8970-4aff-b34c-0d213f47c247",
       "tool_name": "Edit",
       "tool_use_id": "toolu_014vW7mWVgZLDezDpgCoSp19",
-      "tool_response": "<redacted 167 chars>"
+      "tool_response": "<redacted 167 chars>",
+      "tool_input": {
+        "file": "capture-session.mjs"
+      }
     },
     {
       "hook_event_name": "PreToolUse",

@@ -111,9 +111,9 @@ body {
   white-space: nowrap;
 }
 
-/* --- the operations log ----------------------------------------------------
-   The floor answers "what is happening now"; it cannot answer "what has happened".
-   This is the other half, so a session can be read back rather than only watched. */
+/* --- the floor, and the panel beside it ------------------------------------
+   The panel itself is styled in lib/office-view/office-view.css, because it is the
+   same component /office renders. Only its frame is the bridge's business. */
 
 .bridge-body {
   display: grid;
@@ -122,82 +122,29 @@ body {
   flex: 1;
 }
 
-.bridge-log {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border-left: 1px solid var(--line, #e5e8ef);
-  background: #fff;
+.bridge-body .oi {
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
 }
 
-.bridge-log-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px 6px;
-  font-size: 14px;
-}
+/* --- presentation mode ------------------------------------------------------
+   Chrome off, floor only, for putting a running session on a second screen. The
+   renderer's own "Live" label stays inside the frame. */
 
-.bridge-log-head strong {
-  letter-spacing: -0.01em;
-}
-
-.bridge-log-head button {
-  margin-left: auto;
-  border: 1px solid var(--line, #e5e8ef);
-  background: #fff;
-  border-radius: 7px;
-  padding: 4px 9px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.bridge-log-count,
-.bridge-log-empty {
-  margin: 0;
-  padding: 0 16px 10px;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.bridge-log-list {
-  list-style: none;
-  margin: 0;
-  padding: 0 16px 16px;
-  overflow-y: auto;
+.bridge.is-presenting .bridge-floor {
+  flex: 1;
   min-height: 0;
 }
 
-.bridge-log-list li {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 8px 0 8px 11px;
-  border-left: 2px solid #e5e8ef;
-  margin-bottom: 2px;
-}
-
-/* Only the states that mean something get a colour. Violet stays reserved for live. */
-.bridge-log-list li.is-started { border-left-color: #7446ff; }
-.bridge-log-list li.is-failed { border-left-color: #d0603f; }
-.bridge-log-list li.is-created { border-left-color: #4a9d6e; }
-
-.bridge-op-meta {
+.bridge-presenting-hint {
+  margin: 0;
+  padding: 8px 18px;
   font-size: 11px;
-  color: #8a8f98;
-  letter-spacing: 0.02em;
-}
-
-.bridge-op-label {
-  font-size: 13px;
-  color: #1f2228;
-  overflow-wrap: anywhere;
-}
-
-.bridge-op-detail {
-  font-size: 12px;
-  color: #6b7280;
-  overflow-wrap: anywhere;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  flex: none;
 }
 
 @media (max-width: 900px) {
@@ -206,8 +153,8 @@ body {
     grid-template-rows: minmax(280px, 55vh) minmax(0, 1fr);
   }
 
-  .bridge-log {
+  .bridge-body .oi {
     border-left: 0;
-    border-top: 1px solid var(--line, #e5e8ef);
+    border-top: 1px solid var(--line);
   }
 }

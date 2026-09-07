@@ -11,9 +11,10 @@
     "lint": "oxlint",
     "format": "oxfmt",
     "build:bridge": "vite build --config vite.bridge.config.ts",
+    "prepare": "npm run build:bridge",
     "bridge": "node bridge/cli.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "check": "npm run build && npx tsc --noEmit && npm run lint && npm test"
+    "check": "npm run build && npm run build:bridge && npx tsc --noEmit && npm run lint && npm test"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
@@ -59,7 +60,7 @@
   "type": "module",
   "license": "MIT",
   "private": true,
-  "description": "Make invisible work visible \u2014 agentic work rendered as a watchable office.",
+  "description": "Make invisible work visible — agentic work rendered as a watchable office.",
   "bin": {
     "o6-office": "bridge/cli.mjs"
   }

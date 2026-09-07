@@ -201,6 +201,37 @@ test('cached tokens are priced as an upper bound, never optimistically', () => {
   assert.ok(allCached > 0, 'and is never free');
 });
 
+test('a cache write costs more than plain input, because that is what it bills at', () => {
+  /*
+   * The regression. Anthropic bills three input rates — base, cache read at a tenth, and
+   * cache write at a 1.25x premium — and callAnthropic used to add cache creation into
+   * plain input, charging that premium line at the base rate. The docstring above
+   * promises the estimate never reads low; a folded cache write broke that promise in the
+   * one direction it said it would not.
+   */
+  const plain = estimateCost('claude-haiku-4-5', 1_000_000, 0, 0, 0);
+  const written = estimateCost('claude-haiku-4-5', 1_000_000, 0, 0, 1_000_000);
+  assert.ok(written > plain, `a cache write (${written}) must cost more than input (${plain})`);
+
+  const read = estimateCost('claude-haiku-4-5', 1_000_000, 0, 1_000_000, 0);
+  assert.ok(read < plain, `a cache read (${read}) must cost less than input (${plain})`);
+
+  // And the three slices priced together, in full, against rates you can check by hand:
+  // 500k base at $1 + 200k read at $0.10 + 300k write at $1.25, per million.
+  const mixed = estimateCost('claude-haiku-4-5', 1_000_000, 0, 200_000, 300_000);
+  assert.ok(
+    Math.abs(mixed - 0.895) < 1e-9,
+    `500k base + 200k read + 300k write should be $0.895, got ${mixed}`,
+  );
+});
+
+test('more cached tokens than input cannot drive the bill negative', () => {
+  // Defensive: the slices come from a vendor's response, not from us. A nonsensical
+  // report should produce a nonsensical-but-safe number, never a credit.
+  const cost = estimateCost('claude-haiku-4-5', 100, 0, 5_000, 5_000);
+  assert.ok(cost >= 0, `a bill is never negative, got ${cost}`);
+});
+
 test('a run containing one unpriced call reports the whole total as unknown', () => {
   // Summing only the calls we can price would understate the bill and look authoritative
   // doing it. One unknown makes the total unknown.

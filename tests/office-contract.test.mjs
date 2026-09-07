@@ -21,6 +21,7 @@ import {
   createEmitter,
 } from '../lib/office-view/core/events.ts';
 import { OFFICE_EVENT_TYPES, OFFICE_EVENT_VERSION } from '../lib/office-view/core/types.ts';
+import { usageWorkerOf, workerOf } from '../lib/office-view/core/attribution.ts';
 import { toActivity } from '../lib/use-office.ts';
 import {
   compileFloorPlan,
@@ -446,4 +447,64 @@ test('a handoff belongs to the departments at both of its ends', () => {
   assert.ok(belongsTo('outreach'), 'the department it left');
   assert.ok(belongsTo('review'), 'and the one it arrived at');
   assert.ok(!belongsTo('records'), 'and nowhere else');
+});
+
+/* --- who an event belongs to ------------------------------------------------
+ *
+ * Claude Code names a worker only inside a subagent, so the main agent is identified by
+ * omission. The scheduler already knew that (`id ?? 'main'`) and so did the transcript
+ * reader (`usage.worker ?? 'main'`); the inspector panel did not, and clicking the main
+ * agent produced a dossier reading zero assignments and zero desks for the worker that
+ * had done every single thing in the session. Empty does not read as "unattributed", it
+ * reads as "did nothing" — so the rule lives in one function now, and here is its test.
+ */
+
+test('an assignment with no named worker belongs to the main agent', () => {
+  const started = {
+    v: 1, id: 'e1', seq: 1, occurredAt: 0, runId: 'r', source: 'claude-code',
+    type: 'assignment.started', label: 'Bash', station: 'workshop',
+  };
+  assert.equal(workerOf(started), 'main', 'the main agent is named by omission, not absent');
+  assert.equal(
+    workerOf({ ...started, worker: 'agent:abc' }),
+    'agent:abc',
+    'a named worker is still its own',
+  );
+});
+
+test('an artifact is attributed to no one, because it records a desk and not a person', () => {
+  const made = {
+    v: 1, id: 'e2', seq: 2, occurredAt: 0, runId: 'r', source: 'claude-code',
+    type: 'artifact.created', label: 'Edited a.ts', station: 'workshop',
+    artifact: { id: 'a', name: 'a.ts', kind: 'file' },
+  };
+  assert.equal(workerOf(made), null, 'guessing who made it would be an invention');
+});
+
+test('a fixture round-trip does not change who an event belongs to', () => {
+  // JSON drops `worker: undefined` entirely, so a check for the key answers differently
+  // for a live event and the same event replayed. The rule must not notice the difference.
+  const live = {
+    v: 1, id: 'e3', seq: 3, occurredAt: 0, runId: 'r', source: 'claude-code',
+    type: 'assignment.finished', label: 'Read', station: 'reading', worker: undefined,
+  };
+  const replayed = JSON.parse(JSON.stringify(live));
+  assert.equal(Object.hasOwn(live, 'worker'), true, 'the live event carries the key');
+  assert.equal(Object.hasOwn(replayed, 'worker'), false, 'the replayed one does not');
+  assert.equal(workerOf(live), workerOf(replayed), 'and both still belong to the same worker');
+});
+
+test('unavailable usage is credited to nobody, not to the main agent', () => {
+  // "We could not read the transcript" must never become "the main agent spent nothing".
+  const unavailable = {
+    v: 1, id: 'e4', seq: 4, occurredAt: 0, runId: 'r', source: 'claude-code',
+    type: 'usage.reported', label: 'Tokens unavailable', usage: { source: 'unavailable' },
+  };
+  assert.equal(usageWorkerOf(unavailable), null);
+
+  const real = {
+    ...unavailable, id: 'e5', seq: 5,
+    usage: { source: 'transcript', inputTokens: 10, outputTokens: 2 },
+  };
+  assert.equal(usageWorkerOf(real), 'main', 'a real report with no worker is the main agent');
 });

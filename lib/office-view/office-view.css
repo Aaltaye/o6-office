@@ -194,3 +194,140 @@
   outline: 3px solid #b9a6ff;
   outline-offset: 2px;
 }
+
+/* --- the inspector --------------------------------------------------------------
+   Shared by /office and the live bridge, so the two surfaces cannot drift apart the
+   way they already had once. Colours come from the host page's tokens where they
+   exist and fall back to the office's own, so this drops into either without a
+   second stylesheet to keep in sync. */
+
+.oi {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+}
+
+.oi-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px 4px;
+  font-size: 14px;
+}
+
+.oi-head button {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  background: var(--surface, #fff);
+  border-radius: 7px;
+  padding: 4px 9px;
+  font-size: 12px;
+  color: inherit;
+  cursor: pointer;
+}
+
+.oi-count,
+.oi-note {
+  margin: 0;
+  padding: 0 14px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+
+/* --- who a person is, by what they did --- */
+
+.oi-dossier {
+  padding: 0 14px 10px;
+}
+
+.oi-dossier-role {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--subtle);
+}
+
+.oi-dossier dl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 0;
+}
+
+.oi-dossier dt {
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+
+.oi-dossier dd {
+  margin: 1px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* --- operations / produced --- */
+
+.oi-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 14px 8px;
+}
+
+.oi-tabs button {
+  border: 1px solid var(--line);
+  background: var(--surface, #fff);
+  border-radius: 7px;
+  padding: 5px 9px;
+  font-size: 12px;
+  color: var(--subtle);
+  cursor: pointer;
+}
+
+.oi-tabs button.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--porcelain);
+}
+
+.oi-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 14px 14px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.oi-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 0 7px 10px;
+  border-left: 2px solid var(--line);
+  margin-bottom: 2px;
+}
+
+/* Only states that mean something get a colour, and violet stays reserved for live. */
+.oi-list li.is-started { border-left-color: var(--signal); }
+.oi-list li.is-failed { border-left-color: #d0603f; }
+.oi-list li.is-created { border-left-color: #4a9d6e; }
+
+.oi-meta {
+  font-size: 11px;
+  color: var(--subtle);
+}
+
+.oi-label {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.oi-detail {
+  font-size: 12px;
+  color: var(--subtle);
+  overflow-wrap: anywhere;
+}

@@ -211,6 +211,13 @@ function reconstruct(lines, { agentId, agentType, sessionId, raw }) {
           push(block.is_error ? 'PostToolUseFailure' : 'PostToolUse', at, {
             tool_name: call.tool_name,
             tool_use_id: block.tool_use_id,
+            /*
+             * The real PostToolUse hook carries tool_input, and the mapper needs it here:
+             * artifact.created is minted on the Post event, so a reconstruction that
+             * dropped the input left every artifact named "a file" — throwing away the
+             * basename summariseInput deliberately kept.
+             */
+            tool_input: call.tool_input,
             ...(block.is_error
               ? { tool_error: summariseText(text, raw) }
               : { tool_response: summariseText(text, raw) }),
@@ -227,11 +234,13 @@ function reconstruct(lines, { agentId, agentType, sessionId, raw }) {
     // case the renderer must not serialise into a fake sequence (invariant I5).
     const calls = content.filter((block) => block.type === 'tool_use');
     for (const call of calls) {
-      pending.set(call.id, { tool_name: call.name });
+      // The summarised input is remembered so the matching Post event can carry it too.
+      const toolInput = summariseInput(call.name, call.input, raw);
+      pending.set(call.id, { tool_name: call.name, tool_input: toolInput });
       push('PreToolUse', at, {
         tool_name: call.name,
         tool_use_id: call.id,
-        tool_input: summariseInput(call.name, call.input, raw),
+        tool_input: toolInput,
       });
     }
     if (calls.length > 1) {

@@ -2,14 +2,14 @@
   "v": 1,
   "kind": "recorded-run",
   "plan": "coding-session",
-  "recordedAt": "2026-09-06T21:42:46.873Z",
+  "recordedAt": "2026-09-07T02:57:54.044Z",
   "provenance": "A real Claude Code session. Its transcripts were reconstructed into hook payloads (redacted), then mapped by the same bridge mapping the live bridge uses. The tools, their order, their timing, the failures and the subagent are real; the hook payloads were reconstructed from transcripts rather than captured live, and content is redacted.",
   "sourceCapture": {
     "file": "fixtures/captured-coding-session.json",
     "sessionId": "27957ce1-0c95-4390-aa1f-5cc213b9137c",
     "redacted": true
   },
-  "durationMs": 1414627,
+  "durationMs": 1415859,
   "events": [
     {
       "type": "run.started",
@@ -107,7 +107,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "List project files",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -174,7 +174,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read README, package.json, git state",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -241,7 +241,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check file sizes",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -308,7 +308,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect app source",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -375,7 +375,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check for launch config and deps",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -442,7 +442,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add o6-office launch config",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -878,7 +878,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read the office orchestration hook",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -945,7 +945,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find office layout code",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -995,7 +995,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate desk coordinate map",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1045,7 +1045,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find office render block",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1297,7 +1297,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Survey Projects folder and git identity",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1364,7 +1364,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Stop dev server and relocate project",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1431,7 +1431,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Relocate project after leaving directory",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1498,7 +1498,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "PowerShell",
+      "label": "List node/wrangler processes",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1565,7 +1565,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "PowerShell",
+      "label": "Check for junction/symlink on the Codex work dir",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1649,7 +1649,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "PowerShell failed",
+      "label": "Copy project to Projects folder, excluding build artifacts failed",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1734,7 +1734,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Init git and commit baseline",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -1818,7 +1818,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Install dependencies in new location",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -2264,7 +2264,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Agent",
+      "label": "Design office renderer architecture",
       "station": "frontdesk",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -2368,7 +2368,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "List candidate project directories",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2419,7 +2419,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify transcript carries token usage",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -2489,7 +2489,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read package.json and file tree",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2542,7 +2542,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read use-office.ts",
       "station": "reading",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2595,7 +2595,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read lead-engine.ts",
       "station": "reading",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2666,7 +2666,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Count lines of key files",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2719,7 +2719,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read page.tsx",
       "station": "reading",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2790,7 +2790,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read office.css and globals.css",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2843,7 +2843,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Extract desk-label and office-map CSS rules",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -2914,7 +2914,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read build config, layout, api route",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -3001,7 +3001,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read README, openai config, tests, git log",
       "station": "operations",
       "worker": "agent:a29876359c43e3bb5",
       "work": {
@@ -3052,7 +3052,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Read O6 brand palette and design playbook memories",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3136,7 +3136,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3151,7 +3151,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3159,7 +3159,7 @@
       },
       "artifact": {
         "id": "toolu_01NFnvuAywC2cnV3KLoPExPC",
-        "name": "a file",
+        "name": "resilient-churning-spring.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -3307,7 +3307,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3322,7 +3322,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3330,7 +3330,7 @@
       },
       "artifact": {
         "id": "toolu_01XpcF39e1zuuiojnyktDgzj",
-        "name": "a file",
+        "name": "resilient-churning-spring.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -3377,7 +3377,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3392,7 +3392,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3400,7 +3400,7 @@
       },
       "artifact": {
         "id": "toolu_01RqbMN62V4e6EEk3e1UR29R",
-        "name": "a file",
+        "name": "resilient-churning-spring.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -3464,7 +3464,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect subagent transcript line structure",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3531,7 +3531,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Find and inspect a subagent transcript line failed",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3616,7 +3616,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3631,7 +3631,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited resilient-churning-spring.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -3639,7 +3639,7 @@
       },
       "artifact": {
         "id": "toolu_017YyYB1uCBk1Jy5HQb7cX86",
-        "name": "a file",
+        "name": "resilient-churning-spring.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -3939,7 +3939,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check gh auth and baseline test suite",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4023,7 +4023,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Copy approved plan into repo as PLAN.md",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4090,7 +4090,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Generate task files and master index failed",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4204,7 +4204,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write gen-tasks.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4219,7 +4219,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited gen-tasks.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4227,7 +4227,7 @@
       },
       "artifact": {
         "id": "toolu_0129aFEAonDFhH3t9X4nzvus",
-        "name": "a file",
+        "name": "gen-tasks.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -4308,7 +4308,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Generate task files and index",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4392,7 +4392,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write plan-amendment.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4407,7 +4407,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited plan-amendment.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4415,7 +4415,7 @@
       },
       "artifact": {
         "id": "toolu_01RoBbDjBtU29MS1DrDbTf3Q",
-        "name": "a file",
+        "name": "plan-amendment.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -4462,7 +4462,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Append architecture amendments to PLAN.md",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4529,7 +4529,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write patch-tasks.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4544,7 +4544,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited patch-tasks.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4552,7 +4552,7 @@
       },
       "artifact": {
         "id": "toolu_01QXd2ojwFvwRBZm8JCiuUL1",
-        "name": "a file",
+        "name": "patch-tasks.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -4599,7 +4599,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Patch task files with review amendments",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4666,7 +4666,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4681,7 +4681,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4689,7 +4689,7 @@
       },
       "artifact": {
         "id": "toolu_01TBe7LivyBVb7wfAhSvvF5B",
-        "name": "a file",
+        "name": "claudecode.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -4736,7 +4736,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit plan, tasks, and log",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4820,7 +4820,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Branch for T001 and read existing types",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4904,7 +4904,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check test import style and tsconfig",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -4988,7 +4988,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write types.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5003,7 +5003,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited types.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5011,7 +5011,7 @@
       },
       "artifact": {
         "id": "toolu_01FbVxdTxDjs81L8UZh9DjMD",
-        "name": "a file",
+        "name": "types.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5075,7 +5075,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5090,7 +5090,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5098,7 +5098,7 @@
       },
       "artifact": {
         "id": "toolu_01WbL2zHrKjuZAxLZrGE5J4L",
-        "name": "a file",
+        "name": "events.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5162,7 +5162,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5177,7 +5177,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5185,7 +5185,7 @@
       },
       "artifact": {
         "id": "toolu_01R6XvDsTheUnxRSkqmhxPTn",
-        "name": "a file",
+        "name": "plan.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5249,7 +5249,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Trim unused type imports failed",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5334,7 +5334,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check events.ts import block state",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5384,7 +5384,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5399,7 +5399,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5407,7 +5407,7 @@
       },
       "artifact": {
         "id": "toolu_01Vr4yau9ZjSsUBJgqWbmsNy",
-        "name": "a file",
+        "name": "events.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5454,7 +5454,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit types.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5469,7 +5469,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited types.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5477,7 +5477,7 @@
       },
       "artifact": {
         "id": "toolu_01S4HJGkzsU93pA148nZRUb8",
-        "name": "a file",
+        "name": "types.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5558,7 +5558,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5573,7 +5573,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5581,7 +5581,7 @@
       },
       "artifact": {
         "id": "toolu_017fG1em64RRDzM5mDwnu7pi",
-        "name": "a file",
+        "name": "plan.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5628,7 +5628,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5643,7 +5643,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5651,7 +5651,7 @@
       },
       "artifact": {
         "id": "toolu_01Xmy2v4Piw2E1zB6DQhDRuN",
-        "name": "a file",
+        "name": "lead-reactivation.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5732,7 +5732,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit tsconfig.json failed",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5783,7 +5783,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read tsconfig.json",
       "station": "reading",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5833,7 +5833,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit tsconfig.json",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5848,7 +5848,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited tsconfig.json",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5856,7 +5856,7 @@
       },
       "artifact": {
         "id": "toolu_01Frcsr4CCHzFPFA79R9Ln3i",
-        "name": "a file",
+        "name": "tsconfig.json",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5903,7 +5903,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5918,7 +5918,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -5926,7 +5926,7 @@
       },
       "artifact": {
         "id": "toolu_01WY8Pyd4zD4uGL7SHT9UGmC",
-        "name": "a file",
+        "name": "office-contract.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -5973,7 +5973,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run the new contract tests",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6057,7 +6057,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6072,7 +6072,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6080,7 +6080,7 @@
       },
       "artifact": {
         "id": "toolu_01F2pbqQxRiZ8sUZNBZkvUW5",
-        "name": "a file",
+        "name": "office-contract.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -6144,7 +6144,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run tests, typecheck and lint",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6228,7 +6228,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6243,7 +6243,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6251,7 +6251,7 @@
       },
       "artifact": {
         "id": "toolu_011YQdmwfvTKmkkwaHh5ejTY",
-        "name": "a file",
+        "name": "lead-reactivation.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -6298,7 +6298,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify typecheck and test whether lint failure predates my changes",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6382,7 +6382,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Diagnose the tsgolint binary failure",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6449,7 +6449,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "PowerShell",
+      "label": "Test tsgolint execution and check mark-of-the-web",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6533,7 +6533,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find oxlint flag to disable type-aware linting",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6600,7 +6600,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Try running oxlint without type-aware rules",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6667,7 +6667,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run oxlint without type-aware rules",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6751,7 +6751,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Confirm new files lint clean and quantify pre-existing debt",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6835,7 +6835,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6850,7 +6850,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited plan.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6858,7 +6858,7 @@
       },
       "artifact": {
         "id": "toolu_017mPz8vfjUDpd8Z29dNYwyh",
-        "name": "a file",
+        "name": "plan.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -6905,7 +6905,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6920,7 +6920,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-contract.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -6928,7 +6928,7 @@
       },
       "artifact": {
         "id": "toolu_011x5UbG8KKsdiiiBdAxQXXE",
-        "name": "a file",
+        "name": "office-contract.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -6975,7 +6975,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Full verification gate for T001",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7059,7 +7059,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7074,7 +7074,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7082,7 +7082,7 @@
       },
       "artifact": {
         "id": "toolu_01BBREEZM318iN2qnLgqaRmP",
-        "name": "a file",
+        "name": "claudecode.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -7129,7 +7129,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit T001",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7213,7 +7213,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check whether subagent lines now exist in this transcript",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7297,7 +7297,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Inspect subagent transcript structure and token totals failed",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7365,7 +7365,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Search for subagent transcript data anywhere on disk",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7449,7 +7449,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate this session's subagent transcript",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7516,7 +7516,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify per-subagent usage attribution",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7600,7 +7600,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit PLAN.md failed",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7651,7 +7651,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read PLAN.md",
       "station": "reading",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7701,7 +7701,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read PLAN.md",
       "station": "reading",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7751,7 +7751,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit PLAN.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7766,7 +7766,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited PLAN.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7774,7 +7774,7 @@
       },
       "artifact": {
         "id": "toolu_01PGEnGTAokPjmTeXt6uyN7h",
-        "name": "a file",
+        "name": "PLAN.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -7838,7 +7838,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit 005-local-bridge.md failed",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7889,7 +7889,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read 005-local-bridge.md",
       "station": "reading",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7939,7 +7939,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit 005-local-bridge.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7954,7 +7954,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited 005-local-bridge.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -7962,7 +7962,7 @@
       },
       "artifact": {
         "id": "toolu_01JZF8Abj7wAtRKwC9pt8f3d",
-        "name": "a file",
+        "name": "005-local-bridge.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8009,7 +8009,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8024,7 +8024,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8032,7 +8032,7 @@
       },
       "artifact": {
         "id": "toolu_01JX721pncR3KryU1ptnhVrD",
-        "name": "a file",
+        "name": "claudecode.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8113,7 +8113,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8128,7 +8128,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8136,7 +8136,7 @@
       },
       "artifact": {
         "id": "toolu_01NLM9c5YdRY5MUqXYy9nMxU",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8183,7 +8183,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Capture a real session to a fixture",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8250,7 +8250,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify redaction and look for real parallel batches",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8334,7 +8334,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate leaked paths in fixture",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8418,7 +8418,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8433,7 +8433,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8441,7 +8441,7 @@
       },
       "artifact": {
         "id": "toolu_01HCWeJx615YU8dzm9Gt8XSc",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8488,7 +8488,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8503,7 +8503,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8511,7 +8511,7 @@
       },
       "artifact": {
         "id": "toolu_01H9x2x17GUZco5rDZiYP1TK",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8558,7 +8558,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Regenerate fixture and recheck for leaks",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8642,7 +8642,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Record fixture limitation and re-run gate",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8692,7 +8692,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit fixture and merge T001",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8776,7 +8776,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write claude-code-subagent-transcripts.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8791,7 +8791,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claude-code-subagent-transcripts.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8799,7 +8799,7 @@
       },
       "artifact": {
         "id": "toolu_01V1AwFJ1NrJG37iNAcT1vJC",
-        "name": "a file",
+        "name": "claude-code-subagent-transcripts.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8846,7 +8846,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write o6-office-invention-lab.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8861,7 +8861,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited o6-office-invention-lab.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -8869,7 +8869,7 @@
       },
       "artifact": {
         "id": "toolu_01TGC97zbuZ2ZnMqgmo4KadK",
-        "name": "a file",
+        "name": "o6-office-invention-lab.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -8916,7 +8916,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Update memory index and Windows traps memory",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9000,7 +9000,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Branch for T002",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9084,7 +9084,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write projection.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9099,7 +9099,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited projection.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9107,7 +9107,7 @@
       },
       "artifact": {
         "id": "toolu_013s1R5in1xpEbbN68HRnwJc",
-        "name": "a file",
+        "name": "projection.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9154,7 +9154,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9169,7 +9169,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9177,7 +9177,7 @@
       },
       "artifact": {
         "id": "toolu_01Cr6ds9THMStPTqUVpwvwU7",
-        "name": "a file",
+        "name": "timeline.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9258,7 +9258,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9273,7 +9273,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9281,7 +9281,7 @@
       },
       "artifact": {
         "id": "toolu_01EcWBFiXvVWkPVhSZrno1Dj",
-        "name": "a file",
+        "name": "timeline.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9328,7 +9328,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9343,7 +9343,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9351,7 +9351,7 @@
       },
       "artifact": {
         "id": "toolu_018en38aYa499cHSDhHhmkFB",
-        "name": "a file",
+        "name": "timeline.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9432,7 +9432,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9447,7 +9447,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9455,7 +9455,7 @@
       },
       "artifact": {
         "id": "toolu_01Ngikk3QWiqYVM2ega6LUUa",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9519,7 +9519,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9534,7 +9534,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9542,7 +9542,7 @@
       },
       "artifact": {
         "id": "toolu_01TZSR17XMqDx4A2rRaJcWsK",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9589,7 +9589,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run timeline and scheduler tests",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9673,7 +9673,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9688,7 +9688,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited timeline.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9696,7 +9696,7 @@
       },
       "artifact": {
         "id": "toolu_01XFJ5XzEZGMhNX1VxcLVHZb",
-        "name": "a file",
+        "name": "timeline.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9743,7 +9743,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-run timeline tests",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9827,7 +9827,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9842,7 +9842,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9850,7 +9850,7 @@
       },
       "artifact": {
         "id": "toolu_01Vs1ny5rhbM6tXkLeVoTxCt",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -9897,7 +9897,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run full test suite",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9981,7 +9981,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write theme.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -9996,7 +9996,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited theme.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10004,7 +10004,7 @@
       },
       "artifact": {
         "id": "toolu_019tP3f38iQ5AZQDi7dBVDWd",
-        "name": "a file",
+        "name": "theme.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10051,7 +10051,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write sprites.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10066,7 +10066,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited sprites.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10074,7 +10074,7 @@
       },
       "artifact": {
         "id": "toolu_01FomZvPZNfYKVzSiUXkAtbJ",
-        "name": "a file",
+        "name": "sprites.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10155,7 +10155,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10170,7 +10170,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10178,7 +10178,7 @@
       },
       "artifact": {
         "id": "toolu_01Tj18L3RvSLLdPJJWyqetTb",
-        "name": "a file",
+        "name": "useAnimationLoop.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10259,7 +10259,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10274,7 +10274,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10282,7 +10282,7 @@
       },
       "artifact": {
         "id": "toolu_01KsFBHRME6gmXZrf9rzETgd",
-        "name": "a file",
+        "name": "useAnimationLoop.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10346,7 +10346,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10361,7 +10361,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10369,7 +10369,7 @@
       },
       "artifact": {
         "id": "toolu_01JZ6KTsgo9Zgr2KHX6fMNW4",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10450,7 +10450,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write demo-stream.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10465,7 +10465,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited demo-stream.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10473,7 +10473,7 @@
       },
       "artifact": {
         "id": "toolu_01YEsyM7bVWoKcDtDCpLvv4x",
-        "name": "a file",
+        "name": "demo-stream.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10520,7 +10520,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write index.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10535,7 +10535,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited index.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10543,7 +10543,7 @@
       },
       "artifact": {
         "id": "toolu_01C51TxbpsRH52655TMoYtsw",
-        "name": "a file",
+        "name": "index.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10607,7 +10607,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check layout and CSS wiring",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10674,7 +10674,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Append renderer styles to office.css",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10724,7 +10724,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write page.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10739,7 +10739,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited page.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10747,7 +10747,7 @@
       },
       "artifact": {
         "id": "toolu_01Ka4xHeueZDXHYYSMf1Xs8Q",
-        "name": "a file",
+        "name": "page.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10794,7 +10794,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Typecheck the renderer",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10878,7 +10878,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10893,7 +10893,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited events.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10901,7 +10901,7 @@
       },
       "artifact": {
         "id": "toolu_016c7hxJJXVphzf76rJ2dm6L",
-        "name": "a file",
+        "name": "events.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -10948,7 +10948,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10963,7 +10963,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -10971,7 +10971,7 @@
       },
       "artifact": {
         "id": "toolu_013QUT1EQ43892kXKAYr6GuZ",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11018,7 +11018,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-typecheck",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11102,7 +11102,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Point launch config at relocated project",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11370,7 +11370,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11385,7 +11385,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11393,7 +11393,7 @@
       },
       "artifact": {
         "id": "toolu_01VHviz3teFz5suo17nAXDG1",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11440,7 +11440,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Mirror desk activity onto seated workers",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11507,7 +11507,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify setDeskStatus wiring",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11557,7 +11557,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11572,7 +11572,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11580,7 +11580,7 @@
       },
       "artifact": {
         "id": "toolu_011FEBwkrKieXq4qK3tL6ZjZ",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11661,7 +11661,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11676,7 +11676,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11684,7 +11684,7 @@
       },
       "artifact": {
         "id": "toolu_01JdVr6DzQNi7BeeprurbVbF",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11731,7 +11731,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11746,7 +11746,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11754,7 +11754,7 @@
       },
       "artifact": {
         "id": "toolu_015rGU5GmT1fbcgXDsMA3Rhg",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11801,7 +11801,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11816,7 +11816,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11824,7 +11824,7 @@
       },
       "artifact": {
         "id": "toolu_01AamAyWzka7ySc9bGeLjsKq",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -11871,7 +11871,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Typecheck and test after fixes",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -11921,7 +11921,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect the failing test",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12005,7 +12005,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12020,7 +12020,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12028,7 +12028,7 @@
       },
       "artifact": {
         "id": "toolu_01UdX6SHUMEub2YQEx9dZ8uL",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -12075,7 +12075,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-run tests",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12813,7 +12813,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12828,7 +12828,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12836,7 +12836,7 @@
       },
       "artifact": {
         "id": "toolu_01UcB7qYZoR5Zh28LhGjVBhC",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -12883,7 +12883,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12898,7 +12898,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12906,7 +12906,7 @@
       },
       "artifact": {
         "id": "toolu_014VpLDAcGtM88QG5PRUEzc7",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -12953,7 +12953,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12968,7 +12968,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -12976,7 +12976,7 @@
       },
       "artifact": {
         "id": "toolu_01KVjU8QPw2hk8S641cQos3s",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13040,7 +13040,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13055,7 +13055,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13063,7 +13063,7 @@
       },
       "artifact": {
         "id": "toolu_01R6VCN6887Bwg9JxBxTTURt",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13110,7 +13110,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13125,7 +13125,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13133,7 +13133,7 @@
       },
       "artifact": {
         "id": "toolu_01DpGY9icaEqMSCZkC9LmWbQ",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13180,7 +13180,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Typecheck after applyTime refactor",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13398,7 +13398,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Make idle status null so violet means only live activity",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13465,7 +13465,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13480,7 +13480,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13488,7 +13488,7 @@
       },
       "artifact": {
         "id": "toolu_01XX1bdgHUxQ8VAzTQGcuzar",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13535,7 +13535,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13550,7 +13550,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13558,7 +13558,7 @@
       },
       "artifact": {
         "id": "toolu_01ENTjNyAh4mr8PagDiJDvQW",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13605,7 +13605,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify after violet fix",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13655,7 +13655,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect failures",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13739,7 +13739,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate remaining Standing by push",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13789,7 +13789,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13804,7 +13804,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13812,7 +13812,7 @@
       },
       "artifact": {
         "id": "toolu_01HEVCxuTYVgwM1vm3BzTgCq",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13859,7 +13859,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13874,7 +13874,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -13882,7 +13882,7 @@
       },
       "artifact": {
         "id": "toolu_01MbxmvyGNcPKdfTWzdeNkqt",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -13929,7 +13929,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-verify tests",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14299,7 +14299,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14314,7 +14314,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14322,7 +14322,7 @@
       },
       "artifact": {
         "id": "toolu_016bA6ugQnFFRtGp9tqDwwDr",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -14369,7 +14369,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14384,7 +14384,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14392,7 +14392,7 @@
       },
       "artifact": {
         "id": "toolu_01JGgyXLGw2vnQ62L7aR3kLB",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -14439,7 +14439,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify artifact-clear fix",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14657,7 +14657,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14672,7 +14672,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14680,7 +14680,7 @@
       },
       "artifact": {
         "id": "toolu_011r1DktVNobHPZeCNUMZ7oD",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -14727,7 +14727,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14742,7 +14742,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14750,7 +14750,7 @@
       },
       "artifact": {
         "id": "toolu_016BM6yFaidQFSjqJSgjnscS",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -14797,7 +14797,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find remaining inTransit references",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14847,7 +14847,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Remove the broken in-transit counter",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14914,7 +14914,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14929,7 +14929,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited scheduler.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14937,7 +14937,7 @@
       },
       "artifact": {
         "id": "toolu_01TY5xV9oh32oABFucKEiqxp",
-        "name": "a file",
+        "name": "scheduler.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -14984,7 +14984,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -14999,7 +14999,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-timeline.test.mjs",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15007,7 +15007,7 @@
       },
       "artifact": {
         "id": "toolu_01KxHTQBmV26a9W5hrAvrBb7",
-        "name": "a file",
+        "name": "office-timeline.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15054,7 +15054,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify lane and batching fixes",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15188,7 +15188,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit sprites.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15203,7 +15203,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited sprites.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15211,7 +15211,7 @@
       },
       "artifact": {
         "id": "toolu_01Kig1bnu8dj8mdWRWatanmr",
-        "name": "a file",
+        "name": "sprites.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15258,7 +15258,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15273,7 +15273,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15281,7 +15281,7 @@
       },
       "artifact": {
         "id": "toolu_01XA7GoNz5bhe4dL9oTTdKDw",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15328,7 +15328,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify after folder batch change",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15395,7 +15395,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Lint the new renderer code",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15479,7 +15479,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15494,7 +15494,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15502,7 +15502,7 @@
       },
       "artifact": {
         "id": "toolu_01XZrEyRHVadvyGnCKnGYKYC",
-        "name": "a file",
+        "name": "useAnimationLoop.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15549,7 +15549,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15564,7 +15564,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15572,7 +15572,7 @@
       },
       "artifact": {
         "id": "toolu_01QaQSyntynsS5ZgLyvfkJmY",
-        "name": "a file",
+        "name": "useAnimationLoop.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15619,7 +15619,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15634,7 +15634,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited useAnimationLoop.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15642,7 +15642,7 @@
       },
       "artifact": {
         "id": "toolu_011M6t4cMFrfDgD6oQ2CmZm7",
-        "name": "a file",
+        "name": "useAnimationLoop.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15706,7 +15706,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15721,7 +15721,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15729,7 +15729,7 @@
       },
       "artifact": {
         "id": "toolu_0163K9SbMFvNpyDSr9jTVZK5",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -15776,7 +15776,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Suppress SVG role false positives and re-lint",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15860,7 +15860,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix JSX comment syntax",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15910,7 +15910,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-lint renderer",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -15994,7 +15994,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add documented file-level disable and fix the status element",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16044,7 +16044,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check the output element closing tag",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16094,7 +16094,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate the mount-paint effect",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16161,7 +16161,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit OfficeView.tsx failed",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16212,7 +16212,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read OfficeView.tsx",
       "station": "reading",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16262,7 +16262,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16277,7 +16277,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16285,7 +16285,7 @@
       },
       "artifact": {
         "id": "toolu_01NHA1zccwu6WDeFh7WVRgST",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -16332,7 +16332,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Full gate for T002",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16416,7 +16416,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Build",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16550,7 +16550,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16565,7 +16565,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-reactivation.ts",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16573,7 +16573,7 @@
       },
       "artifact": {
         "id": "toolu_01LLmhctmjTQawhGCsVVTnx6",
-        "name": "a file",
+        "name": "lead-reactivation.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -16620,7 +16620,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate compact plan block",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16670,7 +16670,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Rewrite compact plan for vertical screen layout",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16754,7 +16754,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16769,7 +16769,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16777,7 +16777,7 @@
       },
       "artifact": {
         "id": "toolu_01114uk8Ari2N2NzQSPNeBqY",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -16824,7 +16824,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16839,7 +16839,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -16847,7 +16847,7 @@
       },
       "artifact": {
         "id": "toolu_015nr54HJ6JqFE8hRuJCMeLt",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -16894,7 +16894,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add dot style and typecheck",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17112,7 +17112,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Record T002 notes and run final gate",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17162,7 +17162,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit and merge T002",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17246,7 +17246,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17261,7 +17261,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claudecode.md",
       "station": "workshop",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17269,7 +17269,7 @@
       },
       "artifact": {
         "id": "toolu_01FoAcH1T3ZjSgoBE3aJPdjP",
-        "name": "a file",
+        "name": "claudecode.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -17316,7 +17316,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit docs and show task status",
       "station": "operations",
       "work": {
         "id": "4dec08f6-768f-498d-9535-4ace46cee7a5",
@@ -17431,7 +17431,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Branch T003 and read the workflow hook",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17498,7 +17498,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find page.tsx dependencies on the hook",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17565,7 +17565,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find event-consuming expressions in page.tsx",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17649,7 +17649,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write lead-review.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17664,7 +17664,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-review.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17672,7 +17672,7 @@
       },
       "artifact": {
         "id": "toolu_01LWHN8aoBnixFrcJdkdyjE2",
-        "name": "a file",
+        "name": "lead-review.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -17753,7 +17753,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit lead-review.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17768,7 +17768,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-review.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17776,7 +17776,7 @@
       },
       "artifact": {
         "id": "toolu_011tnFqCKB6iNKvZLv44VK9H",
-        "name": "a file",
+        "name": "lead-review.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -17840,7 +17840,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Write failed",
+      "label": "Write use-office.ts failed",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17891,7 +17891,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read use-office.ts",
       "station": "reading",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17941,7 +17941,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17956,7 +17956,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -17964,7 +17964,7 @@
       },
       "artifact": {
         "id": "toolu_019dxk3FATGmjhehgHzxcevL",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18011,7 +18011,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Typecheck the ported hook",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18095,7 +18095,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect page.tsx event call sites",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18145,7 +18145,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate log usage and activityList definition",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18229,7 +18229,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18244,7 +18244,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18252,7 +18252,7 @@
       },
       "artifact": {
         "id": "toolu_01SzM8qxBLjcncRKHGe2LsBK",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18299,7 +18299,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18314,7 +18314,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18322,7 +18322,7 @@
       },
       "artifact": {
         "id": "toolu_0182Xa57KuFLLLbLoMn6GKyH",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18369,7 +18369,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write patch-page.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18384,7 +18384,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited patch-page.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18392,7 +18392,7 @@
       },
       "artifact": {
         "id": "toolu_014WM4HZhMGczixA9f4inRNQ",
-        "name": "a file",
+        "name": "patch-page.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18439,7 +18439,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Patch page.tsx to the new contract",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18489,7 +18489,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Typecheck after page patch",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18573,7 +18573,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18588,7 +18588,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18596,7 +18596,7 @@
       },
       "artifact": {
         "id": "toolu_01DsFe2ua7SraDuHPVwhZvLn",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18643,7 +18643,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18658,7 +18658,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18666,7 +18666,7 @@
       },
       "artifact": {
         "id": "toolu_01Hi6cPtRGuEqamETiTTVbZm",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18713,7 +18713,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18728,7 +18728,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18736,7 +18736,7 @@
       },
       "artifact": {
         "id": "toolu_01YEk1kza433WbZu2FJHkb1S",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18783,7 +18783,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find remaining page.tsx problems",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18833,7 +18833,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix latest and desk-null issues",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18917,7 +18917,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18932,7 +18932,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited use-office.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -18940,7 +18940,7 @@
       },
       "artifact": {
         "id": "toolu_01YDdvDmY9RQvuUsX2axSngA",
-        "name": "a file",
+        "name": "use-office.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -18987,7 +18987,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find latest definition and recheck types",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19054,7 +19054,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix latest and verify",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19138,7 +19138,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19153,7 +19153,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19161,7 +19161,7 @@
       },
       "artifact": {
         "id": "toolu_01J6ApqEgWVcAnhxupn1QqLk",
-        "name": "a file",
+        "name": "lead-workflow.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -19225,7 +19225,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Replace inline workflow with the extracted call",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19292,7 +19292,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Clean up hook imports",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19342,7 +19342,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect remaining holder usage",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19409,7 +19409,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit events.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19424,7 +19424,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited events.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19432,7 +19432,7 @@
       },
       "artifact": {
         "id": "toolu_01V83b2ekWnqZuzm62Z4mSs1",
-        "name": "a file",
+        "name": "events.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -19479,7 +19479,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19494,7 +19494,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19502,7 +19502,7 @@
       },
       "artifact": {
         "id": "toolu_01FqAFEycJS7YxxLqh16b71E",
-        "name": "a file",
+        "name": "lead-workflow.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -19549,7 +19549,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Type the workflow against the contract and dedupe emissions",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19616,7 +19616,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit use-office.ts failed",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19667,7 +19667,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate insertion point and call site",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19717,7 +19717,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add the proxy caller and wire it",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19784,7 +19784,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check for orphaned usage state",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19868,7 +19868,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Derive usage from the event stream",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19918,7 +19918,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check the comment survived the shell mangling",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -19968,7 +19968,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit use-office.ts failed",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20019,7 +20019,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Repair the mangled comment",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20086,7 +20086,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write lead-workflow.test.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20101,7 +20101,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-workflow.test.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20109,7 +20109,7 @@
       },
       "artifact": {
         "id": "toolu_01T1u28f8nKUzA84edoXfcno",
-        "name": "a file",
+        "name": "lead-workflow.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -20156,7 +20156,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run the workflow honesty tests",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20240,7 +20240,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20255,7 +20255,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited lead-workflow.ts",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20263,7 +20263,7 @@
       },
       "artifact": {
         "id": "toolu_01AoqN8taA6LoVN545Dxg9UD",
-        "name": "a file",
+        "name": "lead-workflow.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -20310,7 +20310,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify the no-op handoff fix",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20394,7 +20394,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Lint and build for T003",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20444,7 +20444,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix lint nit and re-verify",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20528,7 +20528,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit and merge T003",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20612,7 +20612,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect commit message for mangling",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20662,7 +20662,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Amend the mangled commit message and re-merge",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20746,7 +20746,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Extract the office-map block to replace",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20830,7 +20830,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write record-demo-run.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20845,7 +20845,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited record-demo-run.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20853,7 +20853,7 @@
       },
       "artifact": {
         "id": "toolu_01B55dLg1CMvvJmDjQSQFbQy",
-        "name": "a file",
+        "name": "record-demo-run.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -20900,7 +20900,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Record the demo run",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -20984,7 +20984,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check mobile hook and page state",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21034,7 +21034,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find page state and inspect helper",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21084,7 +21084,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find inspect and selection state",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21134,7 +21134,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write mount-office.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21149,7 +21149,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited mount-office.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21157,7 +21157,7 @@
       },
       "artifact": {
         "id": "toolu_01SFQGePyUR9vHCeszjypdaE",
-        "name": "a file",
+        "name": "mount-office.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -21204,7 +21204,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Mount the office and typecheck failed",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21255,7 +21255,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find exact state declaration ending",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21305,7 +21305,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect the patch script state block",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21355,7 +21355,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Bash failed",
+      "label": "Mount office and typecheck failed",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21440,7 +21440,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Make patch idempotent and fix anchor",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21490,7 +21490,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Mount the office",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21557,7 +21557,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix the declaration chain",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21641,7 +21641,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Audit palette usage",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21708,7 +21708,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find which rules use the blue",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21775,7 +21775,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Rebuild the palette on O6 tokens",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21825,7 +21825,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify violet is confined to live signals",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21909,7 +21909,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find remaining off-brand colours",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -21959,7 +21959,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Finish palette cleanup and drop dead rules",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22043,7 +22043,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Extract the floor footer block",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22093,7 +22093,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add replay controls to the floor footer",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22177,7 +22177,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect damaged footer",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22227,7 +22227,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write fix-footer.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22242,7 +22242,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited fix-footer.mjs",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22250,7 +22250,7 @@
       },
       "artifact": {
         "id": "toolu_01MSG4fVZaR89iQQms8xFdHm",
-        "name": "a file",
+        "name": "fix-footer.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -22297,7 +22297,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Repair footer and typecheck",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22347,7 +22347,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Style the transport controls and build",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22751,7 +22751,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find onTime/onSelect usage",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22801,7 +22801,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22816,7 +22816,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22824,7 +22824,7 @@
       },
       "artifact": {
         "id": "toolu_01NznacvV1g2c7ZME88atbWm",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -22871,7 +22871,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22886,7 +22886,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited OfficeView.tsx",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -22894,7 +22894,7 @@
       },
       "artifact": {
         "id": "toolu_011Sdr1sYitJZu1Va6mGDNnu",
-        "name": "a file",
+        "name": "OfficeView.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -22941,7 +22941,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Make select stable too",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23092,7 +23092,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Confirm ref exists on disk",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23578,7 +23578,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Extract a pure activity projection",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23628,7 +23628,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Make panels read the same stream the floor renders",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23695,7 +23695,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find the early activity use",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23745,7 +23745,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Hoist the derivations above first use",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -23963,7 +23963,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Lint the changed files",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24047,7 +24047,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect the fixable lint issues",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24097,7 +24097,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix entities and internal link",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24147,7 +24147,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-lint page and run gate",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24214,7 +24214,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find the role=status element",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24264,7 +24264,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Fix status element and count remaining lint debt",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24551,7 +24551,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Revert the next/link change",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24668,7 +24668,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect the top of page.tsx",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -24802,7 +24802,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Clear Vite dependency cache",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25070,7 +25070,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Record T004 notes and run the gate",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25120,7 +25120,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit and merge T004",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25204,7 +25204,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit claudecode.md",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25219,7 +25219,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited claudecode.md",
       "station": "workshop",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25227,7 +25227,7 @@
       },
       "artifact": {
         "id": "toolu_014ikLB8MiZrEy8DPL9k1x3n",
-        "name": "a file",
+        "name": "claudecode.md",
         "kind": "file"
       },
       "source": "claude-code",
@@ -25458,7 +25458,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit docs and summarise Phase 1",
       "station": "operations",
       "work": {
         "id": "94dc778c-3ef4-473a-a172-aec7f37a7f11",
@@ -25590,7 +25590,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Branch T006 and inspect the captured fixture",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25657,7 +25657,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write coding-session.ts",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25672,7 +25672,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited coding-session.ts",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25680,7 +25680,7 @@
       },
       "artifact": {
         "id": "toolu_014mbeZhiJSqUApocCNtbYjd",
-        "name": "a file",
+        "name": "coding-session.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -25744,7 +25744,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write map-claude-code.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25759,7 +25759,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited map-claude-code.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25767,7 +25767,7 @@
       },
       "artifact": {
         "id": "toolu_017bkmffVMrhc82sfAmnBsLz",
-        "name": "a file",
+        "name": "map-claude-code.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -25814,7 +25814,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write map-claude-code.test.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25829,7 +25829,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited map-claude-code.test.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25837,7 +25837,7 @@
       },
       "artifact": {
         "id": "toolu_011nfZAqhWcCZdyHJJLvBSRN",
-        "name": "a file",
+        "name": "map-claude-code.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -25884,7 +25884,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run the mapping tests",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -25968,7 +25968,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Gate and record T006",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26018,7 +26018,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Commit and merge T006",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26102,7 +26102,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write config.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26117,7 +26117,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited config.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26125,7 +26125,7 @@
       },
       "artifact": {
         "id": "toolu_01YHjasak7i6BUWooQZN4fjn",
-        "name": "a file",
+        "name": "config.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26172,7 +26172,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write transcript.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26187,7 +26187,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited transcript.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26195,7 +26195,7 @@
       },
       "artifact": {
         "id": "toolu_015HHNNDpzSzgARLDEBGghxR",
-        "name": "a file",
+        "name": "transcript.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26259,7 +26259,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write server.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26274,7 +26274,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited server.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26282,7 +26282,7 @@
       },
       "artifact": {
         "id": "toolu_015MWCxsNkwZUbQZqSaj9D1b",
-        "name": "a file",
+        "name": "server.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26346,7 +26346,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write bridge.test.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26361,7 +26361,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited bridge.test.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26369,7 +26369,7 @@
       },
       "artifact": {
         "id": "toolu_017hSHrbDsZBQApRpYRcWgH1",
-        "name": "a file",
+        "name": "bridge.test.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26416,7 +26416,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Run the bridge tests",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26500,7 +26500,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write office-view.css",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26515,7 +26515,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited office-view.css",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26523,7 +26523,7 @@
       },
       "artifact": {
         "id": "toolu_01XF1mXvomu1KGWekPoVTftX",
-        "name": "a file",
+        "name": "office-view.css",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26570,7 +26570,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Extract renderer CSS and import it",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26654,7 +26654,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Inspect the damaged comment",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26704,7 +26704,7 @@
     },
     {
       "type": "assignment.failed",
-      "label": "Edit failed",
+      "label": "Edit office.css failed",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26755,7 +26755,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Repair the comment",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26822,7 +26822,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write index.html",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26837,7 +26837,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited index.html",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26845,7 +26845,7 @@
       },
       "artifact": {
         "id": "toolu_01GQ2bVC61a49bVL8LXP7VZR",
-        "name": "a file",
+        "name": "index.html",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26892,7 +26892,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write main.tsx",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26907,7 +26907,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited main.tsx",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26915,7 +26915,7 @@
       },
       "artifact": {
         "id": "toolu_01XaB7FFLH5aMdxndr5X8ew4",
-        "name": "a file",
+        "name": "main.tsx",
         "kind": "file"
       },
       "source": "claude-code",
@@ -26962,7 +26962,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write bridge.css",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26977,7 +26977,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited bridge.css",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -26985,7 +26985,7 @@
       },
       "artifact": {
         "id": "toolu_018WzJEYYEPg2nimYjLYXVUp",
-        "name": "a file",
+        "name": "bridge.css",
         "kind": "file"
       },
       "source": "claude-code",
@@ -27032,7 +27032,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write vite.bridge.config.ts",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27047,7 +27047,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited vite.bridge.config.ts",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27055,7 +27055,7 @@
       },
       "artifact": {
         "id": "toolu_013iV31jsPrAWGVu3L8SZuNF",
-        "name": "a file",
+        "name": "vite.bridge.config.ts",
         "kind": "file"
       },
       "source": "claude-code",
@@ -27102,7 +27102,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Add bridge build and run scripts",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27169,7 +27169,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write cli.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27184,7 +27184,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited cli.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27192,7 +27192,7 @@
       },
       "artifact": {
         "id": "toolu_01KRLwq1AVxmRyw3shGGCAHp",
-        "name": "a file",
+        "name": "cli.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -27239,7 +27239,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Build the bridge client",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27289,7 +27289,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Verify the CLI output and snippet",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27373,7 +27373,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Make the committed snippet use an env token",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27457,7 +27457,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check cli.mjs current state",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27507,7 +27507,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read cli.mjs",
       "station": "reading",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27557,7 +27557,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit cli.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27572,7 +27572,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited cli.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27580,7 +27580,7 @@
       },
       "artifact": {
         "id": "toolu_01MgR53rSsE6iUpFWSezJNkc",
-        "name": "a file",
+        "name": "cli.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -27627,7 +27627,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Wire the ready-to-paste file and verify the reference snippet",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27711,7 +27711,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Write",
+      "label": "Write record-coding-run.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27726,7 +27726,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited record-coding-run.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27734,7 +27734,7 @@
       },
       "artifact": {
         "id": "toolu_01R3rKaWFVF33rsdfoACYvGs",
-        "name": "a file",
+        "name": "record-coding-run.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -27781,7 +27781,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Record the coding-session run",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27865,7 +27865,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Locate the reconstruction function",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27915,7 +27915,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Read",
+      "label": "Read capture-session.mjs",
       "station": "reading",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27965,7 +27965,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27980,7 +27980,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -27988,7 +27988,7 @@
       },
       "artifact": {
         "id": "toolu_01Sx6k3cWu4gcYJJrvu8BWRf",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -28035,7 +28035,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Find where the main reconstruction is called",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28085,7 +28085,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28100,7 +28100,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28108,7 +28108,7 @@
       },
       "artifact": {
         "id": "toolu_01PDmZsNfg9NBWNQRWwCrbi8",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
@@ -28155,7 +28155,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Re-capture with prompt ids and re-record",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28222,7 +28222,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Bash",
+      "label": "Check fixture sizes and the missing SessionStart",
       "station": "operations",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28289,7 +28289,7 @@
     },
     {
       "type": "assignment.finished",
-      "label": "Edit",
+      "label": "Edit capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28304,7 +28304,7 @@
     },
     {
       "type": "artifact.created",
-      "label": "Edited a file",
+      "label": "Edited capture-session.mjs",
       "station": "workshop",
       "work": {
         "id": "b99225ab-8970-4aff-b34c-0d213f47c247",
@@ -28312,7 +28312,7 @@
       },
       "artifact": {
         "id": "toolu_014vW7mWVgZLDezDpgCoSp19",
-        "name": "a file",
+        "name": "capture-session.mjs",
         "kind": "file"
       },
       "source": "claude-code",
