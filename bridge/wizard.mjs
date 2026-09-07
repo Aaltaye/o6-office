@@ -23,7 +23,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { settingsPathFor } from './connect.mjs';
+import { hookWiring, settingsPathFor } from './connect.mjs';
 
 /**
  * What we found, before changing anything.
@@ -63,15 +63,9 @@ export function surveyProject({ root, port, url: expectUrl, token: expectToken }
    * working connection — and telling somebody they are set up when every event will be
    * refused is worse than telling them nothing.
    */
-  const wiring = (event) => {
-    const text = JSON.stringify(hooks[event] ?? '');
-    // Anchored on the endpoint followed by a non-path character, so a project keeping
-    // its own scripts in .claude/hooks/ is not mistaken for a connection to the office.
-    const url = /(https?:\/\/[^\s"\\]+?)\/hook(?![\w/-])/.exec(text);
-    if (!url) return null;
-    const token = /x-o6-token:\s*([^\s"\\]+)/.exec(text);
-    return { url: url[1], token: token?.[1] ?? null };
-  };
+  // The same matcher connect.mjs merges with. Two copies is how the merge kept the loose
+  // version long enough to delete somebody's own hook while this file read it correctly.
+  const wiring = (event) => hookWiring(hooks[event]);
 
   const ours = events.filter((event) => wiring(event) !== null);
   const wiredTo = ours.length ? wiring(ours[0]) : null;

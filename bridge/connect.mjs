@@ -17,8 +17,31 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
-/** How we recognise a hook entry as ours, so we can replace it rather than duplicate it. */
-export const O6_MARKER = '/hook';
+/**
+ * How we recognise a hook entry as ours, so we can replace it rather than duplicate it.
+ *
+ * Anchored on the endpoint URL followed by a non-path character. It used to be the four
+ * characters `/hook`, which is also inside `/hooks/` — the conventional directory a project
+ * keeps its own hook scripts in. So an ordinary `bash .claude/hooks/format.sh` was read as
+ * ours and DELETED on merge: silently destroying somebody's configuration in order to
+ * install a visualisation, which is the worst thing a tool that edits your settings can do.
+ * Caught by running the wizard against a project that had one.
+ */
+const O6_ENDPOINT = /(https?:\/\/[^\s"\\]+?)\/hook(?![\w/-])/;
+
+/** Is this hook entry one of ours? */
+export function isOurHook(entry) {
+  return O6_ENDPOINT.test(JSON.stringify(entry ?? ''));
+}
+
+/** Where an existing hook entry sends events, or null if it is not ours. */
+export function hookWiring(entry) {
+  const text = JSON.stringify(entry ?? '');
+  const url = O6_ENDPOINT.exec(text);
+  if (!url) return null;
+  const token = /x-o6-token:\s*([^\s"\\]+)/.exec(text);
+  return { url: url[1], token: token?.[1] ?? null };
+}
 
 /**
  * Merge our hook block into an existing settings object.
@@ -38,7 +61,7 @@ export function mergeHooks(settings, hooks) {
     // Anything that is not ours stays exactly as it was. Someone else's hooks are not
     // ours to reorganise, and silently dropping them would be the worst possible bug for
     // a tool that edits your config.
-    const theirs = existing.filter((entry) => !JSON.stringify(entry).includes(O6_MARKER));
+    const theirs = existing.filter((entry) => !isOurHook(entry));
     const hadOurs = theirs.length !== existing.length;
 
     next.hooks[event] = [...theirs, ...matchers];

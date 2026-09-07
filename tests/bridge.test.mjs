@@ -1073,3 +1073,51 @@ test('a stream opened before anything has happened connects immediately', async 
     }
   });
 });
+
+test('merging never deletes a hook of theirs that merely mentions hooks', () => {
+  /*
+   * The worst bug this tool could have, and it had it. The marker was the four characters
+   * `/hook`, which is also inside `/hooks/` — the conventional directory a project keeps
+   * its own hook scripts in — so `bash .claude/hooks/format.sh` was classified as OURS and
+   * dropped on merge. Silently destroying somebody's configuration in order to install a
+   * visualisation, three lines under a comment promising not to.
+   *
+   * Caught by running the wizard for real against a project that had one, not by a test.
+   */
+  const theirs = {
+    hooks: {
+      SessionStart: [{ hooks: [{ type: 'command', command: 'bash .claude/hooks/format.sh' }] }],
+      PreToolUse: [{ hooks: [{ type: 'command', command: 'node ./scripts/hooks/audit.js' }] }],
+    },
+  };
+  const ours = {
+    SessionStart: [{ hooks: [{ type: 'command', command: hookCommandFor('http://127.0.0.1:4141', 'tok') }] }],
+    PreToolUse: [{ hooks: [{ type: 'command', command: hookCommandFor('http://127.0.0.1:4141', 'tok') }] }],
+  };
+
+  const { settings, kept } = mergeHooks(theirs, ours);
+  const text = JSON.stringify(settings);
+  assert.ok(text.includes('format.sh'), 'their SessionStart script survived');
+  assert.ok(text.includes('audit.js'), 'their PreToolUse script survived');
+  assert.equal(kept.length, 2, 'and the report says both were kept');
+});
+
+test('merging replaces our own hook rather than stacking a second copy', () => {
+  // The other half: re-running must not leave two of ours posting the same event twice.
+  const already = {
+    hooks: {
+      PreToolUse: [
+        { hooks: [{ type: 'command', command: hookCommandFor('http://127.0.0.1:4311', 'old') }] },
+      ],
+    },
+  };
+  const ours = {
+    PreToolUse: [{ hooks: [{ type: 'command', command: hookCommandFor('http://127.0.0.1:4141', 'new') }] }],
+  };
+
+  const { settings, replaced } = mergeHooks(already, ours);
+  const entries = settings.hooks.PreToolUse;
+  assert.equal(entries.length, 1, 'one of ours, not two');
+  assert.ok(JSON.stringify(entries).includes('4141'), 'and it is the current one');
+  assert.deepEqual(replaced, ['PreToolUse']);
+});
