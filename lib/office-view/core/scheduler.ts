@@ -35,7 +35,7 @@
 import type { OfficeEvent, RoomId, StationId, WorkId, WorkerId, World } from './types.ts';
 import { groupSimultaneous, jitterFor } from './events.ts';
 import { type CompiledPlan, routeBetween } from './plan.ts';
-import { claimDesk, deskOf, newClaims, overflowSpot, releaseWorker } from './seating.ts';
+import { claimDesk, newClaims, overflowSpot, releaseWorker } from './seating.ts';
 import { SPOT_PITCH } from './figure.ts';
 import { workerOf } from './attribution.ts';
 import { MotionChannel, StepChannel, type MotionTrack } from './timeline.ts';
@@ -328,6 +328,22 @@ export function schedule(
   const claims = newClaims();
 
   /**
+   * Which desk each in-flight assignment actually lit.
+   *
+   * An event names a DEPARTMENT; the office chooses the desk. The finish therefore cannot
+   * be resolved from the event alone, and it must not be resolved from where the worker is
+   * NOW either: one agent can hold two tool calls at once in different departments — the
+   * contract explicitly tells producers to emit those with identical timestamps — and by
+   * the time the first finishes, the worker's current claim is the second department's
+   * desk. Quietening that one left the first desk lit violet, claiming a shell command was
+   * still running, for the rest of the session.
+   *
+   * Keyed by worker AND department, because those two together are what a finish names.
+   */
+  const litFor = new Map<string, StationId>();
+  const litKey = (worker: WorkerId | null, station: StationId) => `${worker ?? 'main'}::${station}`;
+
+  /**
    * Where somebody stands while they have no assignment at all.
    *
    * The lounge is not a department and has no desks, so spots are handed out by arrival
@@ -602,6 +618,17 @@ export function schedule(
 
               worker.roomAt.push(simTime, claim.room);
               worker.stationAt.push(simTime, claim.deskId);
+              /*
+               * Working again cancels the record. A producer may re-use an agent id after
+               * announcing it left; without this the floor drew a grey shadowless marker at
+               * a desk that was simultaneously lit violet with the tool that agent was
+               * running right then, and the roster listed it as working. A record is what
+               * somebody leaves behind, so the moment they are back it is not true.
+               */
+              if (worker.departed.sampleAt(simTime)) {
+                worker.departed.push(simTime, null);
+                worker.present.push(simTime, true);
+              }
               worker.station = claim.deskId ?? undefined;
 
               /*
@@ -620,6 +647,7 @@ export function schedule(
             }
           }
 
+          litFor.set(litKey(workerOf(event), event.station), lit);
           busyChannel(lit).push(simTime, event.label);
           setDeskStatus(lit, simTime, event.label);
           if (worker) worker.status.push(simTime, event.label);
@@ -636,21 +664,49 @@ export function schedule(
            * same rule the desks already follow: violet means right now, so it has to stop.
            */
           const seated = workerOf(event);
-          const lit = seated ? (deskOf(claims, plan, seated) ?? event.station) : event.station;
+          const key = litKey(seated, event.station);
+          // The desk this very assignment lit, not wherever its worker has since gone.
+          const lit = litFor.get(key) ?? event.station;
+          litFor.delete(key);
           busyChannel(lit).push(simTime + walkMs, null);
           setDeskStatus(lit, simTime + walkMs, null);
           if (seated) {
-            workers.get(seated)?.status.push(simTime + walkMs, null);
-            timelineHead = Math.max(timelineHead, simTime + walkMs);
+            /*
+             * The worker only goes quiet once they have nothing else running. An agent with
+             * two parallel tool calls is still working when the first returns, and marking
+             * it idle there would blink the person off mid-job.
+             */
+            const stillBusy = [...litFor.keys()].some((other) => other.startsWith(`${seated}::`));
+            if (!stillBusy) {
+              workers.get(seated)?.status.push(simTime + walkMs, null);
+              timelineHead = Math.max(timelineHead, simTime + walkMs);
+            }
           }
           break;
         }
 
         case 'assignment.failed': {
-          // The reason is the producer's own words. We render it verbatim rather than
-          // paraphrasing, so the office never asserts something the run did not.
-          busyChannel(event.station).push(simTime, event.reason);
-          setDeskStatus(event.station, simTime, event.reason);
+          /*
+           * The reason is the producer's own words, rendered verbatim so the office never
+           * asserts something the run did not — and written to the desk THIS assignment was
+           * running at. Addressing the department instead wrote one agent's failure onto
+           * the primary desk, which by then belongs to somebody else: the office
+           * attributing a failure, in its own literal words, to an agent that did not have
+           * it. That is worse than a cosmetic mistake.
+           */
+          const who = workerOf(event);
+          const key = litKey(who, event.station);
+          const lit = litFor.get(key) ?? event.station;
+          litFor.delete(key);
+          busyChannel(lit).push(simTime, event.reason);
+          setDeskStatus(lit, simTime, event.reason);
+          if (who) {
+            const stillBusy = [...litFor.keys()].some((other) => other.startsWith(`${who}::`));
+            if (!stillBusy) {
+              workers.get(who)?.status.push(simTime + walkMs, null);
+              timelineHead = Math.max(timelineHead, simTime + walkMs);
+            }
+          }
           break;
         }
 
@@ -769,7 +825,15 @@ export function schedule(
           const lastAction = state.status.sampleAt(simTime) ?? null;
 
           if (staffing === 'dynamic') {
-            state.present.push(freeAt.get(key) ?? simTime, false);
+            /*
+             * Both pushed at the SAME instant. `freeAt` is when this worker's last
+             * scheduled motion ends, which for an agent that has been sitting still is in
+             * the past — so stamping absence there while the record starts at simTime left
+             * a window in which the worker was neither present nor recorded, and both
+             * renderers gate visibility on exactly those two. The agent simply vanished for
+             * that stretch, and live and replay disagreed about it.
+             */
+            state.present.push(simTime, false);
             state.departed.push(simTime, { station: restingAt, lastAction, at: event.occurredAt });
           } else {
             /*
@@ -855,6 +919,20 @@ export function schedule(
             busyChannel(station).push(simTime, null);
             setDeskStatus(station, simTime, null);
           }
+          /*
+           * And the PEOPLE, which this used to miss. setDeskStatus only reaches the
+           * synthetic `desk:` workers a permanent plan has, so in a dynamic office every
+           * agent kept its last tool label past the end of the run — the committed
+           * recording ships that way, with the main agent still reading "Re-capture and
+           * re-record with session bookends" after the session has closed. The SVG floor
+           * paints a worker with a non-null status in violet, so the demo ends on a person
+           * lit as though still working.
+           */
+          for (const worker of workers.values()) {
+            if (worker.status.sampleAt(simTime) === null) continue;
+            worker.status.push(simTime, null);
+          }
+          litFor.clear();
           break;
         }
 

@@ -1164,3 +1164,83 @@ test('the same burst places everybody identically every time', () => {
     );
   }
 });
+
+/* --- parallel tool calls, and the desk each one belongs to --------------------
+ *
+ * CONNECT.md tells producers that three parallel tool calls are three events with the
+ * SAME timestamp, so one agent holding work in two departments at once is the ordinary
+ * case, not a corner. The finish has to quieten the desk its own start lit — not the desk
+ * the worker happens to hold by then, and not the department's primary desk.
+ */
+
+test('a finish quietens the desk its own start lit, not wherever the agent went next', () => {
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'run.started', occurredAt: 0, label: 'Session opens' });
+    // One agent, two tools at once, in two different departments.
+    emit({ type: 'assignment.started', occurredAt: 1000, label: 'Bash: npm test', station: 'operations' });
+    emit({ type: 'assignment.started', occurredAt: 1000, label: 'Read src/app.ts', station: 'reading' });
+    emit({ type: 'assignment.finished', occurredAt: 2000, label: 'Bash', station: 'operations' });
+    emit({ type: 'assignment.finished', occurredAt: 2000, label: 'Read', station: 'reading' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const end = result.duration + 5000;
+  for (const [station, channel] of result.stationBusy) {
+    assert.equal(
+      channel.sampleAt(end),
+      null,
+      `${station} is still lit after both tools returned — the office claims work is running there`,
+    );
+  }
+});
+
+test('a failure lands on the desk that failed, not on another agent’s', () => {
+  // Writing one agent's literal failure onto a desk somebody else is sitting at is the
+  // office attributing a failure, in its own words, to an agent that did not have it.
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'assignment.started', occurredAt: 0, label: 'Bash: ok', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'assignment.started', occurredAt: 10, label: 'Bash: doomed', station: 'operations', worker: 'agent:b' });
+    emit({
+      type: 'assignment.failed', occurredAt: 900, label: 'Bash failed', station: 'operations',
+      worker: 'agent:b', reason: 'exit 1: no such file',
+    });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const at = result.duration;
+  const deskOfB = result.workers.get('agent:b').stationAt.sampleAt(at);
+  const deskOfA = result.workers.get('agent:a').stationAt.sampleAt(at);
+
+  assert.notEqual(deskOfA, deskOfB, 'the two agents are at different desks');
+  assert.equal(
+    result.stationBusy.get(deskOfB).sampleAt(at),
+    'exit 1: no such file',
+    'the failure is written at the desk that had it, verbatim',
+  );
+  assert.notEqual(
+    result.stationBusy.get(deskOfA)?.sampleAt(at),
+    'exit 1: no such file',
+    'and never at the desk of the agent that did not',
+  );
+});
+
+test('an agent that works again after leaving is no longer a record', () => {
+  // A producer may re-use an agent id. Without clearing the record the floor drew a grey
+  // shadowless marker at a desk that was simultaneously lit violet with that agent's
+  // current tool.
+  const codingCompiled = compileFloorPlan(codingSessionPlan);
+  const events = stream((emit) => {
+    emit({ type: 'specialist.joined', occurredAt: 0, label: 'Joined', worker: 'agent:a', role: 'Explorer' });
+    emit({ type: 'assignment.started', occurredAt: 50, label: 'Bash', station: 'operations', worker: 'agent:a' });
+    emit({ type: 'specialist.left', occurredAt: 100, label: 'Done', worker: 'agent:a' });
+    emit({ type: 'assignment.started', occurredAt: 500, label: 'Bash again', station: 'operations', worker: 'agent:a' });
+  });
+
+  const result = schedule(events, codingCompiled);
+  const end = result.duration;
+  const worker = result.workers.get('agent:a');
+  assert.equal(worker.departed.sampleAt(end), null, 'working again cancels the record');
+  assert.equal(worker.present.sampleAt(end), true, 'and puts them back on the floor properly');
+});

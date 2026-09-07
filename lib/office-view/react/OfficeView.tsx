@@ -368,6 +368,19 @@ export function OfficeView({
     applyTime(clock.current.time, true);
   }, [seekMs, applyTime]);
 
+  /*
+   * Clearing a record repaints too.
+   *
+   * The floor is written per frame, and a finished recording has no frames — which is
+   * exactly the state a viewer tidies up in. Without this the figure disappeared (the
+   * loop's last write happened to catch it) while the accessibility outline, which is
+   * React state, went on listing the agent that had just been cleared.
+   */
+  // eslint-disable-next-line react/react-compiler
+  useEffect(() => {
+    applyTime(clock.current.time, true);
+  }, [dismissed, applyTime]);
+
   // --- Camera ---------------------------------------------------------------
   const fullBounds = useMemo(() => planBounds(plan), [plan]);
   const [camera, setCamera] = useState<Bounds>(fullBounds);
@@ -769,6 +782,7 @@ export function OfficeView({
         plan={plan}
         compiled={compiled}
         stationStatus={readable.stationStatus}
+        t={readable.t}
         presentWorkers={readable.presentWorkers}
         workers={timeline.workers}
         outbox={readable.outbox}
@@ -864,6 +878,7 @@ function splitKey(key: string): [string, string] {
 function OfficeOutline({
   plan,
   compiled,
+  t,
   stationStatus,
   presentWorkers,
   workers,
@@ -875,6 +890,8 @@ function OfficeOutline({
 }: {
   plan: FloorPlan;
   compiled: CompiledPlan;
+  /** The instant being described, so a finished agent can be announced as finished. */
+  t: number;
   stationStatus: Record<string, string | null>;
   presentWorkers: string[];
   workers: ScheduleResult['workers'];
@@ -939,16 +956,30 @@ function OfficeOutline({
       {presentWorkers.length > 0 ? (
         <>
           <h4>Visiting specialists</h4>
+          {/*
+            * A finished agent stays on the floor, so this list contains people who are no
+            * longer working — and a screen reader has no colour, no opacity and no missing
+            * shadow to go on. It used to announce a record identically to a live
+            * specialist, which made the outline the least honest surface in the office
+            * rather than merely the plainest. The state is now said in words.
+            */}
           <ul>
             {presentWorkers
               .map((id) => workers.get(id))
               .filter((worker) => worker && worker.kind === 'specialist')
-              .map((worker) => (
-                <li key={worker!.id}>
-                  {worker!.role}
-                  {worker!.assignment ? `: ${worker!.assignment}` : ''}
-                </li>
-              ))}
+              .map((worker) => {
+                const record = worker!.departed.sampleAt(t);
+                return (
+                  <li key={worker!.id}>
+                    {worker!.role}
+                    {record
+                      ? `: finished${record.lastAction ? `, last action ${record.lastAction}` : ''}`
+                      : worker!.assignment
+                        ? `: ${worker!.assignment}`
+                        : ''}
+                  </li>
+                );
+              })}
           </ul>
         </>
       ) : null}

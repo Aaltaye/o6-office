@@ -451,3 +451,6 @@
   color: inherit;
   cursor: pointer;
 }
+
+/* Present but not running anything: no live colour, because nothing is live. */
+.oi-roster li.is-idle { border-left-color: var(--line); }

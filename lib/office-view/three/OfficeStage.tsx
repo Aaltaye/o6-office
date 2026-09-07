@@ -339,10 +339,17 @@ export function OfficeStage({
         /*
          * Raycasting tests layers, never `visible`, so a hidden figure still swallows
          * clicks unless its layers go with it. A discarded record must be unclickable as
-         * well as unseen.
+         * well as unseen — it stands in FRONT of the desk top, so it would be the nearest
+         * hit, and clicking a desk would keep selecting the person you had just cleared.
+         *
+         * Every MESH, not the group: Raycaster tests the layers of each object it visits,
+         * and a Group's own layers do not mask its children. Setting it on the group alone
+         * looked right and did nothing at all.
          */
-        if (onFloor) figure.layers.enableAll();
-        else figure.layers.disableAll();
+        figure.traverse((part) => {
+          if (onFloor) part.layers.enableAll();
+          else part.layers.disableAll();
+        });
         setWorkerDormant(figure, materials, Boolean(record) && !present);
         const at = state.motion.sampleAt(t);
         if (at) figure.position.set(at.x, 0, at.y);
@@ -413,7 +420,11 @@ export function OfficeStage({
          * caption only when it has something of its own to report: somebody working at it.
          */
         const active = Boolean(stationStatus[station.id]);
-        if (station.satellite && !active) continue;
+        // A satellite earns a caption when it has something of its own to say — somebody
+        // working at it, or the viewer having picked it. Selecting one and being flown to
+        // an unlabelled desk is worse than the crowding this rule exists to prevent.
+        const picked = selection?.kind === 'station' && selection.id === station.id;
+        if (station.satellite && !active && !picked) continue;
         labels[station.id] = {
           ...project(labelAnchorFor(station)),
           // Placement needs to know which labels carry a literal action, so those can be
@@ -444,7 +455,7 @@ export function OfficeStage({
       });
       onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, plan.stations, project, isNarrow, size.height, dismissed],
+    [timeline, plan.stations, project, isNarrow, size.height, dismissed, selection],
   );
 
   // --- camera ---------------------------------------------------------------

@@ -199,26 +199,57 @@ export function Inspector({
    * so. Nothing is inferred from a timeout or a silence.
    */
   const roster = useMemo(() => {
-    const people = new Map<string, { id: string; role: string | null; finished: boolean; last: string | null }>();
+    type Person = {
+      id: string;
+      role: string | null;
+      left: boolean;
+      /** Assignments started and not yet finished or failed. */
+      open: number;
+      last: string | null;
+    };
+    const people = new Map<string, Person>();
+
     for (const event of events) {
       const id = workerOf(event);
       if (!id) continue;
-      const person = people.get(id) ?? { id, role: null, finished: false, last: null };
+      const person = people.get(id) ?? { id, role: null, left: false, open: 0, last: null };
       if (event.type === 'specialist.joined') person.role = event.role ?? person.role;
       if (event.type === 'assignment.started') {
         person.last = event.label;
-        // Working again after finishing is not a contradiction — an agent id can be
-        // re-used by the producer — so the flag follows the most recent word.
-        person.finished = false;
+        person.open += 1;
+        // Working again after leaving is not a contradiction — a producer may re-use an
+        // agent id — so the flag follows the most recent word.
+        person.left = false;
       }
-      if (event.type === 'specialist.left') person.finished = true;
+      /*
+       * Closing an assignment is what makes somebody stop working, and nothing used to do
+       * it. `last` was set when work STARTED and never cleared, and only `specialist.left`
+       * could end a person's working state — which the main agent never emits. So the
+       * roster listed the agent as working, with a violet hairline and its last tool as
+       * the current action, for the whole run. That is the identical defect this change
+       * set fixed in the scheduler, reproduced in the panel that was added to explain it.
+       */
+      if (event.type === 'assignment.finished' || event.type === 'assignment.failed') {
+        person.open = Math.max(0, person.open - 1);
+      }
+      if (event.type === 'run.finished') person.open = 0;
+      if (event.type === 'specialist.left') {
+        person.left = true;
+        person.open = 0;
+      }
       people.set(id, person);
     }
+
+    // `run.finished` names nobody, so it has to be applied to everyone.
+    if (events.some((event) => event.type === 'run.finished')) {
+      for (const person of people.values()) person.open = 0;
+    }
+
     const all = [...people.values()];
     return {
-      working: all.filter((person) => !person.finished),
-      finished: all.filter((person) => person.finished && !dismissed.has(person.id)),
-      clearedCount: all.filter((person) => person.finished && dismissed.has(person.id)).length,
+      working: all.filter((person) => !person.left),
+      finished: all.filter((person) => person.left && !dismissed.has(person.id)),
+      clearedCount: all.filter((person) => person.left && dismissed.has(person.id)).length,
     };
   }, [events, dismissed]);
 
@@ -311,20 +342,35 @@ export function Inspector({
 
           <ul>
             {[...roster.working, ...roster.finished].map((person) => (
-              <li key={person.id} className={person.finished ? 'is-finished' : 'is-working'}>
+              <li
+                key={person.id}
+                className={
+                  person.left ? 'is-finished' : person.open > 0 ? 'is-working' : 'is-idle'
+                }
+              >
                 <button type="button" onClick={() => onSelect({ kind: 'worker', id: person.id })}>
                   <span className="oi-roster-who">
                     {person.id === 'main' ? 'The agent' : person.id}
                   </span>
                   {/* The producer's own last words, never "idle" or "done" — the office
                       reports what was said, and nobody said those. */}
+                  {/*
+                    * Three states, and the wording keeps them apart. Only an open
+                    * assignment is described in the present tense; anything else quotes the
+                    * LAST thing the producer said, labelled as last. Nobody is ever called
+                    * "idle" or "done" — the producer never said either.
+                    */}
                   <span className="oi-roster-what">
-                    {person.finished
-                      ? `finished${person.last ? ` · ${person.last}` : ''}`
-                      : (person.last ?? person.role ?? 'no action reported yet')}
+                    {person.left
+                      ? `finished${person.last ? ` · last: ${person.last}` : ''}`
+                      : person.open > 0
+                        ? (person.last ?? 'working')
+                        : person.last
+                          ? `last: ${person.last}`
+                          : (person.role ?? 'no action reported yet')}
                   </span>
                 </button>
-                {person.finished && onDismiss ? (
+                {person.left && onDismiss ? (
                   <button
                     type="button"
                     className="oi-roster-clear"
