@@ -128,7 +128,15 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
    * twenty reach 5.7 — and a room whose floor stops under their feet is a worse drawing
    * than a room that is bigger than it needs to be.
    */
-  const bounds = over ?? planBox(plan);
+  /*
+   * `home` is the plan's own box and never changes; `bounds` is what the building covers
+   * right now. Every piece of visible DETAIL is positioned from `home`, so growing the room
+   * only ever adds more of it at the edges — nothing already on screen shifts. Positioning
+   * detail from `bounds` instead slid every floorboard and re-flowed every window each time
+   * the room changed size, which made a bigger office read as a different office.
+   */
+  const home = planBox(plan);
+  const bounds = over ?? home;
   const width = bounds.maxX - bounds.minX;
   const depth = bounds.maxY - bounds.minY;
   const cx = (bounds.minX + bounds.maxX) / 2;
@@ -140,9 +148,21 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
   floor.castShadow = false;
   group.add(floor);
 
-  // Plank seams. Cheap, and the single strongest cue that the floor is wood rather than
-  // a grey surface that happens to be brown.
-  for (let z = bounds.minY + 1; z < bounds.maxY; z += 1.15) {
+  /*
+   * Plank seams. Cheap, and the single strongest cue that the floor is wood rather than a
+   * grey surface that happens to be brown.
+   *
+   * Indexed off `home` rather than walked from the current edge, so a given plank is always
+   * in the same place. They span the full width, so widening the room moves none of them —
+   * it only adds boards at the near and far ends, which is what a bigger floor looks like.
+   */
+  const SEAM_PITCH = 1.15;
+  const seamOrigin = home.minY + 1;
+  const firstSeam = Math.ceil((bounds.minY - seamOrigin) / SEAM_PITCH);
+  const lastSeam = Math.floor((bounds.maxY - seamOrigin) / SEAM_PITCH);
+  for (let k = firstSeam; k <= lastSeam; k += 1) {
+    const z = seamOrigin + k * SEAM_PITCH;
+    if (z <= bounds.minY || z >= bounds.maxY) continue;
     const seam = box(width, 0.01, 0.035, seamMat, cx, 0.005, z);
     seam.castShadow = false;
     group.add(seam);
@@ -162,10 +182,22 @@ export function buildRoomShell(plan: FloorPlan, over?: ShellBox) {
   group.add(side);
   group.add(box(0.24, 0.12, depth, skirtMat, bounds.minX, 0.06, cz));
 
-  const windowCount = Math.max(2, Math.floor(depth / 4.5));
-  const windowDepth = depth / windowCount;
-  for (let i = 0; i < windowCount; i++) {
-    const z = bounds.minY + windowDepth * (i + 0.5);
+  /*
+   * Windows, at a pitch fixed by the plan and positions indexed off `home`.
+   *
+   * The old form divided the CURRENT depth into a whole number of windows, so every window
+   * in the wall changed size and slid the moment the wall got longer. Now the pitch is a
+   * constant of the building and growth simply reveals more windows, which is both what a
+   * longer wall actually looks like and the only version where nothing already drawn moves.
+   */
+  const homeDepth = home.maxY - home.minY;
+  const windowDepth = homeDepth / Math.max(2, Math.floor(homeDepth / 4.5));
+  const firstWindow = Math.floor((bounds.minY - home.minY) / windowDepth) - 1;
+  const lastWindow = Math.ceil((bounds.maxY - home.minY) / windowDepth) + 1;
+  for (let i = firstWindow; i <= lastWindow; i++) {
+    const z = home.minY + windowDepth * (i + 0.5);
+    // Only whole windows, and only ones the wall actually reaches.
+    if (z - windowDepth / 2 < bounds.minY || z + windowDepth / 2 > bounds.maxY) continue;
     const h = 2.5;
     const y = 1.9;
     const glass = box(0.06, h, windowDepth * 0.68, glassMat, bounds.minX + 0.08, y, z);

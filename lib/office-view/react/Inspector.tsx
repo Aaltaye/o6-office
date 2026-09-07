@@ -52,6 +52,9 @@ export type InspectorProps = {
   onDismiss?: (worker: string) => void;
   onDismissAll?: (workers: readonly string[]) => void;
   onRestore?: () => void;
+  /** Whether the floor is currently showing only agents that are doing something. */
+  activeOnly?: boolean;
+  onActiveOnly?: (only: boolean) => void;
 };
 
 /** Stable identity so a host that passes nothing does not re-render on every frame. */
@@ -68,6 +71,8 @@ export function Inspector({
   onDismiss,
   onDismissAll,
   onRestore,
+  activeOnly = false,
+  onActiveOnly,
 }: InspectorProps) {
   const [tab, setTab] = useState<'operations' | 'artifacts'>('operations');
 
@@ -348,6 +353,17 @@ export function Inspector({
         <div className="oi-roster">
           <div className="oi-roster-head">
             <span>People in this run</span>
+            {onActiveOnly ? (
+              <button
+                type="button"
+                className={activeOnly ? 'is-on' : ''}
+                aria-pressed={activeOnly}
+                onClick={() => onActiveOnly(!activeOnly)}
+                title="Show only the agents with something running right now"
+              >
+                {activeOnly ? 'Showing active only' : 'Only active'}
+              </button>
+            ) : null}
             {onDismissAll && roster.finished.length > 0 ? (
               <button
                 type="button"
@@ -360,7 +376,10 @@ export function Inspector({
           </div>
 
           <ul>
-            {[...roster.working, ...roster.finished].map((person) => (
+            {(activeOnly
+              ? roster.working.filter((person) => person.open > 0)
+              : [...roster.working, ...roster.finished]
+            ).map((person) => (
               <li
                 key={person.id}
                 className={
@@ -409,6 +428,23 @@ export function Inspector({
             * less after you tidied it, without saying so, would be exactly the kind of
             * quiet subtraction this project exists not to do.
             */}
+          {/*
+            * The filter states itself, and states what it is keeping back. A view that
+            * quietly showed fewer people than are on the floor would be the same
+            * subtraction the cleared line exists to refuse.
+            */}
+          {activeOnly ? (
+            <p className="oi-cleared">
+              {roster.working.filter((person) => person.open === 0).length + roster.finished.length}{' '}
+              hidden · showing only agents with something running
+              {onActiveOnly ? (
+                <button type="button" onClick={() => onActiveOnly(false)}>
+                  Show everyone
+                </button>
+              ) : null}
+            </p>
+          ) : null}
+
           {roster.clearedCount > 0 ? (
             <p className="oi-cleared">
               {roster.clearedCount} cleared from the floor · still in the log

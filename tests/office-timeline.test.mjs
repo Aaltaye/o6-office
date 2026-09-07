@@ -27,7 +27,7 @@ import {
 import { schedule, DEFAULT_OPTIONS } from '../lib/office-view/core/scheduler.ts';
 import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
 import { frameOffice } from '../lib/office-view/core/framing.ts';
-import { planBox, neededShell } from '../lib/office-view/three/room-kit.ts';
+import { planBox, neededShell, buildRoomShell } from '../lib/office-view/three/room-kit.ts';
 // A worker's drawn footprint, shared with the renderer so seating and drawing cannot drift.
 import { WORKER_DIAMETER } from '../lib/office-view/core/figure.ts';
 import { createEmitter } from '../lib/office-view/core/events.ts';
@@ -1564,5 +1564,46 @@ test('the building only grows when somebody is actually outside it', () => {
       `${count} agents: grew=${didGrow} but somebody outside=${outside} — the room should ` +
         `change size when, and only when, a person does not fit on it`,
     );
+  }
+});
+
+test('growing the room adds floorboards and windows without moving any', () => {
+  /*
+   * The room used to divide its CURRENT size into planks and windows, so every board slid
+   * and every window resized the moment a wall moved — a bigger office read as a different
+   * office. Detail is indexed off the plan's own box now, so growth only appends at the
+   * edges.
+   *
+   * Asserted on positions rather than by eye: every piece present at the small size must be
+   * at the identical coordinate at the large one.
+   */
+  const base = planBox(codingSessionPlan);
+  const grown = { ...base, minY: base.minY - 8, maxX: base.maxX + 8 };
+
+  const positionsOf = (shellBox) => {
+    const shell = buildRoomShell(codingSessionPlan, shellBox);
+    const seams = [];
+    const glass = [];
+    shell.group.traverse((object) => {
+      const p = object.geometry?.parameters;
+      if (!p) return;
+      // Seams are the thin full-width strips; glass is the tall thin pane on the west wall.
+      if (p.height === 0.01) seams.push(Number(object.position.z.toFixed(4)));
+      if (p.width === 0.06) glass.push(Number(object.position.z.toFixed(4)));
+    });
+    return { seams: seams.sort((a, b) => a - b), glass: glass.sort((a, b) => a - b) };
+  };
+
+  const small = positionsOf(base);
+  const large = positionsOf(grown);
+
+  assert.ok(small.seams.length > 0 && small.glass.length > 0, 'the small room has detail at all');
+  assert.ok(large.seams.length > small.seams.length, 'a longer floor has more boards');
+
+  for (const z of small.seams) {
+    assert.ok(large.seams.includes(z), `floorboard at ${z} moved when the room grew`);
+  }
+  for (const z of small.glass) {
+    assert.ok(large.glass.includes(z), `window at ${z} moved when the room grew`);
   }
 });

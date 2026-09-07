@@ -63,6 +63,14 @@ export type OfficeStageProps = {
    * does not say it is truncated.
    */
   dismissed?: ReadonlySet<string>;
+  /**
+   * Show only the agents that are doing something right now.
+   *
+   * A view filter, and the office says it is on. It hides people who are present but
+   * between tool calls, and the records of people who have finished — never anything that
+   * IS happening. Nothing is removed from the timeline, the log or any total.
+   */
+  activeOnly?: boolean;
   events: readonly OfficeEvent[];
   modeLabel: string;
   playing?: boolean;
@@ -106,6 +114,7 @@ const EMPTY_DISMISSED: ReadonlySet<string> = new Set();
 export function OfficeStage({
   plan,
   dismissed = EMPTY_DISMISSED,
+  activeOnly = false,
   events,
   modeLabel,
   playing = true,
@@ -337,7 +346,9 @@ export function OfficeStage({
          * there; without one the figure reads as a marker on the floor, which is what it is.
          */
         const record = dismissed.has(id) ? null : (state.departed.sampleAt(t) ?? null);
-        const onFloor = present || Boolean(record);
+        // "Only active" keeps whoever has a literal action running, and nobody else.
+        const working = state.status.sampleAt(t) !== null;
+        const onFloor = activeOnly ? present && working : present || Boolean(record);
         let figure = workers.get(id);
         if (!figure && onFloor) {
           figure = buildWorker(colorForWorker(id));
@@ -522,7 +533,7 @@ export function OfficeStage({
       });
       onTimeRef.current?.(t, timeline.duration);
     },
-    [timeline, plan, project, isNarrow, size.height, dismissed, selection],
+    [timeline, plan, project, isNarrow, size.height, dismissed, selection, activeOnly],
   );
 
   // --- camera ---------------------------------------------------------------

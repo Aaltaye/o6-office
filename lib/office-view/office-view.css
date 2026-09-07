@@ -454,3 +454,11 @@
 
 /* Present but not running anything: no live colour, because nothing is live. */
 .oi-roster li.is-idle { border-left-color: var(--line); }
+
+/* The active-only filter, when it is on. Graphite, not violet: the button is a view
+   control, and violet is reserved for work that is actually happening. */
+.oi-roster-head button.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--porcelain);
+}

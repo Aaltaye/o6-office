@@ -43,6 +43,8 @@ function App() {
   const [selection, setSelection] = useState<Selection>(null);
   /** Chrome off, floor only — for putting a running session on a second screen. */
   const [presenting, setPresenting] = useState(false);
+  /** Show only agents with something running. Most useful here, where a live burst is. */
+  const [activeOnly, setActiveOnly] = useState(false);
   const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed('bridge:live');
   /** Batch incoming events into one render per frame rather than one per event. */
   const pending = useRef<OfficeEvent[]>([]);
@@ -127,6 +129,7 @@ function App() {
       selection={selection}
       onSelect={setSelection}
       dismissed={dismissed}
+      activeOnly={activeOnly}
     />
   );
 
@@ -180,6 +183,8 @@ function App() {
           onDismiss={dismiss}
           onDismissAll={dismissAll}
           onRestore={restoreAll}
+          activeOnly={activeOnly}
+          onActiveOnly={setActiveOnly}
         />
       </div>
 

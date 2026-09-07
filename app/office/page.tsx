@@ -55,6 +55,8 @@ export default function OfficePage() {
   const [progress, setProgress] = useState({ t: 0, duration: 1 });
   const [selection, setSelection] = useState<Selection>(null);
   const [presenting, setPresenting] = useState(false);
+  /** Show only agents with something running. A view filter; the panel says it is on. */
+  const [activeOnly, setActiveOnly] = useState(false);
 
   // Scoped per run, so tidying one recording does not tidy the other.
   const { dismissed, dismiss, dismissAll, restoreAll } = useDismissed(`office:${runName}`);
@@ -141,6 +143,7 @@ export default function OfficePage() {
     onTime: (t: number, duration: number) => setProgress({ t, duration }),
     // Cleared records leave the floor as well as the roster; the count stays stated.
     dismissed,
+    activeOnly,
   };
 
   if (presenting) {
@@ -261,6 +264,8 @@ export default function OfficePage() {
           onDismiss={dismiss}
           onDismissAll={dismissAll}
           onRestore={restoreAll}
+          activeOnly={activeOnly}
+          onActiveOnly={setActiveOnly}
         />
       </div>
 

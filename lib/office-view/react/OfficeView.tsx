@@ -65,6 +65,8 @@ export type OfficeViewProps = {
    * timeline or any total. What was cleared is still counted and still stated in the panel.
    */
   dismissed?: ReadonlySet<string>;
+  /** Show only agents with a literal action running. A view filter; the office says so. */
+  activeOnly?: boolean;
   events: readonly OfficeEvent[];
   /** Shown verbatim in the corner. The viewer must always know what they are watching. */
   modeLabel: string;
@@ -116,6 +118,7 @@ function labelAnchorFor(station: Station): World {
 export function OfficeView({
   plan,
   dismissed = NO_DISMISSALS,
+  activeOnly = false,
   events,
   modeLabel,
   playing = true,
@@ -200,10 +203,12 @@ export function OfficeView({
    * sixtieth of a second.
    */
   const dismissedRef = useRef(dismissed);
+  const activeOnlyRef = useRef(activeOnly);
   useEffect(() => {
     onTimeRef.current = onTime;
     onSelectRef.current = onSelect;
     dismissedRef.current = dismissed;
+    activeOnlyRef.current = activeOnly;
   });
 
   /**
@@ -244,8 +249,10 @@ export function OfficeView({
          * the live one quietly lost a whole panel.
          */
         const record = dismissedRef.current.has(id) ? null : state.departed.sampleAt(t);
+        const working = state.status.sampleAt(t) !== null;
+        const shown = activeOnlyRef.current ? present && working : present || Boolean(record);
         // `hidden` rather than removal: React owns the tree, the loop only styles it.
-        node.style.display = present || record ? '' : 'none';
+        node.style.display = shown ? '' : 'none';
         // A record is a marker, not a colleague: quiet, and never carrying a live colour.
         node.style.opacity = !present && record ? '0.45' : '';
         node.dataset.dormant = !present && record ? 'true' : 'false';
@@ -275,9 +282,10 @@ export function OfficeView({
       // and the click targets cover exactly what is drawn — no more, and no less.'
       const bands: Record<string, string> = {};
       for (const [id, state] of timeline.workers) {
-        const shown =
-          (state.present.sampleAt(t) ?? false) ||
-          Boolean(!dismissedRef.current.has(id) && state.departed.sampleAt(t));
+        const isPresent = state.present.sampleAt(t) ?? false;
+        const shown = activeOnlyRef.current
+          ? isPresent && state.status.sampleAt(t) !== null
+          : isPresent || Boolean(!dismissedRef.current.has(id) && state.departed.sampleAt(t));
         if (!shown) continue;
         presentWorkers.push(id);
         const at = state.motion.sampleAt(t);
@@ -379,7 +387,7 @@ export function OfficeView({
   // eslint-disable-next-line react/react-compiler
   useEffect(() => {
     applyTime(clock.current.time, true);
-  }, [dismissed, applyTime]);
+  }, [dismissed, activeOnly, applyTime]);
 
   // --- Camera ---------------------------------------------------------------
   /**
