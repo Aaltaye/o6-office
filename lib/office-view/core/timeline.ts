@@ -321,3 +321,20 @@ export class SimClock {
     this.duration = Math.max(this.duration, duration);
   }
 }
+
+/**
+ * A rough, readable duration for the compression badge.
+ *
+ * Deliberately coarse: the exact figure is not the point, and a precise-looking number
+ * would imply a precision the cap does not have. "About nine minutes were not shown" is
+ * the honest statement.
+ */
+export function describeSkipped(ms: number): string {
+  const seconds = Math.round(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
+}

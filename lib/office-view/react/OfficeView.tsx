@@ -35,7 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { FloorPlan, OfficeEvent, RoomId, Station, StationId, World } from '../core/types.ts';
 import { compileFloorPlan, aisleBandFor, type CompiledPlan } from '../core/plan.ts';
 import { planBounds, focusBounds, toViewBox, worldToScreen, type Bounds } from '../core/projection.ts';
-import { SimClock } from '../core/timeline.ts';
+import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { Desk, Door, Folder, Prop, RoomPad, Tray, Worker } from '../art/sprites.tsx';
 import { faces, live, palette, PROP_SHAPES, timings } from '../art/theme.ts';
@@ -172,7 +172,7 @@ export function OfficeView({
     stationStatus: {} as Record<string, string | null>,
     presentWorkers: [] as string[],
     outbox: 0,
-    compression: { rate: 1, batched: 0 },
+    compression: { rate: 1, batched: 0, skippedMs: 0 },
     bands: {} as Record<string, string>,
   }));
 
@@ -270,7 +270,7 @@ export function OfficeView({
           stationStatus,
           presentWorkers,
           outbox: timeline.outboxCount.sampleAt(t) ?? 0,
-          compression: timeline.compression.sampleAt(t) ?? { rate: 1, batched: 0 },
+          compression: timeline.compression.sampleAt(t) ?? { rate: 1, batched: 0, skippedMs: 0 },
           bands,
         };
         // Cheap equality on the parts that drive layout, to avoid pointless renders.
@@ -695,10 +695,19 @@ export function OfficeView({
 
       {/* I4: whenever time is compressed or items are batched, say so. A compromise
           stated out loud is information; unstated, it would be a lie. */}
-      {readable.compression.rate !== 1 || readable.compression.batched > 0 ? (
+      {readable.compression.rate !== 1 ||
+      readable.compression.batched > 0 ||
+      readable.compression.skippedMs > 0 ? (
         <output className="office-compression">
-          {readable.compression.rate !== 1 ? `×${readable.compression.rate} time-compressed` : null}
-          {readable.compression.batched > 0 ? ` · ${readable.compression.batched} batched` : null}
+          {[
+            readable.compression.rate !== 1 ? `×${readable.compression.rate} time-compressed` : null,
+            readable.compression.skippedMs > 0
+              ? `${describeSkipped(readable.compression.skippedMs)} of waiting skipped`
+              : null,
+            readable.compression.batched > 0 ? `${readable.compression.batched} batched` : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </output>
       ) : null}
 

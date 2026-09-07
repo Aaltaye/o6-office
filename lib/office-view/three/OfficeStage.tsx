@@ -26,7 +26,7 @@ import * as THREE from 'three';
 
 import type { FloorPlan, OfficeEvent, Station, World } from '../core/types.ts';
 import { compileFloorPlan, type CompiledPlan } from '../core/plan.ts';
-import { SimClock } from '../core/timeline.ts';
+import { SimClock, describeSkipped } from '../core/timeline.ts';
 import { schedule, type ScheduleResult, type SchedulerOptions } from '../core/scheduler.ts';
 import { PROP_SHAPES } from '../art/theme.ts';
 import { useAnimationLoop, useElementSize, usePrefersReducedMotion } from '../react/useAnimationLoop.ts';
@@ -143,6 +143,8 @@ export function OfficeStage({
     labels: {} as Record<string, { left: number; top: number; visible: boolean; active?: boolean; collapsed?: boolean }>,
     presentWorkers: [] as string[],
     outbox: 0,
+    /** I4: what the viewer must be told about how time is being handled, right now. */
+    compression: { rate: 1, batched: 0, skippedMs: 0 },
   }));
   const lastReadableAt = useRef(0);
 
@@ -342,6 +344,7 @@ export function OfficeStage({
         labels: spacedLabels,
         presentWorkers,
         outbox: timeline.outboxCount.sampleAt(t) ?? 0,
+        compression: timeline.compression.sampleAt(t) ?? { rate: 1, batched: 0, skippedMs: 0 },
       });
       onTimeRef.current?.(t, timeline.duration);
     },
@@ -577,6 +580,31 @@ export function OfficeStage({
             );
           })}
       </div>
+
+      {/* I4: whenever time is compressed, sped up, or items are batched, say so. A
+          compromise stated out loud is information; unstated it would be a lie — and this
+          is the renderer people actually watch, so it is the one that has to say it.
+
+          Playback speed belongs here too: the landing hero runs a 23-minute session in
+          under a minute, and a viewer who is not told that is being misled about pace even
+          though every event is real and in order. */}
+      {readable.compression.rate !== 1 ||
+      readable.compression.batched > 0 ||
+      readable.compression.skippedMs > 0 ||
+      speed !== 1 ? (
+        <output className="office-compression">
+          {[
+            readable.compression.rate !== 1 ? `×${readable.compression.rate} time-compressed` : null,
+            speed !== 1 ? `×${speed} speed` : null,
+            readable.compression.skippedMs > 0
+              ? `${describeSkipped(readable.compression.skippedMs)} of waiting skipped`
+              : null,
+            readable.compression.batched > 0 ? `${readable.compression.batched} batched` : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </output>
+      ) : null}
 
       <div className="office-mode-stamp">{modeLabel}</div>
 

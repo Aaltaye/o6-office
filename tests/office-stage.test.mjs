@@ -23,6 +23,10 @@ import {
   LABEL_BOX_COMPACT,
 } from '../lib/office-view/three/stage-scene.ts';
 import { leadReactivationPlan } from '../lib/floorplans/lead-reactivation.ts';
+import { compileFloorPlan } from '../lib/office-view/core/plan.ts';
+import { schedule } from '../lib/office-view/core/scheduler.ts';
+import { describeSkipped } from '../lib/office-view/core/timeline.ts';
+import { createEmitter } from '../lib/office-view/core/events.ts';
 import { codingSessionPlan } from '../lib/floorplans/coding-session.ts';
 
 test('floor-plan space maps to three.js space without mirroring an axis', () => {
@@ -293,3 +297,54 @@ test('when two live labels collide, one moves and both stay readable', () => {
     assert.equal(spaced[id].collapsed, undefined, 'neither live label is ever collapsed');
   }
 });
+
+test('truncated dead air is reported, not silently swallowed', () => {
+  // I4 says compression is always stated. TWO things compress time here: rate-from-debt,
+  // which was reported, and gap capping, which was not — despite a comment claiming it
+  // was. Gap capping is the one that actually fires: a real session is mostly waiting, so
+  // a ten minute pause became 1.4 seconds and the office said nothing at all.
+  const compiled = compileFloorPlan(leadReactivationPlan);
+  const emit = createEmitter({ runId: 'gap', source: 'lead-workflow' });
+  const station = leadReactivationPlan.stations[0].id;
+  const events = [
+    emit({ type: 'run.started', label: 'Start', occurredAt: 0 }),
+    emit({ type: 'assignment.started', label: 'First', station, occurredAt: 1000 }),
+    // Ten minutes of nothing, which the scheduler truncates to maxGapMs.
+    emit({ type: 'assignment.finished', label: 'Done', station, occurredAt: 600000 }),
+  ];
+  const timeline = schedule(events, compiled);
+
+  const stated = timeline.compression.sampleAt(timeline.duration);
+  assert.ok(stated, 'the run has something to say about how it handled time');
+  assert.ok(
+    stated.skippedMs > 500000,
+    `nearly ten minutes was truncated but only ${stated.skippedMs}ms was reported`,
+  );
+  assert.ok(timeline.duration < 60000, 'and the run really was compressed into seconds');
+  assert.deepEqual(timeline.violations, []);
+});
+
+test('a run with no dead air claims none was skipped', () => {
+  // The other half of the invariant: never state a compression that did not happen.
+  const compiled = compileFloorPlan(leadReactivationPlan);
+  const emit = createEmitter({ runId: 'tight', source: 'lead-workflow' });
+  const station = leadReactivationPlan.stations[0].id;
+  const timeline = schedule(
+    [
+      emit({ type: 'run.started', label: 'Start', occurredAt: 0 }),
+      emit({ type: 'assignment.started', label: 'First', station, occurredAt: 200 }),
+      emit({ type: 'assignment.finished', label: 'Done', station, occurredAt: 700 }),
+    ],
+    compiled,
+  );
+  const stated = timeline.compression.sampleAt(timeline.duration) ?? { skippedMs: 0 };
+  assert.equal(stated.skippedMs, 0, 'nothing was skipped, so nothing is claimed');
+});
+
+test('skipped time is described in words a person reads, not milliseconds', () => {
+  assert.equal(describeSkipped(45_000), '45s');
+  assert.equal(describeSkipped(597_600), '10m');
+  assert.equal(describeSkipped(3_600_000), '1h');
+  assert.equal(describeSkipped(5_400_000), '1h 30m');
+});
+

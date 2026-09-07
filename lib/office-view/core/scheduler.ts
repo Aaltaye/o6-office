@@ -123,8 +123,14 @@ export type ScheduleResult = {
   /** Assignment activity per desk, for the "this desk is busy" light pool. */
   stationBusy: Map<StationId, StepChannel<string | null>>;
   outboxCount: StepChannel<number>;
-  /** I4: what the viewer must be told about compression, at each moment. */
-  compression: StepChannel<{ rate: number; batched: number }>;
+  /**
+   * I4: what the viewer must be told about how time is being handled, at each moment.
+   *
+   * `skippedMs` is cumulative real time that was never shown — dead air truncated to
+   * `maxGapMs`. It is the compression that fires most often in a real session, and it is
+   * invisible unless something says it out loud.
+   */
+  compression: StepChannel<{ rate: number; batched: number; skippedMs: number }>;
   /** Maps each event id to the sim time it was scheduled at, for the activity trail. */
   timeOf: Map<string, number>;
   duration: number;
@@ -218,7 +224,7 @@ export function schedule(
   const work = new Map<WorkId, WorkState>();
   const stationBusy = new Map<StationId, StepChannel<string | null>>();
   const outboxCount = new StepChannel<number>();
-  const compression = new StepChannel<{ rate: number; batched: number }>();
+  const compression = new StepChannel<{ rate: number; batched: number; skippedMs: number }>();
   const timeOf = new Map<string, number>();
   const violations: string[] = [];
 
@@ -234,6 +240,9 @@ export function schedule(
   let lastOccurred: number | null = null;
   let outbox = 0;
   let lastReportedRate = 1;
+  /** Cumulative real milliseconds truncated out of idle gaps, for I4. */
+  let skippedMs = 0;
+  let lastReportedSkippedSec = 0;
   let lastReportedBatched = 0;
 
   const hotDesks = plan.plan.stations.filter((s) => s.hotDesk);
@@ -361,10 +370,20 @@ export function schedule(
 
   /** I4: only record a change, so the channel stays small and the UI only reacts on change. */
   const noteCompression = (at: number, rate: number, batched: number) => {
-    if (rate === lastReportedRate && batched === lastReportedBatched) return;
-    compression.push(at, { rate, batched });
+    // Skipped time only needs restating when it has moved by a whole second; otherwise a
+    // long session would push an entry per event and the channel would balloon.
+    const skippedSec = Math.floor(skippedMs / 1000);
+    if (
+      rate === lastReportedRate &&
+      batched === lastReportedBatched &&
+      skippedSec === lastReportedSkippedSec
+    ) {
+      return;
+    }
+    compression.push(at, { rate, batched, skippedMs });
     lastReportedRate = rate;
     lastReportedBatched = batched;
+    lastReportedSkippedSec = skippedSec;
   };
 
   for (const group of groups) {
@@ -372,8 +391,14 @@ export function schedule(
 
     // Advance sim time by the real gap, capped. Capping compresses dead air; it never
     // reorders anything, and the cap being hit is reported under I4.
-    if (lastOccurred === null) simTime = 0;
-    else simTime += Math.min(occurredAt - lastOccurred, opts.maxGapMs);
+    if (lastOccurred === null) {
+      simTime = 0;
+    } else {
+      const realGap = occurredAt - lastOccurred;
+      // What the viewer does NOT get to see. Reported under I4 rather than swallowed.
+      skippedMs += Math.max(0, realGap - opts.maxGapMs);
+      simTime += Math.min(realGap, opts.maxGapMs);
+    }
     lastOccurred = occurredAt;
 
     // Tiering by scheduled-time debt: how far the timeline has run ahead of the events
